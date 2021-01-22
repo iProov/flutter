@@ -77,7 +77,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                   onPressed: () {
                     // UserID needs to change each time for enrol, unless already registered when can keep with verify
-                    getToken('ksdfgsjs@ssdlfgh.ldfgl', 'enrol', 'genuine_presence');
+                    getToken('ksdfgsjs@ssdgh.ldfgl', 'enrol', 'genuine_presence');
                   },
                 )
               ]
