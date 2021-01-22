@@ -28,7 +28,7 @@ flutter:
   plugin:
     platforms:
       android:
-        package: com.iproov.iproov_sdk
+        package: com.iproov.sdk
         pluginClass: IProovSDKPlugin
 
   # To add assets to your plugin package, add an assets section, like this:

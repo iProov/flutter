@@ -12,6 +12,8 @@ dependencies:
   flutter:
     sdk: flutter
 
+  http: ^0.12.1
+
   iproov_sdk:
     # When depending on this package from a real application you should use:
     #   iproov_sdk: ^x.y.z

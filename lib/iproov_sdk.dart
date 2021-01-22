@@ -8,9 +8,6 @@ class IProovSDK {
     static const EventChannel iProovListenerEventChannel =
         EventChannel('com.iproov.sdk.listener');
 
-    static const EventChannel iProovTokenEventChannel =
-        EventChannel('com.iproov.token');
-
     static void launch(String streamingUrl, String token) async {
         _iProovMethodChannel.invokeMethod('launch', <String, dynamic>{
             'streamingUrl': streamingUrl,
@@ -23,14 +20,6 @@ class IProovSDK {
             'streamingUrl': streamingUrl,
             'token': token,
             'optionsJson': optionsJson
-        });
-    }
-
-    static void getToken(String assuranceType, String claimType, String username) async {
-        _iProovMethodChannel.invokeMethod('getToken', <String, dynamic>{
-            'assuranceType': assuranceType,
-            'claimType': claimType,
-            'username': username
         });
     }
 }

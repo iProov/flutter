@@ -1,13 +1,10 @@
-package com.iproov.flutter_sdk_plugin
+package com.iproov.sdk
 
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import androidx.annotation.NonNull
-import com.iproov.androidapiclient.AssuranceType
-import com.iproov.androidapiclient.ClaimType
-import com.iproov.androidapiclient.kotlinfuel.ApiClientFuel
 import com.iproov.sdk.IProov
 import com.iproov.sdk.bridge.OptionsBridge
 import com.iproov.sdk.core.exception.IProovException
@@ -54,12 +51,9 @@ class IProovSDKPlugin: FlutterPlugin {
     }
 
     private lateinit var listenerEventChannel: EventChannel
-    private lateinit var tokenEventChannel: EventChannel
     private lateinit var iProovMethodChannel: MethodChannel
 
-    private var apiClientFuel: ApiClientFuel? = null
     private var listenerEventSink: EventChannel.EventSink? = null
-    private var tokenEventSink: EventChannel.EventSink? = null
     private var flutterPluginBinding: FlutterPlugin.FlutterPluginBinding? = null
 
     private val job = SupervisorJob()
@@ -84,14 +78,13 @@ class IProovSDKPlugin: FlutterPlugin {
         override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: MethodChannel.Result) {
             when (call.method) {
                 METHOD_LAUNCH -> handleLaunch(call, result)
-                METHOD_GET_TOKEN -> fetchToken(call, result)
                 else -> result.notImplemented()
             }
         }
 
         private fun handleLaunch(call: MethodCall, result: MethodChannel.Result) {
             val context: Context? = flutterPluginBinding?.applicationContext
-            val streamingUrl: String = Constants.BASE_URL //call.argument(METHOD_LAUNCH_PARAM_STREAMING_URL)
+            val streamingUrl: String? = call.argument(METHOD_LAUNCH_PARAM_STREAMING_URL)
             val token: String? = call.argument(METHOD_LAUNCH_PARAM_TOKEN)
             val optionsJson: String? = call.argument(METHOD_LAUNCH_PARAM_OPTIONS_JSON)
 
@@ -99,73 +92,24 @@ class IProovSDKPlugin: FlutterPlugin {
                 context == null -> {
                     result.error(METHOD_ERROR_NO_ATTACHED_CONTEXT, METHOD_ERROR_NO_ATTACHED_CONTEXT, null)
                 }
-//                streamingUrl.isNullOrEmpty() -> {
-//                    result.error(METHOD_ERROR_MISSING_OR_EMPTY_ARGUMENT, METHOD_LAUNCH_PARAM_STREAMING_URL, METHOD_LAUNCH_PARAM_STREAMING_URL)
-//                }
+                streamingUrl.isNullOrEmpty() -> {
+                    result.error(METHOD_ERROR_MISSING_OR_EMPTY_ARGUMENT, METHOD_LAUNCH_PARAM_STREAMING_URL, METHOD_LAUNCH_PARAM_STREAMING_URL)
+                }
                 token.isNullOrEmpty() -> {
                     result.error(METHOD_ERROR_MISSING_OR_EMPTY_ARGUMENT, METHOD_LAUNCH_PARAM_TOKEN, METHOD_LAUNCH_PARAM_TOKEN)
                 }
                 else -> {
 
-                    Log.w("launch", "url=" + streamingUrl + " token=" + token)
+                    Log.w("launch", "url=$streamingUrl token=$token")
                     if (optionsJson.isNullOrEmpty()) {
-                        IProov.launch(context, streamingUrl, token)
+                        IProov.launch(context, streamingUrl!!, token!!)
                     } else {
                         try {
                             val json = JSONObject(optionsJson)
-                            val options = OptionsBridge.fromJson(context, json)
-                            IProov.launch(context, streamingUrl, token, options)
+                            val options = OptionsBridge.fromJson(context, json)!!
+                            IProov.launch(context, streamingUrl!!, token!!, options)
                         } catch (ex: JSONException) {
                             result.error(METHOD_LAUNCH_ERROR_OPTIONS_JSON, ex.message, optionsJson)
-                        }
-                    }
-                }
-            }
-        }
-
-        private fun fetchToken(call: MethodCall, result: MethodChannel.Result) {
-            val context: Context? = flutterPluginBinding?.applicationContext
-            val assuranceTypeName: String? = call.argument(METHOD_GET_TOKEN_PARAM_ASSURANCE_TYPE)
-            val claimTypeName: String? = call.argument(METHOD_GET_TOKEN_PARAM_CLAIM_TYPE)
-            val username: String? = call.argument(METHOD_GET_TOKEN_PARAM_USERNAME)
-            when {
-                context == null -> {
-                    result.error(METHOD_ERROR_NO_ATTACHED_CONTEXT, METHOD_ERROR_NO_ATTACHED_CONTEXT, null)
-                }
-                assuranceTypeName.isNullOrEmpty() -> {
-                    result.error(METHOD_ERROR_MISSING_OR_EMPTY_ARGUMENT, METHOD_GET_TOKEN_PARAM_ASSURANCE_TYPE, METHOD_GET_TOKEN_PARAM_ASSURANCE_TYPE)
-                }
-                claimTypeName.isNullOrEmpty() -> {
-                    result.error(METHOD_ERROR_MISSING_OR_EMPTY_ARGUMENT, METHOD_GET_TOKEN_PARAM_CLAIM_TYPE, METHOD_GET_TOKEN_PARAM_CLAIM_TYPE)
-                }
-                username.isNullOrEmpty() -> {
-                    result.error(METHOD_ERROR_MISSING_OR_EMPTY_ARGUMENT, METHOD_GET_TOKEN_PARAM_USERNAME, METHOD_GET_TOKEN_PARAM_USERNAME)
-                }
-                else -> {
-
-                    Log.w("getToken", "assuranceType=" + assuranceTypeName + " claimType=" + claimTypeName)
-                    val assuranceType: AssuranceType = AssuranceType.valueOf(assuranceTypeName)
-                    val claimType: ClaimType = ClaimType.valueOf(claimTypeName)
-
-                    if (apiClientFuel == null) {
-                        apiClientFuel = ApiClientFuel(
-                                context,
-                                Constants.BASE_URL,
-                                Constants.API_KEY,
-                                Constants.SECRET
-                        )
-                    }
-
-                    uiScope.launch(Dispatchers.IO) {
-                        try {
-                            val token = apiClientFuel!!.getToken(
-                                    AssuranceType.GENUINE_PRESENCE,
-                                    claimType,
-                                    username)
-
-                            uiThreadHandler.post{ tokenEventSink?.success(token) }
-                        } catch (e: Exception) {
-                            uiThreadHandler.post{ tokenEventSink?.error(e.javaClass.simpleName, e.message, e.toString()) }
                         }
                     }
                 }
@@ -194,20 +138,6 @@ class IProovSDKPlugin: FlutterPlugin {
                 if (listenerEventSink == null) return
                 IProov.unregisterListener(iProovListener)
                 listenerEventSink = null
-            }
-        })
-
-        tokenEventChannel = EventChannel(flutterPluginBinding.binaryMessenger, METHOD_CHANNEL_TOKEN_NAME)
-        tokenEventChannel.setStreamHandler(object : EventChannel.StreamHandler {
-
-            override fun onListen(arguments: Any?, sink: EventChannel.EventSink?) {
-                tokenEventSink = sink
-                if (tokenEventSink == null) return
-            }
-
-            override fun onCancel(arguments: Any?) {
-                if (tokenEventSink == null) return
-                tokenEventSink = null
             }
         })
     }

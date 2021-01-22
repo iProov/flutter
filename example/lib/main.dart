@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:iproov_sdk/iproov_sdk.dart';
+import 'package:iproov_sdk_example/api-client.dart';
 
 void main() {
   runApp(MyApp());
@@ -30,11 +31,19 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
+  TokenApi tokenApi;
+  Future<String> futureToken;
+
   @override
   void initState() {
-    IProovSDK.iProovListenerEventChannel.receiveBroadcastStream().listen(_onEvent, onError: _onError);
-    IProovSDK.iProovTokenEventChannel.receiveBroadcastStream().listen(_onToken, onError: _onTokenError);
     super.initState();
+    IProovSDK.iProovListenerEventChannel.receiveBroadcastStream().listen(_onEvent, onError: _onError);
+    tokenApi = TokenApi();
+  }
+
+  void getToken(String userID, String claimType, String assuranceType) async {
+    String token = await tokenApi.getToken(userID, claimType, assuranceType);
+    IProovSDK.launch(tokenApi.baseUrl, token);
   }
 
   void _onEvent(Object event) {
@@ -43,14 +52,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _onError(Object error) {
     print("onError $error");
-  }
-
-  void _onToken(Object event) {
-    IProovSDK.launch('', event.toString());
-  }
-
-  void _onTokenError(Object error) {
-    print("onTokenError $error");
   }
 
   Widget build(BuildContext context) {
@@ -75,7 +76,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   ),
                   onPressed: () {
-                    IProovSDK.getToken('GENUINE_PRESENCE', 'VERIFY', 'ksdfgsj@sdlfgh.ldfgl');
+                    // UserID needs to change each time for enrol, unless already registered when can keep with verify
+                    getToken('ksdfgsjs@ssdlfgh.ldfgl', 'enrol', 'genuine_presence');
                   },
                 )
               ]
