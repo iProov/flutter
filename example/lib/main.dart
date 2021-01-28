@@ -1,6 +1,9 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:iproov_sdk/iproov_sdk.dart';
 import 'package:iproov_sdk_example/api-client.dart';
+import 'dart:convert';
 
 void main() {
   runApp(MyApp());
@@ -33,6 +36,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   TokenApi tokenApi;
   Future<String> futureToken;
+  Random random = new Random();
 
   @override
   void initState() {
@@ -43,7 +47,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void getToken(String userID, String claimType, String assuranceType) async {
     String token = await tokenApi.getToken(userID, claimType, assuranceType);
-    IProovSDK.launch(tokenApi.baseUrl, token);
+    Options options = Options();
+    options.ui.lineColor = Colors.red;
+    print("json="+json.encode(options));
+    print("=====> START "+options.toString());
+    IProovSDK.launchWithOptions(tokenApi.baseUrl, token, options);
   }
 
   void _onEvent(Object event) {
@@ -77,7 +85,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                   onPressed: () {
                     // UserID needs to change each time for enrol, unless already registered when can keep with verify
-                    getToken('ksdfgsjs@ssdgh.ldfgl', 'enrol', 'genuine_presence');
+                    getToken('${random.nextInt(1000000)}ksdgfgsjs@ssdguh.ldfgl', 'enrol', 'genuine_presence');
                   },
                 )
               ]

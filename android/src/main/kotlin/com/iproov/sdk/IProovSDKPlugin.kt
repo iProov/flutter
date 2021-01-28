@@ -19,18 +19,11 @@ import kotlinx.coroutines.launch
 import org.json.JSONException
 import org.json.JSONObject
 
-
-data class Progress(
-        val progress: Double,
-        val message: String?
-)
-
 /** IProovSDKPlugin */
 class IProovSDKPlugin: FlutterPlugin {
 
     companion object {
         const val METHOD_CHANNEL_IPROOV_NAME = "com.iproov.sdk"
-        const val METHOD_CHANNEL_TOKEN_NAME = "com.iproov.token"
         const val METHOD_LAUNCH = "launch"
         const val METHOD_LAUNCH_PARAM_STREAMING_URL = "streamingUrl"
         const val METHOD_LAUNCH_PARAM_TOKEN = "token"
@@ -43,11 +36,6 @@ class IProovSDKPlugin: FlutterPlugin {
         const val EVENT_ON_CONNECTING = "onConnecting"
         const val EVENT_ON_CONNECTED = "onConnected"
         const val EVENT_ON_CANCELLED = "onCancelled"
-
-        const val METHOD_GET_TOKEN = "getToken"
-        const val METHOD_GET_TOKEN_PARAM_ASSURANCE_TYPE = "assuranceType"
-        const val METHOD_GET_TOKEN_PARAM_CLAIM_TYPE = "claimType"
-        const val METHOD_GET_TOKEN_PARAM_USERNAME = "username"
     }
 
     private lateinit var listenerEventChannel: EventChannel
@@ -57,10 +45,6 @@ class IProovSDKPlugin: FlutterPlugin {
     private var flutterPluginBinding: FlutterPlugin.FlutterPluginBinding? = null
 
     private val job = SupervisorJob()
-    private val uiScope = CoroutineScope(Dispatchers.Main + job)
-
-    private val uiThreadHandler: Handler = Handler(Looper.getMainLooper())
-
 
     // Callbacks ----
 
