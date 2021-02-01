@@ -6,18 +6,19 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d822db72-c932-48f9-90c1-17c0cd2b99de" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/android/.idea/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/android/.idea/compiler.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/android/.idea/gradle.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/android/.idea/jarRepositories.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/android/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/android/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/android/src/main/kotlin/com/iproov/sdk/OptionsFromJson.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/example/android/app/src/main/assets/montserrat_regular.ttf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/example/android/app/src/main/res/drawable/ic_launcher.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/example/android/app/src/main/res/font/montserrat_bold.ttf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/example/android/app/src/main/res/raw/customer__certificate.der" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/android/build.gradle" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/android/src/main/kotlin/com/iproov/sdk/IProovSDKPlugin.kt" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/main/kotlin/com/iproov/sdk/IProovSDKPlugin.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/lib/api-client.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/lib/api-client.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/android/app/src/main/kotlin/com/iproov/iproov_sdk_example/MainActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/example/android/app/src/main/kotlin/com/iproov/iproov_sdk_example/MainActivity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/android/app/src/main/res/drawable/launch_background.xml" beforeDir="false" afterPath="$PROJECT_DIR$/example/android/app/src/main/res/drawable/launch_background.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/android/app/src/main/res/values/styles.xml" beforeDir="false" afterPath="$PROJECT_DIR$/example/android/app/src/main/res/values/styles.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/example/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/lib/main.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/iproov_sdk.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/iproov_sdk.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,12 +45,19 @@
     <property name="dart.analysis.tool.window.force.activate" value="true" />
     <property name="dart.analysis.tool.window.visible" value="false" />
     <property name="io.flutter.reload.alreadyRun" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/example/android/app/src/main/res/drawable" />
     <property name="show.migrate.to.gradle.popup" value="false" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/example/android/app/src/main/res" />
+      <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/android/src/main/kotlin/com/iproov/sdk" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/example/android/app/src/main/res/drawable" />
+      <recent name="$PROJECT_DIR$/example/android/app/src/main/res" />
+      <recent name="$PROJECT_DIR$/example/android/app/src/main" />
     </key>
   </component>
   <component name="SvnConfiguration">
@@ -66,34 +74,38 @@
     <servers />
   </component>
   <component name="WindowStateProjectService">
-    <state x="1036" y="-987" key="#com.intellij.ide.util.MemberChooser" timestamp="1611318696417">
+    <state x="1036" y="-987" key="#com.intellij.ide.util.MemberChooser" timestamp="1611928394448">
       <screen x="-567" y="-1417" width="2560" height="1417" />
     </state>
-    <state x="1036" y="-987" key="#com.intellij.ide.util.MemberChooser/0.23.1920.1177/-567.-1417.2560.1417@-567.-1417.2560.1417" timestamp="1611318696417" />
-    <state width="1518" height="466" key="GridCell.Tab.0.bottom" timestamp="1611838507490">
+    <state x="1036" y="-987" key="#com.intellij.ide.util.MemberChooser/0.23.1920.1177/-567.-1417.2560.1417@-567.-1417.2560.1417" timestamp="1611928394448" />
+    <state x="978" y="-955" key="AndroidProcessChooserDialog" timestamp="1611921366537">
       <screen x="-567" y="-1417" width="2560" height="1417" />
     </state>
-    <state width="1518" height="466" key="GridCell.Tab.0.bottom/0.23.1920.1177/-567.-1417.2560.1417@-567.-1417.2560.1417" timestamp="1611838507490" />
+    <state x="978" y="-955" key="AndroidProcessChooserDialog/0.23.1920.1177/-567.-1417.2560.1417@-567.-1417.2560.1417" timestamp="1611921366537" />
+    <state width="1518" height="466" key="GridCell.Tab.0.bottom" timestamp="1612164490363">
+      <screen x="-567" y="-1417" width="2560" height="1417" />
+    </state>
+    <state width="1518" height="466" key="GridCell.Tab.0.bottom/0.23.1920.1177/-567.-1417.2560.1417@-567.-1417.2560.1417" timestamp="1612164490363" />
     <state width="1878" height="432" key="GridCell.Tab.0.bottom/0.23.1920.1177/-567.-1417.2560.1417@0.23.1920.1177" timestamp="1610115332037" />
-    <state width="1498" height="575" key="GridCell.Tab.0.bottom/0.23.1920.1177@0.23.1920.1177" timestamp="1611586758226" />
-    <state width="1518" height="466" key="GridCell.Tab.0.center" timestamp="1611838507489">
+    <state width="1518" height="466" key="GridCell.Tab.0.bottom/0.23.1920.1177@0.23.1920.1177" timestamp="1612018278529" />
+    <state width="1518" height="466" key="GridCell.Tab.0.center" timestamp="1612164490363">
       <screen x="-567" y="-1417" width="2560" height="1417" />
     </state>
-    <state width="1518" height="466" key="GridCell.Tab.0.center/0.23.1920.1177/-567.-1417.2560.1417@-567.-1417.2560.1417" timestamp="1611838507489" />
+    <state width="1518" height="466" key="GridCell.Tab.0.center/0.23.1920.1177/-567.-1417.2560.1417@-567.-1417.2560.1417" timestamp="1612164490363" />
     <state width="1878" height="432" key="GridCell.Tab.0.center/0.23.1920.1177/-567.-1417.2560.1417@0.23.1920.1177" timestamp="1610115332036" />
-    <state width="1498" height="575" key="GridCell.Tab.0.center/0.23.1920.1177@0.23.1920.1177" timestamp="1611586758225" />
-    <state width="1518" height="466" key="GridCell.Tab.0.left" timestamp="1611838507489">
+    <state width="1518" height="466" key="GridCell.Tab.0.center/0.23.1920.1177@0.23.1920.1177" timestamp="1612018278529" />
+    <state width="1518" height="466" key="GridCell.Tab.0.left" timestamp="1612164490362">
       <screen x="-567" y="-1417" width="2560" height="1417" />
     </state>
-    <state width="1518" height="466" key="GridCell.Tab.0.left/0.23.1920.1177/-567.-1417.2560.1417@-567.-1417.2560.1417" timestamp="1611838507489" />
+    <state width="1518" height="466" key="GridCell.Tab.0.left/0.23.1920.1177/-567.-1417.2560.1417@-567.-1417.2560.1417" timestamp="1612164490362" />
     <state width="1878" height="432" key="GridCell.Tab.0.left/0.23.1920.1177/-567.-1417.2560.1417@0.23.1920.1177" timestamp="1610115332036" />
-    <state width="1498" height="575" key="GridCell.Tab.0.left/0.23.1920.1177@0.23.1920.1177" timestamp="1611586758225" />
-    <state width="1518" height="466" key="GridCell.Tab.0.right" timestamp="1611838507490">
+    <state width="1518" height="466" key="GridCell.Tab.0.left/0.23.1920.1177@0.23.1920.1177" timestamp="1612018278528" />
+    <state width="1518" height="466" key="GridCell.Tab.0.right" timestamp="1612164490363">
       <screen x="-567" y="-1417" width="2560" height="1417" />
     </state>
-    <state width="1518" height="466" key="GridCell.Tab.0.right/0.23.1920.1177/-567.-1417.2560.1417@-567.-1417.2560.1417" timestamp="1611838507490" />
+    <state width="1518" height="466" key="GridCell.Tab.0.right/0.23.1920.1177/-567.-1417.2560.1417@-567.-1417.2560.1417" timestamp="1612164490363" />
     <state width="1878" height="432" key="GridCell.Tab.0.right/0.23.1920.1177/-567.-1417.2560.1417@0.23.1920.1177" timestamp="1610115332037" />
-    <state width="1498" height="575" key="GridCell.Tab.0.right/0.23.1920.1177@0.23.1920.1177" timestamp="1611586758226" />
+    <state width="1518" height="466" key="GridCell.Tab.0.right/0.23.1920.1177@0.23.1920.1177" timestamp="1612018278529" />
     <state x="915" y="-955" width="615" height="490" key="find.popup" timestamp="1611318589252">
       <screen x="-567" y="-1417" width="2560" height="1417" />
     </state>

@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:iproov_sdk/iproov_sdk.dart';
 import 'package:iproov_sdk_example/api-client.dart';
-import 'dart:convert';
 
 void main() {
   runApp(MyApp());
@@ -48,17 +47,37 @@ class _MyHomePageState extends State<MyHomePage> {
   void getToken(String userID, String claimType, String assuranceType) async {
     String token = await tokenApi.getToken(userID, claimType, assuranceType);
     Options options = Options();
-    options.ui.lineColor = Colors.red;
-    print("json="+json.encode(options));
-    print("=====> START "+options.toString());
+
+    // You can just use Flutter/Dart Colors for all Color types
+    // options.ui.lineColor = Colors.red;
+
+    // For certificates you add them to the android/app/src/main/res/raw folder and reference them here like below (no extension)
+    // options.network.certificates = [ "raw/customer__certificate" ];
+
+    // For font assets in the android/app/src/main/assets folder we just give the full name plus extension
+    // options.ui.fontPath = "montserrat_regular.ttf";
+
+    // For font resources in the android/app/src/main/res/font folder we just give the name without extension
+    // options.ui.fontResource = "montserrat_bold";
+
+    // For logo, only logoImageResource is available, in the android/app/src/main/res/drawable folder we just give the name without extension
+    // options.ui.logoImageResource = "ic_launcher";
+
     IProovSDK.launchWithOptions(tokenApi.baseUrl, token, options);
   }
 
   void _onEvent(Object event) {
-    print("onEvent $event");
+    // This is where responses come back
+    if (event is Map<String, dynamic>) {
+      double progress = event["progress"];
+      String message = event["message"];
+      print("onEvent Progress=$progress message=$message");
+    } else
+      print("onEvent $event");
   }
 
   void _onError(Object error) {
+    // This is where errors come back
     print("onError $error");
   }
 

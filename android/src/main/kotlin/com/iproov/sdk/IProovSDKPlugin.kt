@@ -1,23 +1,17 @@
 package com.iproov.sdk
 
 import android.content.Context
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import androidx.annotation.NonNull
-import com.iproov.sdk.IProov
-import com.iproov.sdk.bridge.OptionsBridge
 import com.iproov.sdk.core.exception.IProovException
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
 import org.json.JSONException
 import org.json.JSONObject
+import java.io.BufferedReader
 
 /** IProovSDKPlugin */
 class IProovSDKPlugin: FlutterPlugin {
@@ -51,7 +45,7 @@ class IProovSDKPlugin: FlutterPlugin {
     private val iProovListener = object : IProov.Listener {
         override fun onConnecting() { listenerEventSink?.success(EVENT_ON_CONNECTING) }
         override fun onConnected() { listenerEventSink?.success(EVENT_ON_CONNECTED) }
-        override fun onProcessing(progress: Double, message: String?) { listenerEventSink?.success(message) }
+        override fun onProcessing(progress: Double, message: String?) { listenerEventSink?.success(hashMapOf("progress" to progress, "message" to message)) }
         override fun onSuccess(result: IProov.SuccessResult) { listenerEventSink?.success(result.toString()) }
         override fun onFailure(result: IProov.FailureResult) { listenerEventSink?.success(result.toString()) }
         override fun onCancelled() { listenerEventSink?.error(EVENT_ON_CANCELLED, EVENT_ON_CANCELLED, EVENT_ON_CANCELLED) }
@@ -70,7 +64,7 @@ class IProovSDKPlugin: FlutterPlugin {
             val context: Context? = flutterPluginBinding?.applicationContext
             val streamingUrl: String? = call.argument(METHOD_LAUNCH_PARAM_STREAMING_URL)
             val token: String? = call.argument(METHOD_LAUNCH_PARAM_TOKEN)
-            val optionsJson: String? = call.argument(METHOD_LAUNCH_PARAM_OPTIONS_JSON)
+            val optionsJson: String? = call.argument(METHOD_LAUNCH_PARAM_OPTIONS_JSON)//convertToAndroid(call.argument(METHOD_LAUNCH_PARAM_OPTIONS_JSON))
 
             when {
                 context == null -> {
@@ -84,15 +78,33 @@ class IProovSDKPlugin: FlutterPlugin {
                 }
                 else -> {
 
-                    Log.w("launch", "url=$streamingUrl token=$token")
+                    Log.w("launch", "url=$streamingUrl token=$token options=$optionsJson")
                     if (optionsJson.isNullOrEmpty()) {
                         IProov.launch(context, streamingUrl!!, token!!)
                     } else {
                         try {
                             val json = JSONObject(optionsJson)
-                            val options = OptionsBridge.fromJson(context, json)!!
+                            val options = OptionsFromJson.fromJson(context, json)!!
+
+                            val certResId = options.network.certificates[0]
+                            val stream = context.resources.openRawResource(certResId)
+                            val reader = BufferedReader(stream.reader())
+                            val content = StringBuffer()
+                            try {
+                                var line = reader.readLine()
+                                while (line != null) {
+                                    content.append(line)
+                                    line = reader.readLine()
+                                }
+                            } finally {
+                                reader.close()
+                            }
+
+                            Log.w("launch cert", "contents=$content")
+
                             IProov.launch(context, streamingUrl!!, token!!, options)
                         } catch (ex: JSONException) {
+                            Log.w("launch bang", "ex=$ex")
                             result.error(METHOD_LAUNCH_ERROR_OPTIONS_JSON, ex.message, optionsJson)
                         }
                     }

@@ -50,8 +50,8 @@ class UI {
     Color livenessTintColor = Color(0xFF1756E5);
     String title;
     String fontPath;
-    int fontResource;
-    int logoImageResource;
+    String fontResource;
+    String logoImageResource;
 
     // Drawable logoImageDrawable = null;
     bool scanLineDisabled = false;
@@ -74,7 +74,6 @@ class UI {
             'font_path': fontPath,
             'font_resource': fontResource,
             'logo_image_resource': logoImageResource,
-    // Drawable logoImageDrawable = null;
             'scan_line_disabled': scanLineDisabled,
             'enable_screenshots': enableScreenshots,
             'orientation': orientationToJson(orientation),
@@ -106,15 +105,14 @@ class UI {
 
 class Network {
     bool disableCertificatePinning = false;
-    // List<int> certificates = new List(R.raw.iproov__certificate);
+    List<String> certificates;
     int timeoutSecs = 10;
     String path = "/socket.io/v2/";
 
     Map<String, dynamic> toJson() =>
         removeNulls({
             'disable_certificate_pinning': disableCertificatePinning,
-            // 'certificates': certificates,
-    // @JsonKey(name: 'certificates') List<Integer> certificates = new ArrayList<>(Collections.singletonList(R.raw.iproov__certificate));
+            'certificates': certificates,
             'timeout': timeoutSecs,
             'path': path
         });
