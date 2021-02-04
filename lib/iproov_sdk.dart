@@ -3,21 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:convert';
 
-class IProovSDK {
+class IProov {
     static const MethodChannel _iProovMethodChannel =
         const MethodChannel('com.iproov.sdk');
 
     static const EventChannel iProovListenerEventChannel =
         EventChannel('com.iproov.sdk.listener');
 
-    static void launch(String streamingUrl, String token) async {
+    static void launch(String streamingUrl, String token, [Options options]) async {
+      if (options == null)
         _iProovMethodChannel.invokeMethod('launch', <String, dynamic>{
-            'streamingUrl': streamingUrl,
-            'token': token
+          'streamingUrl': streamingUrl,
+          'token': token
         });
-    }
-
-    static void launchWithOptions(String streamingUrl, String token, Options options) async {
+      else
         _iProovMethodChannel.invokeMethod('launch', <String, dynamic>{
             'streamingUrl': streamingUrl,
             'token': token,

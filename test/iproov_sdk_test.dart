@@ -1,6 +1,5 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:iproov_sdk/iproov_sdk.dart';
 
 void main() {
   const MethodChannel channel = MethodChannel('iproov_sdk');

@@ -43,11 +43,11 @@ class IProovSDKPlugin: FlutterPlugin {
     // Callbacks ----
 
     private val iProovListener = object : IProov.Listener {
-        override fun onConnecting() { listenerEventSink?.success(EVENT_ON_CONNECTING) }
-        override fun onConnected() { listenerEventSink?.success(EVENT_ON_CONNECTED) }
-        override fun onProcessing(progress: Double, message: String?) { listenerEventSink?.success(hashMapOf("progress" to progress, "message" to message)) }
-        override fun onSuccess(result: IProov.SuccessResult) { listenerEventSink?.success(result.toString()) }
-        override fun onFailure(result: IProov.FailureResult) { listenerEventSink?.success(result.toString()) }
+        override fun onConnecting() { listenerEventSink?.success(hashMapOf("event" to "connecting")) }
+        override fun onConnected() { listenerEventSink?.success(hashMapOf("event" to "connected")) }
+        override fun onProcessing(progress: Double, message: String?) { listenerEventSink?.success(hashMapOf("event" to "processing", "progress" to progress, "message" to message)) }
+        override fun onSuccess(result: IProov.SuccessResult) { listenerEventSink?.success(hashMapOf("event" to "success", "token" to result.token)) }
+        override fun onFailure(result: IProov.FailureResult) { listenerEventSink?.success(hashMapOf("event" to "failure", "token" to result.token)) }
         override fun onCancelled() { listenerEventSink?.error(EVENT_ON_CANCELLED, EVENT_ON_CANCELLED, EVENT_ON_CANCELLED) }
         override fun onError(e: IProovException) { listenerEventSink?.error(e.javaClass.simpleName, e.message, e.toString()) }
     }

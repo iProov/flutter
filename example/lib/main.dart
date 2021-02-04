@@ -33,18 +33,17 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
-  TokenApi tokenApi;
+  IProovApiClient tokenApi = IProovApiClient();
   Future<String> futureToken;
   Random random = new Random();
 
   @override
   void initState() {
     super.initState();
-    IProovSDK.iProovListenerEventChannel.receiveBroadcastStream().listen(_onEvent, onError: _onError);
-    tokenApi = TokenApi();
+    IProov.iProovListenerEventChannel.receiveBroadcastStream().listen(_onEvent, onError: _onError);
   }
 
-  void getToken(String userID, String claimType, String assuranceType) async {
+  void getToken(String userID, ClaimType claimType, AssuranceType assuranceType) async {
     String token = await tokenApi.getToken(userID, claimType, assuranceType);
     Options options = Options();
 
@@ -63,7 +62,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // For logo, only logoImageResource is available, in the android/app/src/main/res/drawable folder we just give the name without extension
     // options.ui.logoImageResource = "ic_launcher";
 
-    IProovSDK.launchWithOptions(tokenApi.baseUrl, token, options);
+    IProov.launch(tokenApi.baseUrl, token, options);
   }
 
   void _onEvent(Object event) {
@@ -104,7 +103,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                   onPressed: () {
                     // UserID needs to change each time for enrol, unless already registered when can keep with verify
-                    getToken('${random.nextInt(1000000)}ksdgfgsjs@ssdguh.ldfgl', 'enrol', 'genuine_presence');
+                    getToken('${random.nextInt(1000000)}ksdgfgsjs@ssdguh.ldfgl', ClaimType.ENROL, AssuranceType.GENUINE_PRESENCE_ASSURANCE);
                   },
                 )
               ]

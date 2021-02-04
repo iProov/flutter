@@ -8,14 +8,17 @@
     <list default="true" id="d822db72-c932-48f9-90c1-17c0cd2b99de" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/android/src/main/kotlin/com/iproov/sdk/IProovSDKPlugin.kt" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/main/kotlin/com/iproov/sdk/IProovSDKPlugin.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/src/main/kotlin/com/iproov/sdk/OptionsFromJson.kt" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/main/kotlin/com/iproov/sdk/OptionsFromJson.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/lib/api-client.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/lib/api-client.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/lib/main.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/iproov_sdk.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/iproov_sdk.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/iproov_sdk_test.dart" beforeDir="false" afterPath="$PROJECT_DIR$/test/iproov_sdk_test.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[D0AA002233JC0200465]" />
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
