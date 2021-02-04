@@ -6,26 +6,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d822db72-c932-48f9-90c1-17c0cd2b99de" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/android/src/main/kotlin/com/iproov/sdk/OptionsFromJson.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/example/android/app/src/main/assets/montserrat_regular.ttf" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/example/android/app/src/main/res/drawable/ic_launcher.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/example/android/app/src/main/res/font/montserrat_bold.ttf" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/example/android/app/src/main/res/raw/customer__certificate.der" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/android/src/main/kotlin/com/iproov/sdk/IProovSDKPlugin.kt" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/main/kotlin/com/iproov/sdk/IProovSDKPlugin.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/android/app/src/main/kotlin/com/iproov/iproov_sdk_example/MainActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/example/android/app/src/main/kotlin/com/iproov/iproov_sdk_example/MainActivity.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/android/app/src/main/res/drawable/launch_background.xml" beforeDir="false" afterPath="$PROJECT_DIR$/example/android/app/src/main/res/drawable/launch_background.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/android/app/src/main/res/values/styles.xml" beforeDir="false" afterPath="$PROJECT_DIR$/example/android/app/src/main/res/values/styles.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/lib/main.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/iproov_sdk.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/iproov_sdk.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/src/main/kotlin/com/iproov/sdk/OptionsFromJson.kt" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/main/kotlin/com/iproov/sdk/OptionsFromJson.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[D0AA002233JC0200465]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[]" />
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
@@ -82,28 +72,28 @@
       <screen x="-567" y="-1417" width="2560" height="1417" />
     </state>
     <state x="978" y="-955" key="AndroidProcessChooserDialog/0.23.1920.1177/-567.-1417.2560.1417@-567.-1417.2560.1417" timestamp="1611921366537" />
-    <state width="1518" height="466" key="GridCell.Tab.0.bottom" timestamp="1612164490363">
+    <state width="1518" height="466" key="GridCell.Tab.0.bottom" timestamp="1612262411821">
       <screen x="-567" y="-1417" width="2560" height="1417" />
     </state>
-    <state width="1518" height="466" key="GridCell.Tab.0.bottom/0.23.1920.1177/-567.-1417.2560.1417@-567.-1417.2560.1417" timestamp="1612164490363" />
+    <state width="1518" height="466" key="GridCell.Tab.0.bottom/0.23.1920.1177/-567.-1417.2560.1417@-567.-1417.2560.1417" timestamp="1612262411821" />
     <state width="1878" height="432" key="GridCell.Tab.0.bottom/0.23.1920.1177/-567.-1417.2560.1417@0.23.1920.1177" timestamp="1610115332037" />
     <state width="1518" height="466" key="GridCell.Tab.0.bottom/0.23.1920.1177@0.23.1920.1177" timestamp="1612018278529" />
-    <state width="1518" height="466" key="GridCell.Tab.0.center" timestamp="1612164490363">
+    <state width="1518" height="466" key="GridCell.Tab.0.center" timestamp="1612262411820">
       <screen x="-567" y="-1417" width="2560" height="1417" />
     </state>
-    <state width="1518" height="466" key="GridCell.Tab.0.center/0.23.1920.1177/-567.-1417.2560.1417@-567.-1417.2560.1417" timestamp="1612164490363" />
+    <state width="1518" height="466" key="GridCell.Tab.0.center/0.23.1920.1177/-567.-1417.2560.1417@-567.-1417.2560.1417" timestamp="1612262411820" />
     <state width="1878" height="432" key="GridCell.Tab.0.center/0.23.1920.1177/-567.-1417.2560.1417@0.23.1920.1177" timestamp="1610115332036" />
     <state width="1518" height="466" key="GridCell.Tab.0.center/0.23.1920.1177@0.23.1920.1177" timestamp="1612018278529" />
-    <state width="1518" height="466" key="GridCell.Tab.0.left" timestamp="1612164490362">
+    <state width="1518" height="466" key="GridCell.Tab.0.left" timestamp="1612262411820">
       <screen x="-567" y="-1417" width="2560" height="1417" />
     </state>
-    <state width="1518" height="466" key="GridCell.Tab.0.left/0.23.1920.1177/-567.-1417.2560.1417@-567.-1417.2560.1417" timestamp="1612164490362" />
+    <state width="1518" height="466" key="GridCell.Tab.0.left/0.23.1920.1177/-567.-1417.2560.1417@-567.-1417.2560.1417" timestamp="1612262411820" />
     <state width="1878" height="432" key="GridCell.Tab.0.left/0.23.1920.1177/-567.-1417.2560.1417@0.23.1920.1177" timestamp="1610115332036" />
     <state width="1518" height="466" key="GridCell.Tab.0.left/0.23.1920.1177@0.23.1920.1177" timestamp="1612018278528" />
-    <state width="1518" height="466" key="GridCell.Tab.0.right" timestamp="1612164490363">
+    <state width="1518" height="466" key="GridCell.Tab.0.right" timestamp="1612262411821">
       <screen x="-567" y="-1417" width="2560" height="1417" />
     </state>
-    <state width="1518" height="466" key="GridCell.Tab.0.right/0.23.1920.1177/-567.-1417.2560.1417@-567.-1417.2560.1417" timestamp="1612164490363" />
+    <state width="1518" height="466" key="GridCell.Tab.0.right/0.23.1920.1177/-567.-1417.2560.1417@-567.-1417.2560.1417" timestamp="1612262411821" />
     <state width="1878" height="432" key="GridCell.Tab.0.right/0.23.1920.1177/-567.-1417.2560.1417@0.23.1920.1177" timestamp="1610115332037" />
     <state width="1518" height="466" key="GridCell.Tab.0.right/0.23.1920.1177@0.23.1920.1177" timestamp="1612018278529" />
     <state x="915" y="-955" width="615" height="490" key="find.popup" timestamp="1611318589252">

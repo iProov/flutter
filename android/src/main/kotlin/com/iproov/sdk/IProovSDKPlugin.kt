@@ -78,33 +78,16 @@ class IProovSDKPlugin: FlutterPlugin {
                 }
                 else -> {
 
-                    Log.w("launch", "url=$streamingUrl token=$token options=$optionsJson")
+                    Log.d("launch", "url=$streamingUrl token=$token options=$optionsJson")
                     if (optionsJson.isNullOrEmpty()) {
-                        IProov.launch(context, streamingUrl!!, token!!)
+                        IProov.launch(context, streamingUrl, token)
                     } else {
                         try {
                             val json = JSONObject(optionsJson)
-                            val options = OptionsFromJson.fromJson(context, json)!!
-
-                            val certResId = options.network.certificates[0]
-                            val stream = context.resources.openRawResource(certResId)
-                            val reader = BufferedReader(stream.reader())
-                            val content = StringBuffer()
-                            try {
-                                var line = reader.readLine()
-                                while (line != null) {
-                                    content.append(line)
-                                    line = reader.readLine()
-                                }
-                            } finally {
-                                reader.close()
-                            }
-
-                            Log.w("launch cert", "contents=$content")
-
-                            IProov.launch(context, streamingUrl!!, token!!, options)
+                            val options = OptionsFromJson.fromJson(context, json)
+                            IProov.launch(context, streamingUrl, token, options)
                         } catch (ex: JSONException) {
-                            Log.w("launch bang", "ex=$ex")
+                            Log.e("launch", ex.message)
                             result.error(METHOD_LAUNCH_ERROR_OPTIONS_JSON, ex.message, optionsJson)
                         }
                     }
