@@ -13,7 +13,6 @@ import org.json.JSONException
 import org.json.JSONObject
 import java.io.BufferedReader
 
-/** IProovSDKPlugin */
 class IProovSDKPlugin: FlutterPlugin {
 
     companion object {
@@ -23,13 +22,7 @@ class IProovSDKPlugin: FlutterPlugin {
         const val METHOD_LAUNCH_PARAM_TOKEN = "token"
         const val METHOD_LAUNCH_PARAM_OPTIONS_JSON = "optionsJson"
         const val METHOD_ERROR_NO_ATTACHED_CONTEXT = "METHOD_ERROR_NO_ATTACHED_CONTEXT"
-        const val METHOD_ERROR_MISSING_OR_EMPTY_ARGUMENT = "MISSING_OR_EMPTY_ARGUMENT"
-        const val METHOD_LAUNCH_ERROR_OPTIONS_JSON = "ERROR_OPTIONS_JSON"
-
         const val EVENT_CHANNEL_NAME = "com.iproov.sdk.listener"
-        const val EVENT_ON_CONNECTING = "onConnecting"
-        const val EVENT_ON_CONNECTED = "onConnected"
-        const val EVENT_ON_CANCELLED = "onCancelled"
     }
 
     private lateinit var listenerEventChannel: EventChannel
@@ -38,8 +31,6 @@ class IProovSDKPlugin: FlutterPlugin {
     private var listenerEventSink: EventChannel.EventSink? = null
     private var flutterPluginBinding: FlutterPlugin.FlutterPluginBinding? = null
 
-    private val job = SupervisorJob()
-
     // Callbacks ----
 
     private val iProovListener = object : IProov.Listener {
@@ -47,9 +38,9 @@ class IProovSDKPlugin: FlutterPlugin {
         override fun onConnected() { listenerEventSink?.success(hashMapOf("event" to "connected")) }
         override fun onProcessing(progress: Double, message: String?) { listenerEventSink?.success(hashMapOf("event" to "processing", "progress" to progress, "message" to message)) }
         override fun onSuccess(result: IProov.SuccessResult) { listenerEventSink?.success(hashMapOf("event" to "success", "token" to result.token)) }
-        override fun onFailure(result: IProov.FailureResult) { listenerEventSink?.success(hashMapOf("event" to "failure", "token" to result.token)) }
-        override fun onCancelled() { listenerEventSink?.error(EVENT_ON_CANCELLED, EVENT_ON_CANCELLED, EVENT_ON_CANCELLED) }
-        override fun onError(e: IProovException) { listenerEventSink?.error(e.javaClass.simpleName, e.message, e.toString()) }
+        override fun onFailure(result: IProov.FailureResult) { listenerEventSink?.success(hashMapOf("event" to "failure", "token" to result.token, "reason" to result.reason, "feedbackCode" to result.feedbackCode)) }
+        override fun onCancelled() { listenerEventSink?.success(hashMapOf("event" to "cancelled")) }
+        override fun onError(e: IProovException) { listenerEventSink?.success(hashMapOf("event" to "error", "exception" to e.toString())) }
     }
 
     private val methodCallHandler = object : MethodChannel.MethodCallHandler {
@@ -64,17 +55,18 @@ class IProovSDKPlugin: FlutterPlugin {
             val context: Context? = flutterPluginBinding?.applicationContext
             val streamingUrl: String? = call.argument(METHOD_LAUNCH_PARAM_STREAMING_URL)
             val token: String? = call.argument(METHOD_LAUNCH_PARAM_TOKEN)
-            val optionsJson: String? = call.argument(METHOD_LAUNCH_PARAM_OPTIONS_JSON)//convertToAndroid(call.argument(METHOD_LAUNCH_PARAM_OPTIONS_JSON))
+            val optionsJson: String? = call.argument(METHOD_LAUNCH_PARAM_OPTIONS_JSON)
 
+            result.success(null)
             when {
                 context == null -> {
-                    result.error(METHOD_ERROR_NO_ATTACHED_CONTEXT, METHOD_ERROR_NO_ATTACHED_CONTEXT, null)
+                    listenerEventSink?.success(hashMapOf("event" to "error", "exception" to IllegalArgumentException(METHOD_ERROR_NO_ATTACHED_CONTEXT).toString()))
                 }
                 streamingUrl.isNullOrEmpty() -> {
-                    result.error(METHOD_ERROR_MISSING_OR_EMPTY_ARGUMENT, METHOD_LAUNCH_PARAM_STREAMING_URL, METHOD_LAUNCH_PARAM_STREAMING_URL)
+                    listenerEventSink?.success(hashMapOf("event" to "error", "exception" to  IllegalArgumentException(METHOD_LAUNCH_PARAM_STREAMING_URL).toString()))
                 }
                 token.isNullOrEmpty() -> {
-                    result.error(METHOD_ERROR_MISSING_OR_EMPTY_ARGUMENT, METHOD_LAUNCH_PARAM_TOKEN, METHOD_LAUNCH_PARAM_TOKEN)
+                    listenerEventSink?.success(hashMapOf("event" to "error", "exception" to IllegalArgumentException(METHOD_LAUNCH_PARAM_TOKEN).toString()))
                 }
                 else -> {
 
@@ -86,9 +78,9 @@ class IProovSDKPlugin: FlutterPlugin {
                             val json = JSONObject(optionsJson)
                             val options = OptionsFromJson.fromJson(context, json)
                             IProov.launch(context, streamingUrl, token, options)
-                        } catch (ex: JSONException) {
-                            Log.e("launch", ex.message)
-                            result.error(METHOD_LAUNCH_ERROR_OPTIONS_JSON, ex.message, optionsJson)
+                        } catch (ex: IProovException) {
+                            Log.e("launch", ex.toString())
+                            listenerEventSink?.success(hashMapOf("event" to "error", "exception" to ex.toString()))
                         }
                     }
                 }

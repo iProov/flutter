@@ -1,28 +1,93 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:convert';
 
-class IProov {
-    static const MethodChannel _iProovMethodChannel =
-        const MethodChannel('com.iproov.sdk');
+enum IProovState { connecting, connected, processing, success, failure, cancelled, error }
 
-    static const EventChannel iProovListenerEventChannel =
-        EventChannel('com.iproov.sdk.listener');
+class IProovStateData {
+  final IProovState state;
+  final String stateString;
+  final String token;
+  final double progress;
+  final String message;
+  final String exception;
+  final String reason;
+  final String feedbackCode;
 
-    static void launch(String streamingUrl, String token, [Options options]) async {
-      if (options == null)
-        _iProovMethodChannel.invokeMethod('launch', <String, dynamic>{
-          'streamingUrl': streamingUrl,
-          'token': token
-        });
-      else
-        _iProovMethodChannel.invokeMethod('launch', <String, dynamic>{
-            'streamingUrl': streamingUrl,
-            'token': token,
-            'optionsJson': json.encode(options)
-        });
+  IProovStateData({this.state, this.stateString, this.token, this.progress, this.message, this.exception, this.reason, this.feedbackCode});
+
+  factory IProovStateData.fromMap(Map map) {
+    IProovState state;
+    switch (map['event']) {
+      case 'connecting':
+        state = IProovState.connecting;
+        break;
+      case 'connected':
+        state = IProovState.connected;
+        break;
+      case 'processing':
+        state = IProovState.processing;
+        break;
+      case 'success':
+        state = IProovState.success;
+        break;
+      case 'failure':
+        state = IProovState.failure;
+        break;
+      case 'cancelled':
+        state = IProovState.cancelled;
+        break;
+      case 'error':
+        state = IProovState.error;
+        break;
     }
+    return IProovStateData(
+        state: state,
+        stateString: map['event'],
+        token: map['token'],
+        progress: map['progress'],
+        message: map['message'],
+        exception: map['exception'],
+        reason: map['reason'],
+        feedbackCode: map['feedbackCode']
+    );
+  }
+}
+
+class IProov {
+  static const MethodChannel _iProovMethodChannel =
+  const MethodChannel('com.iproov.sdk');
+
+  static const EventChannel _iProovListenerEventChannel =
+  EventChannel('com.iproov.sdk.listener');
+
+  Stream<IProovStateData> launch(String streamingUrl, String token,
+      [Options options]) {
+    final resultStream = _iProovMethodChannel.invokeMethod(
+        'launch', <String, dynamic>{
+      'streamingUrl': streamingUrl,
+      'token': token,
+      'optionsJson': json.encode(options)
+    })
+        .asStream()
+        .asyncExpand((_) =>
+        _iProovListenerEventChannel
+            .receiveBroadcastStream()
+            .map((result) => IProovStateData.fromMap(result)));
+    return resultStream;
+  }
+
+  IProov() {
+    _iProovListenerEventChannel.receiveBroadcastStream().listen(
+            (dynamic data) {
+          print("Event");
+          print(data);
+        },
+        onError:
+            (Object error) {
+          print("Error $error");
+        });
+  }
 }
 
 class Options {

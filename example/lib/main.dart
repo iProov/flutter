@@ -37,47 +37,54 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<String> futureToken;
   Random random = new Random();
 
-  @override
-  void initState() {
-    super.initState();
-    IProov.iProovListenerEventChannel.receiveBroadcastStream().listen(_onEvent, onError: _onError);
-  }
-
   void getToken(String userID, ClaimType claimType, AssuranceType assuranceType) async {
     String token = await tokenApi.getToken(userID, claimType, assuranceType);
     Options options = Options();
 
     // You can just use Flutter/Dart Colors for all Color types
-    // options.ui.lineColor = Colors.red;
+    //   options.ui.lineColor = Colors.red;
 
     // For certificates you add them to the android/app/src/main/res/raw folder and reference them here like below (no extension)
-    // options.network.certificates = [ "raw/customer__certificate" ];
+    //   options.network.certificates = [ "raw/customer__certificate" ];
 
     // For font assets in the android/app/src/main/assets folder we just give the full name plus extension
-    // options.ui.fontPath = "montserrat_regular.ttf";
+    //   options.ui.fontPath = "montserrat_regular.ttf";
 
     // For font resources in the android/app/src/main/res/font folder we just give the name without extension
-    // options.ui.fontResource = "montserrat_bold";
+    //   options.ui.fontResource = "montserrat_bold";
 
     // For logo, only logoImageResource is available, in the android/app/src/main/res/drawable folder we just give the name without extension
-    // options.ui.logoImageResource = "ic_launcher";
+    //   options.ui.logoImageResource = "ic_launcher";
 
-    IProov.launch(tokenApi.baseUrl, token, options);
+    launchIProov(token, options);
   }
 
-  void _onEvent(Object event) {
-    // This is where responses come back
-    if (event is Map<String, dynamic>) {
-      double progress = event["progress"];
-      String message = event["message"];
-      print("onEvent Progress=$progress message=$message");
-    } else
-      print("onEvent $event");
+  void launchIProov(String token, Options options) {
+    IProov().launch(tokenApi.baseUrl, token, options).listen((response) {
+      handleResponse(response);
+    });
   }
 
-  void _onError(Object error) {
-    // This is where errors come back
-    print("onError $error");
+  void handleResponse(IProovStateData response) {
+    switch(response.state) {
+      case IProovState.processing:
+        print('IProov: progress=${response.progress} message=${response.message}');
+        break;
+      case IProovState.success:
+        print('IProov: ${response.stateString} token=${response.token}');
+        break;
+      case IProovState.failure:
+        print('IProov: ${response.stateString} token=${response.token} reason=${response.reason} feedbackCode=${response.feedbackCode}');
+        break;
+      case IProovState.error:
+        print('IProov: ${response.stateString} exception=${response.exception}');
+        break;
+      case IProovState.connecting:
+      case IProovState.connected:
+      case IProovState.cancelled:
+        print('IProov: ${response.stateString}');
+        break;
+    }
   }
 
   Widget build(BuildContext context) {
@@ -103,7 +110,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                   onPressed: () {
                     // UserID needs to change each time for enrol, unless already registered when can keep with verify
-                    getToken('${random.nextInt(1000000)}ksdgfgsjs@ssdguh.ldfgl', ClaimType.ENROL, AssuranceType.GENUINE_PRESENCE_ASSURANCE);
+                    getToken('${random.nextInt(1000000)}flutter-example@iproov.com', ClaimType.ENROL, AssuranceType.GENUINE_PRESENCE_ASSURANCE);
                   },
                 )
               ]
