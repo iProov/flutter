@@ -12,6 +12,7 @@ enum IProovState {
   error
 }
 
+
 class IProovStateData {
   final IProovState state;
   final String stateString;
@@ -26,32 +27,8 @@ class IProovStateData {
       {this.state, this.stateString, this.token, this.progress, this.message, this.exception, this.reason, this.feedbackCode});
 
   factory IProovStateData.fromMap(Map map) {
-    IProovState state;
-    switch (map['event']) {
-      case 'connecting':
-        state = IProovState.connecting;
-        break;
-      case 'connected':
-        state = IProovState.connected;
-        break;
-      case 'processing':
-        state = IProovState.processing;
-        break;
-      case 'success':
-        state = IProovState.success;
-        break;
-      case 'failure':
-        state = IProovState.failure;
-        break;
-      case 'cancelled':
-        state = IProovState.cancelled;
-        break;
-      case 'error':
-        state = IProovState.error;
-        break;
-    }
     return IProovStateData(
-        state: state,
+        state: parseState(map['event']),
         stateString: map['event'],
         token: map['token'],
         progress: map['progress'],
@@ -60,6 +37,26 @@ class IProovStateData {
         reason: map['reason'],
         feedbackCode: map['feedbackCode']
     );
+  }
+
+  static IProovState parseState(String value) {
+    switch (value) {
+      case 'connecting':
+        return IProovState.connecting;
+      case 'connected':
+        return IProovState.connected;
+      case 'processing':
+        return IProovState.processing;
+      case 'success':
+        return IProovState.success;
+      case 'failure':
+        return IProovState.failure;
+      case 'cancelled':
+        return IProovState.cancelled;
+      case 'error':
+        return IProovState.error;
+    }
+    return null;
   }
 }
 
