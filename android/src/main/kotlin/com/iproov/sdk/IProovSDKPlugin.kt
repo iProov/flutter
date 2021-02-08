@@ -8,10 +8,8 @@ import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
-import kotlinx.coroutines.SupervisorJob
-import org.json.JSONException
 import org.json.JSONObject
-import java.io.BufferedReader
+import java.lang.Exception
 
 class IProovSDKPlugin: FlutterPlugin {
 
@@ -60,13 +58,13 @@ class IProovSDKPlugin: FlutterPlugin {
             result.success(null)
             when {
                 context == null -> {
-                    listenerEventSink?.success(hashMapOf("event" to "error", "exception" to IllegalArgumentException(METHOD_ERROR_NO_ATTACHED_CONTEXT).toString()))
+                    handleException(IllegalArgumentException(METHOD_ERROR_NO_ATTACHED_CONTEXT))
                 }
                 streamingUrl.isNullOrEmpty() -> {
-                    listenerEventSink?.success(hashMapOf("event" to "error", "exception" to  IllegalArgumentException(METHOD_LAUNCH_PARAM_STREAMING_URL).toString()))
+                    handleException(IllegalArgumentException(METHOD_LAUNCH_PARAM_STREAMING_URL))
                 }
                 token.isNullOrEmpty() -> {
-                    listenerEventSink?.success(hashMapOf("event" to "error", "exception" to IllegalArgumentException(METHOD_LAUNCH_PARAM_TOKEN).toString()))
+                    handleException(IllegalArgumentException(METHOD_LAUNCH_PARAM_TOKEN))
                 }
                 else -> {
 
@@ -80,11 +78,15 @@ class IProovSDKPlugin: FlutterPlugin {
                             IProov.launch(context, streamingUrl, token, options)
                         } catch (ex: IProovException) {
                             Log.e("launch", ex.toString())
-                            listenerEventSink?.success(hashMapOf("event" to "error", "exception" to ex.toString()))
+                            handleException(ex)
                         }
                     }
                 }
             }
+        }
+
+        private fun handleException(exception: Exception) {
+            listenerEventSink?.success(hashMapOf("event" to "error", "exception" to exception.toString()))
         }
     }
 
