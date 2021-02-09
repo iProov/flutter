@@ -12,7 +12,6 @@ enum IProovState {
   error
 }
 
-
 class IProovStateData {
   final IProovState state;
   final String stateString;
