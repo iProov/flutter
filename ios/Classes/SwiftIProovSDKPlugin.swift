@@ -14,7 +14,7 @@ public final class SwiftIProovSDKPlugin: NSObject, FlutterPlugin, FlutterStreamH
 
     enum LaunchArguments: String {
         case optionsJSON = "optionsJson"
-        case streamingUrl
+        case streamingURL = "streamingUrl"
         case token
     }
 
@@ -67,7 +67,7 @@ public final class SwiftIProovSDKPlugin: NSObject, FlutterPlugin, FlutterStreamH
             return result(PluginError.launchArgumentsMissing.sinkError)
         }
 
-        guard let streamingURL = arguments[LaunchArguments.streamingUrl.rawValue], !streamingURL.isEmpty else {
+        guard let streamingURL = arguments[LaunchArguments.streamingURL.rawValue], !streamingURL.isEmpty else {
             return result(PluginError.streamURLArgumentMissingOrEmpty.sinkError)
         }
 
