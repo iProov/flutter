@@ -13,7 +13,7 @@ public final class SwiftIProovSDKPlugin: NSObject, FlutterPlugin, FlutterStreamH
     }
 
     enum LaunchArguments: String {
-        case optionsJSON
+        case optionsJSON = "optionsJson"
         case streamingUrl
         case token
     }
