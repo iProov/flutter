@@ -2,7 +2,7 @@ import Flutter
 import iProov
 import UIKit
 
-public class SwiftIProovSDKPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
+public final class SwiftIProovSDKPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     enum ChannelName: String {
         case event = "com.iproov.sdk.listener"
         case method = "com.iproov.sdk"
