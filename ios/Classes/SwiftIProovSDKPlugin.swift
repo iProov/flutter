@@ -77,8 +77,7 @@ public final class SwiftIProovSDKPlugin: NSObject, FlutterPlugin, FlutterStreamH
 
         let options: Options
         if let optionsJSON = arguments[LaunchArguments.optionsJSON.rawValue] {
-            print(optionsJSON)
-            options = Options() // TODO:
+            options = Options.from(jsonString: optionsJSON)
         } else {
             options = Options()
         }
