@@ -95,7 +95,7 @@ private extension SwiftIProovSDKPlugin {
 
         let options: Options
         if arguments[LaunchArguments.optionsJSON.rawValue] != nil {
-            options = Options.from(jsonString: optionsJSON)
+            options = Options() // TODO, uncomment upon next SDK release Options.from(jsonString: optionsJSON)
         } else {
             options = Options()
         }
