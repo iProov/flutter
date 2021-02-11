@@ -2,48 +2,52 @@ import Flutter
 import iProov
 import UIKit
 
-public final class SwiftIProovSDKPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
-    enum ChannelName: String {
+public final class SwiftIProovSDKPlugin: NSObject {
+    private enum ChannelName: String {
         case event = "com.iproov.sdk.listener"
         case method = "com.iproov.sdk"
     }
 
-    enum FlutterMethod: String {
+    private enum FlutterMethod: String {
         case launch
     }
 
-    enum LaunchArguments: String {
+    private enum SinkEventKey: String {
+        case event
+        case exception
+        case feedbackCode
+        case message
+        case progress
+        case reason
+        case token
+    }
+
+    private enum SinkEventValue: String {
+        case connecting
+        case connected
+        case error
+        case processing
+        case failure
+        case success
+    }
+
+    fileprivate enum LaunchArguments: String {
         case optionsJSON = "optionsJson"
         case streamingURL = "streamingUrl"
         case token
     }
 
-    enum PluginError {
+    fileprivate enum PluginError {
         case errorFromIProovSDK(LocalizedError)
         case launchArgumentsMissing
         case streamURLArgumentMissingOrEmpty
         case tokenArgumentMissingOrEmpty
-
-        var message: String {
-            switch self {
-            case let .errorFromIProovSDK(error):
-                return error.errorDescription ?? ""
-            case .launchArgumentsMissing:
-                return "iProov SDK launch arguments missing"
-            case .streamURLArgumentMissingOrEmpty:
-                return "iProov SDK streamURL arguments missing or empty"
-            case .tokenArgumentMissingOrEmpty:
-                return "iProov SDK token arguments missing or empty"
-            }
-        }
-
-        var sinkError: [String: String?] {
-            ["event": "error", "exception": message]
-        }
     }
 
     private var sink: FlutterEventSink?
+}
 
+extension SwiftIProovSDKPlugin: FlutterPlugin {
     public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(name: ChannelName.method.rawValue, binaryMessenger: registrar.messenger())
         let instance = SwiftIProovSDKPlugin()
@@ -61,8 +65,22 @@ public final class SwiftIProovSDKPlugin: NSObject, FlutterPlugin, FlutterStreamH
             result(FlutterMethodNotImplemented)
         }
     }
+}
 
-    private func handleLaunch(arguments: Any?, result: @escaping FlutterResult) {
+extension SwiftIProovSDKPlugin: FlutterStreamHandler {
+    public func onListen(withArguments _: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
+        sink = events
+        return nil
+    }
+
+    public func onCancel(withArguments _: Any?) -> FlutterError? {
+        sink = nil
+        return nil
+    }
+}
+
+private extension SwiftIProovSDKPlugin {
+    func handleLaunch(arguments: Any?, result: @escaping FlutterResult) {
         guard let arguments = arguments as? [String: String] else {
             return result(PluginError.launchArgumentsMissing.sinkError)
         }
@@ -76,7 +94,7 @@ public final class SwiftIProovSDKPlugin: NSObject, FlutterPlugin, FlutterStreamH
         }
 
         let options: Options
-        if let optionsJSON = arguments[LaunchArguments.optionsJSON.rawValue] {
+        if arguments[LaunchArguments.optionsJSON.rawValue] != nil {
             options = Options.from(jsonString: optionsJSON)
         } else {
             options = Options()
@@ -89,20 +107,30 @@ public final class SwiftIProovSDKPlugin: NSObject, FlutterPlugin, FlutterStreamH
         result(nil)
     }
 
-    private func sinkEvent(for status: Status) -> Any {
+    func sinkEvent(for status: Status) -> Any {
         switch status {
         case .connecting:
-            return ["event": "connecting"]
+            return [SinkEventKey.event.rawValue: SinkEventValue.connecting.rawValue]
         case .connected:
-            return ["event": "connected"]
+            return [SinkEventKey.event.rawValue: SinkEventValue.connected.rawValue]
         case let .processing(progress, message):
-            return ["event": "processing", "progress": progress, "message": message]
+            return [
+                SinkEventKey.event.rawValue: SinkEventValue.processing.rawValue,
+                SinkEventKey.progress.rawValue: progress,
+                SinkEventKey.message.rawValue: message,
+            ]
         case let .success(result):
-            return ["event": "success", "token": result.token]
+            return [
+                SinkEventKey.event.rawValue: SinkEventValue.success.rawValue,
+                SinkEventKey.token.rawValue: result.token,
+            ]
         case .cancelled:
             return FlutterEndOfEventStream
         case let .failure(result):
-            return ["event": "failure", "token": result.token, "reason": result.reason, "feedbackCode": result.feedbackCode]
+            return [SinkEventKey.event.rawValue: SinkEventValue.failure.rawValue,
+                    SinkEventKey.token.rawValue: result.token,
+                    SinkEventKey.reason.rawValue: result.reason,
+                    SinkEventKey.feedbackCode.rawValue: result.feedbackCode]
         case let .error(error):
             return PluginError.errorFromIProovSDK(error).sinkError
         @unknown default:
@@ -111,14 +139,28 @@ public final class SwiftIProovSDKPlugin: NSObject, FlutterPlugin, FlutterStreamH
     }
 }
 
-public extension SwiftIProovSDKPlugin {
-    func onListen(withArguments _: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
-        sink = events
-        return nil
+private extension SwiftIProovSDKPlugin.PluginError {
+    var message: String {
+        let arg: String
+
+        switch self {
+        case let .errorFromIProovSDK(error):
+            return error.errorDescription ?? ""
+        case .launchArgumentsMissing:
+            arg = "launch"
+        case .streamURLArgumentMissingOrEmpty:
+            arg = SwiftIProovSDKPlugin.LaunchArguments.streamingURL.rawValue
+        case .tokenArgumentMissingOrEmpty:
+            arg = SwiftIProovSDKPlugin.LaunchArguments.token.rawValue
+        }
+
+        return "iProov SDK \(arg) arguments missing or empty"
     }
 
-    func onCancel(withArguments _: Any?) -> FlutterError? {
-        sink = nil
-        return nil
+    var sinkError: [String: String?] {
+        [
+            SwiftIProovSDKPlugin.SinkEventKey.event.rawValue: SwiftIProovSDKPlugin.SinkEventValue.error.rawValue,
+            SwiftIProovSDKPlugin.SinkEventKey.exception.rawValue: message,
+        ]
     }
 }
