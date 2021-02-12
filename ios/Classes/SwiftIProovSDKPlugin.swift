@@ -12,6 +12,12 @@ public final class SwiftIProovSDKPlugin: NSObject {
         case launch
     }
 
+    private enum LaunchArguments: String {
+        case optionsJSON = "optionsJson"
+        case streamingURL = "streamingUrl"
+        case token
+    }
+
     private enum SinkEventKey: String {
         case event
         case exception
@@ -23,18 +29,13 @@ public final class SwiftIProovSDKPlugin: NSObject {
     }
 
     private enum SinkEventValue: String {
+        case cancelled
         case connecting
         case connected
         case error
         case processing
         case failure
         case success
-    }
-
-    fileprivate enum LaunchArguments: String {
-        case optionsJSON = "optionsJson"
-        case streamingURL = "streamingUrl"
-        case token
     }
 
     fileprivate enum PluginError {
@@ -95,19 +96,27 @@ private extension SwiftIProovSDKPlugin {
 
         let options: Options
         if arguments[LaunchArguments.optionsJSON.rawValue] != nil {
-            options = Options() // TODO, uncomment upon next SDK release Options.from(jsonString: optionsJSON)
+            options = Options() // Options.from(jsonString: optionsJSON)
         } else {
             options = Options()
         }
 
         IProov.launch(streamingURL: streamingURL, token: token, options: options) { [weak self] in
-            self?.sink?(self?.sinkEvent(for: $0))
+            guard let self = self else {
+                return
+            }
+
+            guard let event = self.sinkEvent(for: $0) else {
+                return
+            }
+
+            self.sink?(event)
         }
 
         result(nil)
     }
 
-    func sinkEvent(for status: Status) -> Any {
+    func sinkEvent(for status: Status) -> [String: Any]? {
         switch status {
         case .connecting:
             return [SinkEventKey.event.rawValue: SinkEventValue.connecting.rawValue]
@@ -125,27 +134,26 @@ private extension SwiftIProovSDKPlugin {
                 SinkEventKey.token.rawValue: result.token,
             ]
         case .cancelled:
-            return FlutterEndOfEventStream
+            return [SinkEventKey.event.rawValue: SinkEventValue.cancelled.rawValue]
         case let .failure(result):
             return [SinkEventKey.event.rawValue: SinkEventValue.failure.rawValue,
                     SinkEventKey.token.rawValue: result.token,
                     SinkEventKey.reason.rawValue: result.reason,
                     SinkEventKey.feedbackCode.rawValue: result.feedbackCode]
         case let .error(error):
-            return PluginError.errorFromIProovSDK(error).sinkError
+            return PluginError.errorFromIProovSDK(error).sinkError as [String: Any]
         @unknown default:
-            return FlutterMethodNotImplemented
+            return nil
         }
     }
 }
 
 private extension SwiftIProovSDKPlugin.PluginError {
-    var message: String {
+    var sinkError: [String: String?] {
         let arg: String
-
         switch self {
         case let .errorFromIProovSDK(error):
-            return error.errorDescription ?? ""
+            arg = error.errorDescription ?? ""
         case .launchArgumentsMissing:
             arg = "launch"
         case .streamURLArgumentMissingOrEmpty:
@@ -154,13 +162,9 @@ private extension SwiftIProovSDKPlugin.PluginError {
             arg = SwiftIProovSDKPlugin.LaunchArguments.token.rawValue
         }
 
-        return "iProov SDK \(arg) arguments missing or empty"
-    }
-
-    var sinkError: [String: String?] {
-        [
+        return [
             SwiftIProovSDKPlugin.SinkEventKey.event.rawValue: SwiftIProovSDKPlugin.SinkEventValue.error.rawValue,
-            SwiftIProovSDKPlugin.SinkEventKey.exception.rawValue: message,
+            SwiftIProovSDKPlugin.SinkEventKey.exception.rawValue: "iProov SDK \(arg) arguments missing or empty",
         ]
     }
 }
