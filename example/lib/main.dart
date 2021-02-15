@@ -65,25 +65,22 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  void handleResponse(IProovStateData response) {
-    switch(response.state) {
-      case IProovState.processing:
-        print('IProov: progress=${response.progress} message=${response.message}');
-        break;
-      case IProovState.success:
-        print('IProov: ${response.stateString} token=${response.token}');
-        break;
-      case IProovState.failure:
-        print('IProov: ${response.stateString} token=${response.token} reason=${response.reason} feedbackCode=${response.feedbackCode}');
-        break;
-      case IProovState.error:
-        print('IProov: ${response.stateString} exception=${response.exception}');
-        break;
-      case IProovState.connecting:
-      case IProovState.connected:
-      case IProovState.cancelled:
-        print('IProov: ${response.stateString}');
-        break;
+  void handleResponse(IProovResponse response) {
+    if (response is IProovResponseProgress) {
+      print(
+          'IProov: progress=${response.progress} message=${response.message}');
+    } else if (response is IProovResponseSuccess) {
+      print('IProov: Success token=${response.token}');
+    } else if (response is IProovResponseFailure) {
+        print('IProov: Failure token=${response.token} reason=${response.reason} feedbackCode=${response.feedbackCode}');
+    } else if (response is IProovResponseError) {
+        print('IProov: Error reason=${response.reason} message=${response.message}');
+    } else if (response is IProovResponseConnecting) {
+      print('IProov: Connecting');
+    } else if (response is IProovResponseConnected) {
+      print('IProov: Connected');
+    } else if (response is IProovResponseCancelled) {
+      print('IProov: Cancelled');
     }
   }
 

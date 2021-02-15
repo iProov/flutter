@@ -2,61 +2,64 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:convert';
 
-enum IProovState {
-  connecting,
-  connected,
-  processing,
-  success,
-  failure,
-  cancelled,
-  error
+abstract class IProovResponse {
+
+  static const connecting = const IProovResponseConnecting();
+  static const connected = const IProovResponseConnected();
+  static const cancelled = const IProovResponseCancelled();
+  factory IProovResponse.progress(double progress, String message) = IProovResponseProgress;
+  factory IProovResponse.success(String token) = IProovResponseSuccess;
+  factory IProovResponse.failure(String token, String reason, String feedbackCode) = IProovResponseFailure;
+  factory IProovResponse.error(String reason, String message) = IProovResponseError;
+
+  factory IProovResponse.fromMap(Map map) {
+      switch (map['event']) {
+        case 'connecting': return connecting;
+        case 'connected': return connected;
+        case 'processing': return IProovResponse.progress(map['progress'], map['message']);
+        case 'success': return IProovResponse.success(map['token']);
+        case 'failure': return IProovResponse.failure(map['token'], map['reason'], map['feedbackCode']);
+        case 'cancelled': return cancelled;
+        case 'error': return IProovResponse.error(map['reason'], map['message']);
+      }
+      return null;
+  }
 }
 
-class IProovStateData {
-  final IProovState state;
-  final String stateString;
-  final String token;
+class IProovResponseConnecting implements IProovResponse {
+  const IProovResponseConnecting();
+}
+
+class IProovResponseConnected implements IProovResponse {
+  const IProovResponseConnected();
+}
+
+class IProovResponseCancelled implements IProovResponse {
+  const IProovResponseCancelled();
+}
+
+class IProovResponseProgress implements IProovResponse {
   final double progress;
   final String message;
-  final String exception;
+  const IProovResponseProgress(this.progress, this.message);
+}
+
+class IProovResponseSuccess implements IProovResponse {
+  final String token;
+  const IProovResponseSuccess(this.token);
+}
+
+class IProovResponseFailure implements IProovResponse {
+  final String token;
   final String reason;
   final String feedbackCode;
+  const IProovResponseFailure(this.token, this.reason, this.feedbackCode);
+}
 
-  IProovStateData(
-      {this.state, this.stateString, this.token, this.progress, this.message, this.exception, this.reason, this.feedbackCode});
-
-  factory IProovStateData.fromMap(Map map) {
-    return IProovStateData(
-        state: parseState(map['event']),
-        stateString: map['event'],
-        token: map['token'],
-        progress: map['progress'],
-        message: map['message'],
-        exception: map['exception'],
-        reason: map['reason'],
-        feedbackCode: map['feedbackCode']
-    );
-  }
-
-  static IProovState parseState(String value) {
-    switch (value) {
-      case 'connecting':
-        return IProovState.connecting;
-      case 'connected':
-        return IProovState.connected;
-      case 'processing':
-        return IProovState.processing;
-      case 'success':
-        return IProovState.success;
-      case 'failure':
-        return IProovState.failure;
-      case 'cancelled':
-        return IProovState.cancelled;
-      case 'error':
-        return IProovState.error;
-    }
-    return null;
-  }
+class IProovResponseError implements IProovResponse {
+  final String reason;
+  final String message;
+  const IProovResponseError(this.reason, this.message);
 }
 
 class IProov {
@@ -66,7 +69,7 @@ class IProov {
   static const EventChannel _iProovListenerEventChannel =
   EventChannel('com.iproov.sdk.listener');
 
-  Stream<IProovStateData> launch(String streamingUrl, String token,
+  Stream<IProovResponse> launch(String streamingUrl, String token,
       [Options options]) {
     final resultStream = _iProovMethodChannel.invokeMethod(
         'launch', <String, dynamic>{
@@ -78,7 +81,7 @@ class IProov {
         .asyncExpand((_) =>
         _iProovListenerEventChannel
             .receiveBroadcastStream()
-            .map((result) => IProovStateData.fromMap(result)));
+            .map((result) => IProovResponse.fromMap(result)));
     return resultStream;
   }
 

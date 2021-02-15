@@ -117,6 +117,7 @@ class IProovSDKPlugin: FlutterPlugin {
 
     override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
         iProovMethodChannel.setMethodCallHandler(null)
+        listenerEventChannel.setStreamHandler(null)
         this.flutterPluginBinding = null
     }
 }
