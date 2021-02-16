@@ -16,7 +16,7 @@ class IProovSDKPlugin: FlutterPlugin {
     companion object {
         const val METHOD_CHANNEL_IPROOV_NAME = "com.iproov.sdk"
         const val METHOD_LAUNCH = "launch"
-        const val METHOD_LAUNCH_PARAM_STREAMING_URL = "streamingUrl"
+        const val METHOD_LAUNCH_PARAM_STREAMING_URL = "streamingURL"
         const val METHOD_LAUNCH_PARAM_TOKEN = "token"
         const val METHOD_LAUNCH_PARAM_OPTIONS_JSON = "optionsJson"
         const val METHOD_ERROR_NO_ATTACHED_CONTEXT = "METHOD_ERROR_NO_ATTACHED_CONTEXT"
