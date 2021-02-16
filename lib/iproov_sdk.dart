@@ -73,7 +73,7 @@ class IProov {
       [Options options]) {
     final resultStream = _iProovMethodChannel.invokeMethod(
         'launch', <String, dynamic>{
-      'streamingUrl': streamingUrl,
+      'streamingURL': streamingURL,
       'token': token,
       'optionsJson': json.encode(options)
     })
