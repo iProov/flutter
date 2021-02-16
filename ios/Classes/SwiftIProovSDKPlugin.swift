@@ -13,8 +13,8 @@ public final class SwiftIProovSDKPlugin: NSObject {
     }
 
     private enum LaunchArguments: String {
-        case optionsJSON = "optionsJson"
-        case streamingURL = "streamingUrl"
+        case optionsJSON
+        case streamingURL
         case token
     }
 
