@@ -14,6 +14,7 @@ import java.lang.Exception
 class IProovSDKPlugin: FlutterPlugin {
 
     companion object {
+        val TAG = IProovSDKPlugin::class.simpleName
         const val METHOD_CHANNEL_IPROOV_NAME = "com.iproov.sdk"
         const val METHOD_LAUNCH = "launch"
         const val METHOD_LAUNCH_PARAM_STREAMING_URL = "streamingURL"
@@ -68,7 +69,6 @@ class IProovSDKPlugin: FlutterPlugin {
                 }
                 else -> {
 
-                    Log.d("launch", "url=$streamingUrl token=$token options=$optionsJson")
                     if (optionsJson.isNullOrEmpty()) {
                         IProov.launch(context, streamingUrl, token)
                     } else {
@@ -77,7 +77,7 @@ class IProovSDKPlugin: FlutterPlugin {
                             val options = OptionsFromJson.fromJson(context, json)
                             IProov.launch(context, streamingUrl, token, options)
                         } catch (ex: IProovException) {
-                            Log.e("launch", ex.toString())
+                            Log.e(TAG, ex.toString())
                             handleException(ex)
                         }
                     }

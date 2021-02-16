@@ -17,49 +17,48 @@ internal object OptionsFromJson {
     fun fromJson(context: Context, json: JSONObject?): IProov.Options {
         val options = IProov.Options()
         if (json == null) return options
-        options.ui = json.optJSONObject("ui")?.optUIOptions(context) ?: options.ui
-        options.capture = json.optJSONObject("capture")?.optCaptureOptions() ?: options.capture
-        options.network = json.optJSONObject("network")?.networkOptionsFromJson(context) ?: options.network
-        return options
+        options.apply {
+            ui = json.optJSONObject("ui")?.optUIOptions(context) ?: ui
+            capture = json.optJSONObject("capture")?.optCaptureOptions() ?: capture
+            network = json.optJSONObject("network")?.networkOptionsFromJson(context) ?: network
+            return this
+        }
     }
 
-    private fun JSONObject.optUIOptions(context: Context): IProov.Options.UI {
-        val ui = IProov.Options.UI()
-        ui.autoStartDisabled = optBoolean("auto_start_disabled", ui.autoStartDisabled)
-        ui.filter = optFilter(ui.filter)
-        ui.lineColor = optColor("line_color", ui.lineColor)
-        ui.backgroundColor = optColor("background_color", ui.backgroundColor)
-        ui.loadingTintColor = optColor("loading_tint_color", ui.loadingTintColor)
-        ui.notReadyTintColor = optColor("not_ready_tint_color", ui.notReadyTintColor)
-        ui.livenessTintColor = optColor("liveness_tint_color", ui.livenessTintColor)
-        ui.title = optString("title", ui.title)
-        ui.fontPath = optString("font_path", ui.fontPath)
-        ui.fontResource = optFontResource(context)
-        ui.scanLineDisabled = optBoolean("scan_line_disabled", ui.scanLineDisabled)
-        ui.enableScreenshots = optBoolean("enable_screenshots", ui.enableScreenshots)
-        ui.orientation = optOrientation(ui.orientation)
-        ui.logoImageResource = optDrawableResource(context, "logo_image_resource")
-        ui.activityCompatibilityRequestCode = optInteger("activity_compatibility_request_code", ui.activityCompatibilityRequestCode)
-        return ui
-    }
+    private fun JSONObject.optUIOptions(context: Context): IProov.Options.UI =
+        IProov.Options.UI().apply {
+            autoStartDisabled = optBoolean("auto_start_disabled", autoStartDisabled)
+            filter = optFilter(filter)
+            lineColor = optColor("line_color", lineColor)
+            backgroundColor = optColor("background_color", backgroundColor)
+            loadingTintColor = optColor("loading_tint_color", loadingTintColor)
+            notReadyTintColor = optColor("not_ready_tint_color", notReadyTintColor)
+            livenessTintColor = optColor("liveness_tint_color", livenessTintColor)
+            title = optString("title", title)
+            fontPath = optString("font_path", fontPath)
+            fontResource = optFontResource(context)
+            scanLineDisabled = optBoolean("scan_line_disabled", scanLineDisabled)
+            enableScreenshots = optBoolean("enable_screenshots", enableScreenshots)
+            orientation = optOrientation(orientation)
+            logoImageResource = optDrawableResource(context, "logo_image_resource")
+            activityCompatibilityRequestCode = optInteger("activity_compatibility_request_code", activityCompatibilityRequestCode)
+        }
 
-    private fun JSONObject.optCaptureOptions(): IProov.Options.Capture {
-        val capture = IProov.Options.Capture()
-        capture.camera = optCamera(capture.camera)
-        capture.faceDetector = optFaceDetector(capture.faceDetector)
-        capture.maxYaw = optFloat("max_yaw", capture.maxYaw)
-        capture.maxRoll = optFloat("max_roll", capture.maxRoll)
-        capture.maxPitch = optFloat("max_pitch", capture.maxPitch)
-        return capture
-    }
+    private fun JSONObject.optCaptureOptions(): IProov.Options.Capture =
+        IProov.Options.Capture().apply {
+            camera = optCamera(camera)
+            faceDetector = optFaceDetector(faceDetector)
+            maxYaw = optFloat("max_yaw", maxYaw)
+            maxRoll = optFloat("max_roll", maxRoll)
+            maxPitch = optFloat("max_pitch", maxPitch)
+        }
 
-    private fun JSONObject.networkOptionsFromJson(context: Context): IProov.Options.Network {
-        val network = IProov.Options.Network()
-        network.path = optString("path", network.path)
-        network.timeoutSecs = optInt("timeout", network.timeoutSecs)
-        network.certificates = optCertificates(context, network.certificates)
-        return network
-    }
+    private fun JSONObject.networkOptionsFromJson(context: Context): IProov.Options.Network =
+        IProov.Options.Network().apply {
+            path = optString("path", path)
+            timeoutSecs = optInt("timeout", timeoutSecs)
+            certificates = optCertificates(context, certificates)
+        }
 
     private fun JSONObject.optCertificates(context: Context, fallback: List<Int>): List<Int> {
         val certificates = optJSONArray("certificates") ?: return fallback

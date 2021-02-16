@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:iproov_sdk/iproov_sdk.dart';
-import 'package:iproov_sdk_example/api-client.dart';
+import 'package:iproov_sdk_example/api_client.dart';
 
 void main() {
   runApp(MyApp());
@@ -65,21 +65,21 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  void handleResponse(IProovResponse response) {
-    if (response is IProovResponseProgress) {
+  void handleResponse(IProovEvent response) {
+    if (response is IProovEventProgress) {
       print(
           'IProov: progress=${response.progress} message=${response.message}');
-    } else if (response is IProovResponseSuccess) {
+    } else if (response is IProovEventSuccess) {
       print('IProov: Success token=${response.token}');
-    } else if (response is IProovResponseFailure) {
+    } else if (response is IProovEventFailure) {
         print('IProov: Failure token=${response.token} reason=${response.reason} feedbackCode=${response.feedbackCode}');
-    } else if (response is IProovResponseError) {
+    } else if (response is IProovEventError) {
         print('IProov: Error reason=${response.reason} message=${response.message}');
-    } else if (response is IProovResponseConnecting) {
+    } else if (response is IProovEventConnecting) {
       print('IProov: Connecting');
-    } else if (response is IProovResponseConnected) {
+    } else if (response is IProovEventConnected) {
       print('IProov: Connected');
-    } else if (response is IProovResponseCancelled) {
+    } else if (response is IProovEventCancelled) {
       print('IProov: Cancelled');
     }
   }

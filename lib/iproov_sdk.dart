@@ -2,99 +2,113 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:convert';
 
-abstract class IProovResponse {
+abstract class IProovEvent {
+  static const connecting = const IProovEventConnecting();
+  static const connected = const IProovEventConnected();
+  static const cancelled = const IProovEventCancelled();
 
-  static const connecting = const IProovResponseConnecting();
-  static const connected = const IProovResponseConnected();
-  static const cancelled = const IProovResponseCancelled();
-  factory IProovResponse.progress(double progress, String message) = IProovResponseProgress;
-  factory IProovResponse.success(String token) = IProovResponseSuccess;
-  factory IProovResponse.failure(String token, String reason, String feedbackCode) = IProovResponseFailure;
-  factory IProovResponse.error(String reason, String message) = IProovResponseError;
+  factory IProovEvent.progress(double progress, String message) =
+      IProovEventProgress;
 
-  factory IProovResponse.fromMap(Map map) {
-      switch (map['event']) {
-        case 'connecting': return connecting;
-        case 'connected': return connected;
-        case 'processing': return IProovResponse.progress(map['progress'], map['message']);
-        case 'success': return IProovResponse.success(map['token']);
-        case 'failure': return IProovResponse.failure(map['token'], map['reason'], map['feedbackCode']);
-        case 'cancelled': return cancelled;
-        case 'error': return IProovResponse.error(map['reason'], map['message']);
-      }
-      return null;
+  factory IProovEvent.success(String token) = IProovEventSuccess;
+
+  factory IProovEvent.failure(
+      String token, String reason, String feedbackCode) = IProovEventFailure;
+
+  factory IProovEvent.error(String reason, String message) =
+      IProovEventError;
+
+  factory IProovEvent.fromMap(Map map) {
+    switch (map['event']) {
+      case 'connecting':
+        return connecting;
+      case 'connected':
+        return connected;
+      case 'processing':
+        return IProovEvent.progress(map['progress'], map['message']);
+      case 'success':
+        return IProovEvent.success(map['token']);
+      case 'failure':
+        return IProovEvent.failure(
+            map['token'], map['reason'], map['feedbackCode']);
+      case 'cancelled':
+        return cancelled;
+      case 'error':
+        return IProovEvent.error(map['reason'], map['message']);
+    }
+    return null;
   }
 }
 
-class IProovResponseConnecting implements IProovResponse {
-  const IProovResponseConnecting();
+class IProovEventConnecting implements IProovEvent {
+  const IProovEventConnecting();
 }
 
-class IProovResponseConnected implements IProovResponse {
-  const IProovResponseConnected();
+class IProovEventConnected implements IProovEvent {
+  const IProovEventConnected();
 }
 
-class IProovResponseCancelled implements IProovResponse {
-  const IProovResponseCancelled();
+class IProovEventCancelled implements IProovEvent {
+  const IProovEventCancelled();
 }
 
-class IProovResponseProgress implements IProovResponse {
+class IProovEventProgress implements IProovEvent {
   final double progress;
   final String message;
-  const IProovResponseProgress(this.progress, this.message);
+
+  const IProovEventProgress(this.progress, this.message);
 }
 
-class IProovResponseSuccess implements IProovResponse {
+class IProovEventSuccess implements IProovEvent {
   final String token;
-  const IProovResponseSuccess(this.token);
+
+  const IProovEventSuccess(this.token);
 }
 
-class IProovResponseFailure implements IProovResponse {
+class IProovEventFailure implements IProovEvent {
   final String token;
   final String reason;
   final String feedbackCode;
-  const IProovResponseFailure(this.token, this.reason, this.feedbackCode);
+
+  const IProovEventFailure(this.token, this.reason, this.feedbackCode);
 }
 
-class IProovResponseError implements IProovResponse {
+class IProovEventError implements IProovEvent {
   final String reason;
   final String message;
-  const IProovResponseError(this.reason, this.message);
+
+  const IProovEventError(this.reason, this.message);
 }
 
 class IProov {
   static const MethodChannel _iProovMethodChannel =
-  const MethodChannel('com.iproov.sdk');
+      const MethodChannel('com.iproov.sdk');
 
   static const EventChannel _iProovListenerEventChannel =
-  EventChannel('com.iproov.sdk.listener');
+      EventChannel('com.iproov.sdk.listener');
 
-  Stream<IProovResponse> launch(String streamingUrl, String token,
+  Stream<IProovEvent> launch(String streamingUrl, String token,
       [Options options]) {
-    final resultStream = _iProovMethodChannel.invokeMethod(
-        'launch', <String, dynamic>{
-      'streamingURL': streamingURL,
-      'token': token,
-      'optionsJSON': json.encode(options)
-    })
+    final resultStream = _iProovMethodChannel
+        .invokeMethod('launch', <String, dynamic>{
+          'streamingURL': streamingUrl,
+          'token': token,
+          'optionsJSON': json.encode(options)
+        })
         .asStream()
-        .asyncExpand((_) =>
-        _iProovListenerEventChannel
+        .asyncExpand((_) => _iProovListenerEventChannel
             .receiveBroadcastStream()
-            .map((result) => IProovResponse.fromMap(result)));
+            .map((result) => IProovEvent.fromMap(result)));
     return resultStream;
   }
 
   IProov() {
-    _iProovListenerEventChannel.receiveBroadcastStream().listen(
-            (dynamic data) {
-          print("Event");
-          print(data);
-        },
-        onError:
-            (Object error) {
-          print("Error $error");
-        });
+    _iProovListenerEventChannel.receiveBroadcastStream().listen((dynamic data) {
+      print("Event");
+      print(data);
+    }, onError: (Object error) {
+      print("Error $error");
+    });
   }
 }
 
@@ -103,8 +117,7 @@ class Options {
   Network network = new Network();
   Capture capture = new Capture();
 
-  Map<String, dynamic> toJson() =>
-      {
+  Map<String, dynamic> toJson() => {
         'ui': ui.toJson(),
         'network': network.toJson(),
         'capture': capture.toJson()
@@ -132,8 +145,7 @@ class UI {
   bool useLegacyConnectingUI = false;
   int activityCompatibilityRequestCode = -1;
 
-  Map<String, dynamic> toJson() =>
-      removeNulls({
+  Map<String, dynamic> toJson() => removeNulls({
         'auto_start_disabled': autoStartDisabled,
         'filter': filterToString(filter),
         'line_color': colorToString(lineColor),
@@ -188,8 +200,7 @@ class Network {
   int timeoutSecs = 10;
   String path = "/socket.io/v2/";
 
-  Map<String, dynamic> toJson() =>
-      removeNulls({
+  Map<String, dynamic> toJson() => removeNulls({
         'disable_certificate_pinning': disableCertificatePinning,
         'certificates': certificates,
         'timeout': timeoutSecs,
@@ -204,8 +215,7 @@ class Capture {
   Camera camera = Camera.FRONT;
   FaceDetector faceDetector = FaceDetector.AUTO;
 
-  Map<String, dynamic> toJson() =>
-      removeNulls({
+  Map<String, dynamic> toJson() => removeNulls({
         'max_pitch': maxPitch,
         'max_yaw': maxYaw,
         'max_roll': maxRoll,
