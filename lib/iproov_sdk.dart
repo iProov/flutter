@@ -75,7 +75,7 @@ class IProov {
         'launch', <String, dynamic>{
       'streamingURL': streamingURL,
       'token': token,
-      'optionsJson': json.encode(options)
+      'optionsJSON': json.encode(options)
     })
         .asStream()
         .asyncExpand((_) =>
