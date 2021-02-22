@@ -12,16 +12,16 @@ class IProovSDK {
 
     static void launch(String streamingUrl, String token) async {
         _iProovMethodChannel.invokeMethod('launch', <String, dynamic>{
-            'streamingUrl': streamingUrl,
+            'streamingURL': streamingUrl,
             'token': token
         });
     }
 
     static void launchWithOptions(String streamingUrl, String token, Options options) async {
         _iProovMethodChannel.invokeMethod('launch', <String, dynamic>{
-            'streamingUrl': streamingUrl,
+            'streamingURL': streamingUrl,
             'token': token,
-            'optionsJson': json.encode(options)
+            'optionsJSON': json.encode(options)
         });
     }
 }
