@@ -61,7 +61,10 @@ extension SwiftIProovSDKPlugin: FlutterPlugin {
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         switch FlutterMethod(rawValue: call.method) {
         case .launch:
-            handleLaunch(arguments: call.arguments, result: result)
+            handleLaunch(arguments: call.arguments) { error in
+                sink?(error)
+            }
+            result(nil)
         case .none:
             result(FlutterMethodNotImplemented)
         }
@@ -81,41 +84,31 @@ extension SwiftIProovSDKPlugin: FlutterStreamHandler {
 }
 
 private extension SwiftIProovSDKPlugin {
-    func handleLaunch(arguments: Any?, result: @escaping FlutterResult) {
+    func handleLaunch(arguments: Any?, launchError: (Any) -> ()) {
         guard let arguments = arguments as? [String: String] else {
-            return result(PluginError.launchArgumentsMissing.sinkError)
+            return launchError(PluginError.launchArgumentsMissing.sinkError)
         }
 
         guard let streamingURL = arguments[LaunchArguments.streamingURL.rawValue], !streamingURL.isEmpty else {
-            return result(PluginError.streamURLArgumentMissingOrEmpty.sinkError)
+            return launchError(PluginError.streamURLArgumentMissingOrEmpty.sinkError)
         }
 
         guard let token = arguments[LaunchArguments.token.rawValue], !token.isEmpty else {
-            return result(PluginError.tokenArgumentMissingOrEmpty.sinkError)
+            return launchError(PluginError.tokenArgumentMissingOrEmpty.sinkError)
         }
 
         let options: Options
-        if arguments[LaunchArguments.optionsJSON.rawValue] != nil {
-            options = Options() // Options.from(jsonString: optionsJSON)
+        if let optionsJSON = arguments[LaunchArguments.optionsJSON.rawValue] {
+            options = Options.from(jsonString: optionsJSON)
         } else {
             options = Options()
         }
 
         IProov.launch(streamingURL: streamingURL, token: token, options: options) { [weak self] in
-            guard let self = self else {
-                return
-            }
-
-            guard let event = self.sinkEvent(for: $0) else {
-                return
-            }
-
-            self.sink?(event)
+            self?.sink?(self?.sinkEvent(for: $0))
         }
-
-        result(nil)
     }
-
+    
     func sinkEvent(for status: Status) -> [String: Any]? {
         switch status {
         case .connecting:
