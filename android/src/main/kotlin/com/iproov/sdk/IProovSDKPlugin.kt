@@ -3,6 +3,7 @@ package com.iproov.sdk
 import android.content.Context
 import android.util.Log
 import androidx.annotation.NonNull
+import com.iproov.sdk.bridge.OptionsBridge
 import com.iproov.sdk.core.exception.IProovException
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.EventChannel
@@ -74,7 +75,7 @@ class IProovSDKPlugin: FlutterPlugin {
                     } else {
                         try {
                             val json = JSONObject(optionsJson)
-                            val options = OptionsFromJson.fromJson(context, json)
+                            val options = OptionsBridge.fromJson(context, json)
                             IProov.launch(context, streamingUrl, token, options)
                         } catch (ex: IProovException) {
                             Log.e(TAG, ex.toString())
