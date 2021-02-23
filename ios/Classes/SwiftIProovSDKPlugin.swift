@@ -148,7 +148,7 @@ private extension SwiftIProovSDKPlugin.PluginError {
         case let .errorFromIProovSDK(error):
             arg = error.errorDescription ?? ""
         case .launchArgumentsMissing:
-            arg = "launch"
+            arg = SwiftIProovSDKPlugin.FlutterMethod.launch.rawValue
         case .streamURLArgumentMissingOrEmpty:
             arg = SwiftIProovSDKPlugin.LaunchArguments.streamingURL.rawValue
         case .tokenArgumentMissingOrEmpty:
