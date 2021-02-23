@@ -10,7 +10,7 @@ Pod::Spec.new do |s|
   s.source_files = 'Classes/**/*'
   
   s.dependency 'Flutter'
-  s.dependency 'iProov', :tag => s.version.to_s
+  s.dependency 'iProov', '~> s.version.to_s'
   
   s.swift_version = '5.3'
   s.platform = :ios, '9.0'
