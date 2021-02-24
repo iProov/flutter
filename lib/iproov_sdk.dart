@@ -190,7 +190,7 @@ class UI {
   }
 
   static String colorToString(Color color) {
-    return "#" + color.value.toRadixString(16);
+    return "#" + color.value.toRadixString(16).substring(2);
   }
 }
 
