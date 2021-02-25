@@ -84,7 +84,7 @@ extension SwiftIProovSDKPlugin: FlutterStreamHandler {
 }
 
 private extension SwiftIProovSDKPlugin {
-    func handleLaunch(arguments: Any?, launchError: (Any) -> ()) {
+    func handleLaunch(arguments: Any?, launchError: (Any) -> Void) {
         guard let arguments = arguments as? [String: String] else {
             return launchError(PluginError.launchArgumentsMissing.sinkError)
         }
@@ -108,7 +108,7 @@ private extension SwiftIProovSDKPlugin {
             self?.sink?(self?.sinkEvent(for: $0))
         }
     }
-    
+
     func sinkEvent(for status: Status) -> [String: Any]? {
         switch status {
         case .connecting:
