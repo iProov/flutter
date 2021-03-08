@@ -15,7 +15,7 @@ abstract class IProovEvent {
   factory IProovEvent.failure(
       String token, String reason, String feedbackCode) = IProovEventFailure;
 
-  factory IProovEvent.error(String reason, String message) =
+  factory IProovEvent.error(String reason, String message, String exception) =
       IProovEventError;
 
   factory IProovEvent.fromMap(Map map) {
@@ -34,7 +34,7 @@ abstract class IProovEvent {
       case 'cancelled':
         return cancelled;
       case 'error':
-        return IProovEvent.error(map['reason'], map['message']);
+        return IProovEvent.error(map['reason'], map['message'], map['exception']);
     }
     return null;
   }
@@ -76,8 +76,9 @@ class IProovEventFailure implements IProovEvent {
 class IProovEventError implements IProovEvent {
   final String reason;
   final String message;
+  final String exception;
 
-  const IProovEventError(this.reason, this.message);
+  const IProovEventError(this.reason, this.message, this.exception);
 }
 
 class IProov {
@@ -87,7 +88,7 @@ class IProov {
   static const EventChannel _iProovListenerEventChannel =
       EventChannel('com.iproov.sdk.listener');
 
-  Stream<IProovEvent> launch(String streamingUrl, String token,
+  static Stream<IProovEvent> launch(String streamingUrl, String token,
       [Options options]) {
     final resultStream = _iProovMethodChannel
         .invokeMethod('launch', <String, dynamic>{
@@ -102,14 +103,8 @@ class IProov {
     return resultStream;
   }
 
-  IProov() {
-    _iProovListenerEventChannel.receiveBroadcastStream().listen((dynamic data) {
-      print("Event");
-      print(data);
-    }, onError: (Object error) {
-      print("Error $error");
-    });
-  }
+  // Private constructor
+  IProov._();
 }
 
 class Options {

@@ -60,4 +60,5 @@ flutter {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "com.iproov.sdk:iproov-mlkit:6.3.0"
 }

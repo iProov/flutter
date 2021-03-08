@@ -3,6 +3,13 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
 
+/*
+ * WARNING - this Api Client is ONLY intended for DEMONSTRATION and EVALUATION purposes.
+ * We STRONGLY recommend that this code is NOT used in a production CLIENT.
+ * The purpose of this code is to quickly enable the creation of a stand alone client before
+ * investment is made in putting this functionality into a server, where it belongs
+ * We also recommend NOT to put your apiKey and Secret into your GitHub repository.
+ */
 class IProovApiClient {
   final String _baseUrl = 'https://eu.rp.secure.iproov.me/api/v2/';
   final String _apiKey = '<your api key here>';

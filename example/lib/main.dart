@@ -60,7 +60,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void launchIProov(String token, Options options) {
-    IProov().launch(tokenApi.baseUrl, token, options).listen((response) {
+    IProov.launch(tokenApi.baseUrl, token, options).listen((response) {
       handleResponse(response);
     });
   }

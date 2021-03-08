@@ -40,7 +40,7 @@ class IProovSDKPlugin: FlutterPlugin {
         override fun onSuccess(result: IProov.SuccessResult) { listenerEventSink?.success(hashMapOf("event" to "success", "token" to result.token)) }
         override fun onFailure(result: IProov.FailureResult) { listenerEventSink?.success(hashMapOf("event" to "failure", "token" to result.token, "reason" to result.reason, "feedbackCode" to result.feedbackCode)) }
         override fun onCancelled() { listenerEventSink?.success(hashMapOf("event" to "cancelled")) }
-        override fun onError(e: IProovException) { listenerEventSink?.success(hashMapOf("event" to "error", "exception" to e.toString())) }
+        override fun onError(e: IProovException) { listenerEventSink?.success(hashMapOf("event" to "error", "reason" to e.reason, "message" to e.message, "exception" to e.toString())) }
     }
 
     private val methodCallHandler = object : MethodChannel.MethodCallHandler {
@@ -78,7 +78,7 @@ class IProovSDKPlugin: FlutterPlugin {
                             val options = OptionsBridge.fromJson(context, json)
                             IProov.launch(context, streamingUrl, token, options)
                         } catch (ex: IProovException) {
-                            Log.e(TAG, ex.toString())
+                            Log.e(TAG, "here "+ex.toString())
                             handleException(ex)
                         }
                     }
@@ -103,20 +103,23 @@ class IProovSDKPlugin: FlutterPlugin {
         listenerEventChannel.setStreamHandler(object : EventChannel.StreamHandler {
 
             override fun onListen(arguments: Any?, sink: EventChannel.EventSink?) {
+                Log.e(TAG, "onListen ############################")
                 listenerEventSink = sink
                 if (listenerEventSink == null) return
-                IProov.registerListener(iProovListener)
             }
 
             override fun onCancel(arguments: Any?) {
+                Log.e(TAG, "onCancel ############################")
                 if (listenerEventSink == null) return
-                IProov.unregisterListener(iProovListener)
                 listenerEventSink = null
             }
         })
+
+        IProov.registerListener(iProovListener)
     }
 
     override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
+        IProov.unregisterListener(iProovListener)
         iProovMethodChannel.setMethodCallHandler(null)
         listenerEventChannel.setStreamHandler(null)
         this.flutterPluginBinding = null
