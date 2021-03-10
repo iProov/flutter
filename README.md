@@ -1,5 +1,5 @@
 ![iProov: Flexible authentication for identity assurance](images/banner.jpg)
-# iProov Biometrics Flutter SDK Plugin v2021.03.01
+# iProov Biometrics Flutter SDK Plugin v1.0.0
 
 ## Table of contents
 
