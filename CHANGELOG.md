@@ -1,4 +1,6 @@
-## 1.0.0
+# iProov Biometrics SDK
 
-* IProov Biometrics SDK Android 6.3.1
-* IProov Biometrics SDK iOS 8.2.0
+## 2021.03.01
+
+* iOS 8.2.0
+* Android 6.2.1

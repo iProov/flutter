@@ -1,5 +1,5 @@
 ![iProov: Flexible authentication for identity assurance](images/banner.jpg)
-# iProov Biometrics Flutter SDK Plugin v1.0.0
+# iProov Biometrics Flutter SDK Plugin v2021.03.01
 
 ## Table of contents
 
@@ -31,10 +31,11 @@ The iProov Flutter SDK is provided via this repository, which contains the follo
 - **example** - Folder containing a demonstration Flutter App containing a Dart iProov Api Client implementation (for demonstrations only)
 - **lib** - Folder containing the Flutter (Dart) side of the SDK Plugin
 - **android** - Folder containing the Android (Kotlin) side of the SDK Plugin
+- **ios** - Folder containing the iOS (Swift) side of the SDK Plugin
 
 ## Registration
 
-You can obtain API credentials by registering on the [iProov Partner Portal](https://www.iproov.net).
+You can obtain API credentials by registering on the [iProov Partner Portal](https://portal.iproov.net).
 
 ## Installation
 
@@ -102,7 +103,7 @@ iProov can terminate in one of four ways:
 
 ## Options
 
-The `Options` allow iProov to be customised: for example by changing the UI (colors,  fonts, icon, face representation, scan line), defining the network access, selecting a [face detector](#alternative-face-detectors), etc.
+The `Options` allow iProov to be customized: for example by changing the UI (colors, fonts, icon, face representation, scan line), defining the network access, selecting a [face detector](#alternative-face-detectors), etc.
 
 Most of these options are common to both Android and iOS, however, some are platform specific (for example Android resources). For a full description, please read the respective [Android](https://github.com/iProov/android#options) and [iOS](https://github.com/iProov/ios#options) native SDK documentation.
 
