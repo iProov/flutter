@@ -78,7 +78,6 @@ class IProovSDKPlugin: FlutterPlugin {
                             val options = OptionsBridge.fromJson(context, json)
                             IProov.launch(context, streamingUrl, token, options)
                         } catch (ex: IProovException) {
-                            Log.e(TAG, "here "+ex.toString())
                             handleException(ex)
                         }
                     }
@@ -103,14 +102,10 @@ class IProovSDKPlugin: FlutterPlugin {
         listenerEventChannel.setStreamHandler(object : EventChannel.StreamHandler {
 
             override fun onListen(arguments: Any?, sink: EventChannel.EventSink?) {
-                Log.e(TAG, "onListen ############################")
                 listenerEventSink = sink
-                if (listenerEventSink == null) return
             }
 
             override fun onCancel(arguments: Any?) {
-                Log.e(TAG, "onCancel ############################")
-                if (listenerEventSink == null) return
                 listenerEventSink = null
             }
         })

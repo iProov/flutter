@@ -88,19 +88,18 @@ class IProov {
   static const EventChannel _iProovListenerEventChannel =
       EventChannel('com.iproov.sdk.listener');
 
-  static Stream<IProovEvent> launch(String streamingUrl, String token,
+  static final events = _iProovListenerEventChannel
+      .receiveBroadcastStream()
+      .map((result) => IProovEvent.fromMap(result));
+
+  static Future<dynamic> launch(String streamingUrl, String token,
       [Options options]) {
-    final resultStream = _iProovMethodChannel
+    return _iProovMethodChannel
         .invokeMethod('launch', <String, dynamic>{
           'streamingURL': streamingUrl,
           'token': token,
           'optionsJSON': json.encode(options)
-        })
-        .asStream()
-        .asyncExpand((_) => _iProovListenerEventChannel
-            .receiveBroadcastStream()
-            .map((result) => IProovEvent.fromMap(result)));
-    return resultStream;
+        });
   }
 
   // Private constructor

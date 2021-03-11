@@ -66,12 +66,11 @@ For the purposes of on-device demos/testing, we provide Dart sample code for obt
 
 Once you have a valid token, you can `launch()` an iProov capture using the following:
 
-```
+```dart
 import 'package:iproov_sdk/iproov_sdk.dart';
 
-IProov.launch(url, token, options).listen((response) {
-  handleResponse(response);
-});
+IProov.events.listen(handleResponse);
+IProov.launch(url, token, options);
 ```
 
 The `launch()` function takes three parameters (the third is optional):
@@ -80,7 +79,8 @@ The `launch()` function takes three parameters (the third is optional):
 2. `token` - was obtained from an initial call via your server (or using `api-client.dart` for testing ONLY)
 3. `options` - these are all the configurations that can be applied to customize iProov. You can read up on the way they are presented in Dart [below](#options), and in greater detail in the respective [Android](https://github.com/iProov/android) and [iOS](https://github.com/iProov/ios) native SDK documentation.
 
-The `launch()` function returns `Stream<IProovEvent>`. In the example, a function called `handleResponse` is used to handle all the responses. There are many types of response and each one is represented by a subclass of `IProovEvent`.
+The `events` field represents a `Stream<IProovEvent>` indicating the progress of the IProov scan.
+In the example, a function called `handleResponse` is used to handle all the responses. There are many types of response and each one is represented by a subclass of `IProovEvent`.
 
 ### Responses
 
@@ -111,7 +111,7 @@ Most of these options are common to both Android and iOS, however, some are plat
 
 These examples are in the example app and demonstrate the differences in Android handling of options.
 
-```
+```dart
 // For font assets in the android/app/src/main/assets folder we just give the full name plus extension
 options.ui.fontPath = "montserrat_regular.ttf";
 

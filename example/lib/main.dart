@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -36,6 +37,7 @@ class _MyHomePageState extends State<MyHomePage> {
   IProovApiClient tokenApi = IProovApiClient();
   Future<String> futureToken;
   Random random = new Random();
+  StreamSubscription<IProovEvent> subscription;
 
   void getToken(String userID, ClaimType claimType, AssuranceType assuranceType) async {
     String token = await tokenApi.getToken(userID, claimType, assuranceType);
@@ -60,9 +62,11 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void launchIProov(String token, Options options) {
-    IProov.launch(tokenApi.baseUrl, token, options).listen((response) {
-      handleResponse(response);
-    });
+    if (subscription == null) {
+      subscription = IProov.events.listen(handleResponse);
+    }
+
+    IProov.launch(tokenApi.baseUrl, token, options);
   }
 
   void handleResponse(IProovEvent response) {
@@ -74,7 +78,7 @@ class _MyHomePageState extends State<MyHomePage> {
     } else if (response is IProovEventFailure) {
         print('IProov: Failure token=${response.token} reason=${response.reason} feedbackCode=${response.feedbackCode}');
     } else if (response is IProovEventError) {
-        print('IProov: Error reason=${response.reason} message=${response.message}');
+        print('IProov: Error reason=${response.reason} message=${response.message} exception=${response.exception}');
     } else if (response is IProovEventConnecting) {
       print('IProov: Connecting');
     } else if (response is IProovEventConnected) {
