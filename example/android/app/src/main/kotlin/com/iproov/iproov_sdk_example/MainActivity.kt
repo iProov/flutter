@@ -1,4 +1,4 @@
-package com.iproov.iproov_sdk_example
+package com.iproov.iproov_example
 
 import io.flutter.embedding.android.FlutterActivity
 

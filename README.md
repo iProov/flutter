@@ -1,5 +1,5 @@
 ![iProov: Flexible authentication for identity assurance](images/banner.jpg)
-# iProov Biometrics Flutter SDK Plugin v1.0.0
+# iProov Biometrics Flutter SDK Plugin v0.1.0
 
 ## Table of contents
 
@@ -43,7 +43,7 @@ Add the following to your project's `pubspec.yml` file. As you can see, our plug
 
 ```
 dependencies:
-  iproov_sdk: ^1.0.0
+  iproov: ^0.1.0
     git:
       url: git@github.com:iProov/flutter.git
 ```
@@ -67,7 +67,7 @@ For the purposes of on-device demos/testing, we provide Dart sample code for obt
 Once you have a valid token, you can `launch()` an iProov capture using the following:
 
 ```dart
-import 'package:iproov_sdk/iproov_sdk.dart';
+import 'package:iproov/iproov.dart';
 
 IProov.events.listen(handleResponse);
 IProov.launch(url, token, options);

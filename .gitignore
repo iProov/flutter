@@ -3,6 +3,7 @@
 
 .packages
 .pub/
+.gradle/
 
 build/
 
@@ -12,3 +13,5 @@ build/
 .flutter-plugins-dependencies
 .flutter-plugins
 pubspec.lock
+
+local.properties
