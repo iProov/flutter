@@ -45,14 +45,14 @@ class IProovApiClient {
   }
 }
 
-enum ClaimType { ENROL, VERIFY, ID_MATCH }
+enum ClaimType { enrol, verify, idMatch }
 
 extension ClaimTypeToString on ClaimType {
   String value() {
     switch (this) {
-      case ClaimType.ENROL:
+      case ClaimType.enrol:
         return 'enrol';
-      case ClaimType.VERIFY:
+      case ClaimType.verify:
         return 'verify';
       default:
         return 'id_match';
@@ -60,11 +60,11 @@ extension ClaimTypeToString on ClaimType {
   }
 }
 
-enum AssuranceType { GENUINE_PRESENCE_ASSURANCE, LIVENESS }
+enum AssuranceType { genuinePresenceAssurance, liveness }
 
 extension AssuranceTypeToString on AssuranceType {
   String value() {
-    if (this == AssuranceType.GENUINE_PRESENCE_ASSURANCE)
+    if (this == AssuranceType.genuinePresenceAssurance)
       return 'genuine_presence';
     else
       return 'liveness';

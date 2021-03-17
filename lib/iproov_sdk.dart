@@ -120,7 +120,7 @@ class Options {
 
 class UI {
   bool autoStartDisabled = false;
-  Filter filter = Filter.SHADED;
+  Filter filter = Filter.shaded;
   Color lineColor = Color(0xFF404040);
   Color backgroundColor = Color(0xFFFAFAFA);
   Color loadingTintColor = Color(0xFF5c5c5c);
@@ -135,8 +135,8 @@ class UI {
   // Drawable logoImageDrawable = null;
   bool scanLineDisabled = false;
   bool enableScreenshots = false;
-  Orientation orientation = Orientation.PORTRAIT;
-  bool useLegacyConnectingUI = false;
+  Orientation orientation = Orientation.portrait;
+  bool useLegacyConnectingUi = false;
   int activityCompatibilityRequestCode = -1;
 
   Map<String, dynamic> toJson() => removeNulls({
@@ -155,36 +155,36 @@ class UI {
         'scan_line_disabled': scanLineDisabled,
         'enable_screenshots': enableScreenshots,
         'orientation': orientationToJson(orientation),
-        'use_legacy_connecting_ui': useLegacyConnectingUI,
+        'use_legacy_connecting_ui': useLegacyConnectingUi,
         'activitycompatibility_request_code': activityCompatibilityRequestCode
       });
 
   static String orientationToJson(Orientation orientation) {
     switch (orientation) {
-      case Orientation.PORTRAIT:
+      case Orientation.portrait:
         return "portrait";
-      case Orientation.LANDSCAPE:
+      case Orientation.landscape:
         return "landscape";
-      case Orientation.REVERSE_PORTRAIT:
+      case Orientation.reversePortrait:
         return "reverse_portrait";
-      case Orientation.REVERSE_LANDSCAPE:
+      case Orientation.reverseLandscape:
         return "reverse_landscape";
     }
   }
 
   static String filterToString(Filter filter) {
     switch (filter) {
-      case Filter.CLASSIC:
+      case Filter.classic:
         return "classic";
-      case Filter.SHADED:
+      case Filter.shaded:
         return "shaded";
-      case Filter.VIBRANT:
+      case Filter.vibrant:
         return "vibrant";
     }
   }
 
   static String colorToString(Color color) {
-    return "#" + color.value.toRadixString(16).substring(2);
+    return "#" + color.value.toRadixString(16);
   }
 }
 
@@ -206,8 +206,8 @@ class Capture {
   double maxPitch;
   double maxYaw;
   double maxRoll;
-  Camera camera = Camera.FRONT;
-  FaceDetector faceDetector = FaceDetector.AUTO;
+  Camera camera = Camera.front;
+  FaceDetector faceDetector = FaceDetector.auto;
 
   Map<String, dynamic> toJson() => removeNulls({
         'max_pitch': maxPitch,
@@ -219,31 +219,31 @@ class Capture {
 
   static String cameraToString(Camera camera) {
     switch (camera) {
-      case Camera.FRONT:
+      case Camera.front:
         return "front";
-      case Camera.EXTERNAL:
+      case Camera.external:
         return "external";
     }
   }
 
   static String faceDetectorToString(FaceDetector faceDetector) {
     switch (faceDetector) {
-      case FaceDetector.AUTO:
+      case FaceDetector.auto:
         return "auto";
-      case FaceDetector.CLASSIC:
+      case FaceDetector.classic:
         return "classic";
-      case FaceDetector.BLAZEFACE:
+      case FaceDetector.blazeFace:
         return "blazeface";
-      case FaceDetector.ML_KIT:
+      case FaceDetector.mlKit:
         return "mlkit";
     }
   }
 }
 
-enum Camera { FRONT, EXTERNAL }
-enum FaceDetector { AUTO, CLASSIC, ML_KIT, BLAZEFACE }
-enum Filter { CLASSIC, SHADED, VIBRANT }
-enum Orientation { PORTRAIT, LANDSCAPE, REVERSE_PORTRAIT, REVERSE_LANDSCAPE }
+enum Camera { front, external }
+enum FaceDetector { auto, classic, mlKit, blazeFace }
+enum Filter { classic, shaded, vibrant }
+enum Orientation { portrait, landscape, reversePortrait, reverseLandscape }
 
 Map<String, dynamic> removeNulls(Map<String, dynamic> map) {
   map.removeWhere((key, value) => key == null || value == null);

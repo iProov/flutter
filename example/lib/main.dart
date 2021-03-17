@@ -34,13 +34,13 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
-  IProovApiClient tokenApi = IProovApiClient();
+  IProovApiClient apiClient = IProovApiClient();
   Future<String> futureToken;
   Random random = new Random();
   StreamSubscription<IProovEvent> subscription;
 
   void getToken(String userID, ClaimType claimType, AssuranceType assuranceType) async {
-    String token = await tokenApi.getToken(userID, claimType, assuranceType);
+    String token = await apiClient.getToken(userID, claimType, assuranceType);
     Options options = Options();
 
     // You can just use Flutter/Dart Colors for all Color types
@@ -66,7 +66,7 @@ class _MyHomePageState extends State<MyHomePage> {
       subscription = IProov.events.listen(handleResponse);
     }
 
-    IProov.launch(tokenApi.baseUrl, token, options);
+    IProov.launch(apiClient.baseUrl, token, options);
   }
 
   void handleResponse(IProovEvent response) {
@@ -111,7 +111,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                   onPressed: () {
                     // UserID needs to change each time for enrol, unless already registered when can keep with verify
-                    getToken('${random.nextInt(1000000)}flutter-example@iproov.com', ClaimType.ENROL, AssuranceType.GENUINE_PRESENCE_ASSURANCE);
+                    getToken('${random.nextInt(1000000)}flutter-example@iproov.com', ClaimType.enrol, AssuranceType.genuinePresenceAssurance);
                   },
                 )
               ]

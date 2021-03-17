@@ -136,7 +136,7 @@ When using `options.ui.fontPath` then the ttf file will be expected in the `andr
 
 Similary for the certificates, although no extension is required. Since there can be many certificates then an array of Strings is expected. Certificate files are expected in the `android/app/src/main/res/raw` folder of the android module of your app. For example, `options.network.certificates = [ "raw/customer__certificate" ];`
 
-Colors are all Flutter based, however the Alpha part is ignored. For example, `options.ui.lineColor = Colors.red;`
+Colors are all Flutter based. For example, `options.ui.lineColor = Colors.red;`
 
 ## String localization & customization
 
