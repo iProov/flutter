@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
-  s.name             = 'iproov_sdk'
-  s.version          = '8.2.0'
+  s.name             = 'iproov'
+  s.version          = '0.1.0-beta'
   s.summary          = 'Flexible authentication for identity assurance'
   s.homepage         = 'https://www.iproov.com/'
   s.license          = { :type => 'commercial', :file => '../LICENSE.md' }

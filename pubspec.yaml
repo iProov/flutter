@@ -22,3 +22,6 @@ flutter:
       android:
         package: com.iproov.sdk
         pluginClass: IProovSDKPlugin
+        
+    ios:
+        pluginClass: IProovSDKPlugin

@@ -81,13 +81,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.1.4"
-  iproov_sdk:
+  iproov:
     dependency: "direct main"
     description:
       path: ".."
       relative: true
     source: path
-    version: "2021.01.01"
+    version: "0.1.0"
   matcher:
     dependency: transitive
     description:
