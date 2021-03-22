@@ -71,14 +71,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void handleResponse(IProovEvent response) {
     if (response is IProovEventProgress) {
-      print(
-          'IProov: progress=${response.progress} message=${response.message}');
+      print('IProov: progress=${response.progress} message=${response.message}');
     } else if (response is IProovEventSuccess) {
       print('IProov: Success token=${response.token}');
     } else if (response is IProovEventFailure) {
-        print('IProov: Failure token=${response.token} reason=${response.reason} feedbackCode=${response.feedbackCode}');
+      print('IProov: Failure token=${response.token} reason=${response.reason} feedbackCode=${response.feedbackCode}');
     } else if (response is IProovEventError) {
-        print('IProov: Error reason=${response.reason} message=${response.message} exception=${response.exception}');
+      print('IProov: Error reason=${response.reason} message=${response.message} exception=${response.exception}');
     } else if (response is IProovEventConnecting) {
       print('IProov: Connecting');
     } else if (response is IProovEventConnected) {

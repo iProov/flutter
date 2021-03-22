@@ -45,7 +45,7 @@ class IProovApiClient {
   }
 }
 
-enum ClaimType { enrol, verify, idMatch }
+enum ClaimType { enrol, verify }
 
 extension ClaimTypeToString on ClaimType {
   String value() {
@@ -53,9 +53,8 @@ extension ClaimTypeToString on ClaimType {
       case ClaimType.enrol:
         return 'enrol';
       case ClaimType.verify:
+      default: // Stupid compiler!
         return 'verify';
-      default:
-        return 'id_match';
     }
   }
 }
