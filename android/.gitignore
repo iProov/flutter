@@ -1,0 +1,27 @@
+*.iml
+.gradle
+/local.properties
+.DS_Store
+/build
+/captures
+
+# IntelliJ
+*.iml
+.idea/workspace.xml
+/.idea/workspace.xml
+.idea/tasks.xml
+.idea/gradle.xml
+.idea/assetWizardSettings.xml
+.idea/dictionaries
+.idea/libraries
+.idea/caches
+.idea/encodings.xml
+.idea/modules.xml
+.idea/markdown-navigator-enh.xml
+.idea/jarRepositories.xml
+.idea/misc.xml
+.idea/markdown-navigator/*.*
+.idea/markdown-navigator.xml
+.idea/markdown-exported-files.xml
+.idea/inspectionProfiles
+.idea/codeStyles
