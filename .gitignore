@@ -3,5 +3,15 @@
 
 .packages
 .pub/
+.gradle/
 
 build/
+
+.idea/workspace.xml
+.idea/libraries/*
+
+.flutter-plugins-dependencies
+.flutter-plugins
+pubspec.lock
+
+local.properties

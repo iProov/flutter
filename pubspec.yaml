@@ -1,8 +1,8 @@
-name: iproov_sdk
-description: Flexible authentication for identity assurance
-homepage: https://www.iproov.com/
-version: 2021.01.01
-author: iProov
+name: iproov
+description: A new flutter plugin project.
+version: 0.1.0
+author:
+homepage:
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
@@ -21,6 +21,4 @@ flutter:
     platforms:
       android:
         package: com.iproov.sdk
-        pluginClass: IProovSDKPlugin
-      ios:
         pluginClass: IProovSDKPlugin

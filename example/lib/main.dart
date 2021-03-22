@@ -1,8 +1,9 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:iproov_sdk/iproov_sdk.dart';
-import 'package:iproov_sdk_example/api-client.dart';
+import 'package:iproov/iproov.dart';
+import 'package:iproov_example/api_client.dart';
 
 void main() {
   runApp(MyApp());
@@ -33,52 +34,57 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
-  TokenApi tokenApi;
+  IProovApiClient apiClient = IProovApiClient();
   Future<String> futureToken;
   Random random = new Random();
+  StreamSubscription<IProovEvent> subscription;
 
-  @override
-  void initState() {
-    super.initState();
-    IProovSDK.iProovListenerEventChannel.receiveBroadcastStream().listen(_onEvent, onError: _onError);
-    tokenApi = TokenApi();
-  }
-
-  void getToken(String userID, String claimType, String assuranceType) async {
-    String token = await tokenApi.getToken(userID, claimType, assuranceType);
+  void getToken(String userID, ClaimType claimType, AssuranceType assuranceType) async {
+    String token = await apiClient.getToken(userID, claimType, assuranceType);
     Options options = Options();
 
     // You can just use Flutter/Dart Colors for all Color types
-    // options.ui.lineColor = Colors.red;
+    //   options.ui.lineColor = Colors.red;
 
     // For certificates you add them to the android/app/src/main/res/raw folder and reference them here like below (no extension)
-    // options.network.certificates = [ "raw/customer__certificate" ];
+    //   options.network.certificates = [ "raw/customer__certificate" ];
 
     // For font assets in the android/app/src/main/assets folder we just give the full name plus extension
-    // options.ui.fontPath = "montserrat_regular.ttf";
+    //   options.ui.fontPath = "montserrat_regular.ttf";
 
     // For font resources in the android/app/src/main/res/font folder we just give the name without extension
-    // options.ui.fontResource = "montserrat_bold";
+    //   options.ui.fontResource = "montserrat_bold";
 
     // For logo, only logoImageResource is available, in the android/app/src/main/res/drawable folder we just give the name without extension
-    // options.ui.logoImageResource = "ic_launcher";
+    //   options.ui.logoImageResource = "ic_launcher";
 
-    IProovSDK.launchWithOptions(tokenApi.baseUrl, token, options);
+    launchIProov(token, options);
   }
 
-  void _onEvent(Object event) {
-    // This is where responses come back
-    if (event is Map<String, dynamic>) {
-      double progress = event["progress"];
-      String message = event["message"];
-      print("onEvent Progress=$progress message=$message");
-    } else
-      print("onEvent $event");
+  void launchIProov(String token, Options options) {
+    if (subscription == null) {
+      subscription = IProov.events.listen(handleResponse);
+    }
+
+    IProov.launch(apiClient.baseUrl, token, options);
   }
 
-  void _onError(Object error) {
-    // This is where errors come back
-    print("onError $error");
+  void handleResponse(IProovEvent response) {
+    if (response is IProovEventProgress) {
+      print('IProov: progress=${response.progress} message=${response.message}');
+    } else if (response is IProovEventSuccess) {
+      print('IProov: Success token=${response.token}');
+    } else if (response is IProovEventFailure) {
+      print('IProov: Failure token=${response.token} reason=${response.reason} feedbackCode=${response.feedbackCode}');
+    } else if (response is IProovEventError) {
+      print('IProov: Error reason=${response.reason} message=${response.message} exception=${response.exception}');
+    } else if (response is IProovEventConnecting) {
+      print('IProov: Connecting');
+    } else if (response is IProovEventConnected) {
+      print('IProov: Connected');
+    } else if (response is IProovEventCancelled) {
+      print('IProov: Cancelled');
+    }
   }
 
   Widget build(BuildContext context) {
@@ -104,7 +110,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                   onPressed: () {
                     // UserID needs to change each time for enrol, unless already registered when can keep with verify
-                    getToken('${random.nextInt(1000000)}ksdgfgsjs@ssdguh.ldfgl', 'enrol', 'genuine_presence');
+                    getToken('${random.nextInt(1000000)}flutter-example@iproov.com', ClaimType.enrol, AssuranceType.genuinePresenceAssurance);
                   },
                 )
               ]

@@ -1,6 +1,6 @@
-# iproov_sdk_example
+# iproov_example
 
-Demonstrates how to use the iproov_sdk plugin.
+Demonstrates how to use the iproov sdk plugin.
 
 ## Getting Started
 
