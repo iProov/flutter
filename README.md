@@ -43,7 +43,7 @@ Add the following to your project's `pubspec.yml` file. As you can see, our plug
 
 ```
 dependencies:
-  iproov: ^0.1.0
+  iproov_sdk: ^0.1.0
     git:
       url: git@github.com:iProov/flutter.git
 ```
@@ -67,7 +67,7 @@ For the purposes of on-device demos/testing, we provide Dart sample code for obt
 Once you have a valid token, you can `launch()` an iProov capture using the following:
 
 ```dart
-import 'package:iproov/iproov.dart';
+import 'package:iproov_sdk/iproov_sdk.dart';
 
 IProov.events.listen(handleResponse);
 IProov.launch(url, token, options);

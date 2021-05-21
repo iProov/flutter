@@ -1,4 +1,4 @@
-# iproov_example
+# iproov_sdk_example
 
 Demonstrates how to use the iproov sdk plugin.
 

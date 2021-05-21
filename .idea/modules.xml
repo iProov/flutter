@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/iproov.iml" filepath="$PROJECT_DIR$/iproov.iml" />
-      <module fileurl="file://$PROJECT_DIR$/android/iproov_android.iml" filepath="$PROJECT_DIR$/android/iproov_sdk_android.iml" />
-      <module fileurl="file://$PROJECT_DIR$/example/android/iproov_example_android.iml" filepath="$PROJECT_DIR$/example/android/iproov_sdk_example_android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/iproov_sdk.iml" filepath="$PROJECT_DIR$/iproov_sdk.iml" />
+      <module fileurl="file://$PROJECT_DIR$/android/iproov_sdk_android.iml" filepath="$PROJECT_DIR$/android/iproov_sdk_android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/example/android/iproov_sdk_example_android.iml" filepath="$PROJECT_DIR$/example/android/iproov_sdk_example_android.iml" />
     </modules>
   </component>
 </project>

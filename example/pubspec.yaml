@@ -1,4 +1,4 @@
-name: iproov_example
+name: iproov_sdk_example
 description: Demonstrates how to use the iproov sdk plugin.
 
 publish_to: 'none'
@@ -12,9 +12,9 @@ dependencies:
 
   http: ^0.12.1
 
-  iproov:
+  iproov_sdk:
     # When depending on this package from a real application you should use:
-    #   iproov: ^x.y.z
+    #   iproov_sdk: ^x.y.z
     # See https://dart.dev/tools/pub/dependencies#version-constraints
     # The example app is bundled with the plugin so we use a path dependency on
     # the parent directory to use the current plugin's version.

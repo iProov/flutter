@@ -26,7 +26,7 @@ class IProovApiClient {
         body: jsonEncode(<String, String>{
           'api_key': _apiKey,
           'secret': _secret,
-          'resource': 'com.iproov.iproov.flutter',
+          'resource': 'com.iproov.iproov_sdk.flutter',
           'client': 'android',
           'user_id': userId,
           'assurance_type': assuranceType.value()

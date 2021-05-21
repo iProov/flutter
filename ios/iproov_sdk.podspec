@@ -1,5 +1,5 @@
 Pod::Spec.new do |s|
-  s.name             = 'iproov'
+  s.name             = 'iproov_sdk'
   s.version          = '0.1.0-beta'
   s.summary          = 'Flexible authentication for identity assurance'
   s.homepage         = 'https://www.iproov.com/'

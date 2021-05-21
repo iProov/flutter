@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:iproov/iproov.dart';
-import 'package:iproov_example/api_client.dart';
+import 'package:iproov_sdk/iproov_sdk.dart';
+import 'package:iproov_sdk_example/api_client.dart';
 
 void main() {
   runApp(MyApp());
