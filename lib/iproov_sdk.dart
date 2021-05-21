@@ -121,12 +121,12 @@ class Options {
 class UI {
   bool autoStartDisabled = false;
   Filter filter = Filter.shaded;
-  Color lineColor = Color(0x404040);
-  Color backgroundColor = Color(0xFAFAFA);
-  Color loadingTintColor = Color(0x5c5c5c);
-  Color notReadyTintColor = Color(0xf5a623);
-  Color readyTintColor = Color(0x01bf46);
-  Color livenessTintColor = Color(0x1756E5);
+  Color lineColor = Color(0xFF404040);
+  Color backgroundColor = Color(0xFFFAFAFA);
+  Color loadingTintColor = Color(0xFF5c5c5c);
+  Color notReadyTintColor = Color(0xFFf5a623);
+  Color readyTintColor = Color(0xFF01bf46);
+  Color livenessTintColor = Color(0xFF1756E5);
   String title;
   String fontPath;
   String fontResource;
