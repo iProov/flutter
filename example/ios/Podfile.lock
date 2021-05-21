@@ -1,17 +1,17 @@
 PODS:
   - Flutter (1.0.0)
-  - iProov (8.2.0):
-    - Socket.IO-Client-Swift (~> 15.2)
-  - iproov_sdk (8.1.1):
+  - iproov (0.1.0-beta):
     - Flutter
-    - iProov
+    - iProov (= 8.3.1)
+  - iProov (8.3.1):
+    - Socket.IO-Client-Swift (~> 15.2)
   - Socket.IO-Client-Swift (15.2.0):
     - Starscream (~> 3.1)
   - Starscream (3.1.1)
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
-  - iproov_sdk (from `.symlinks/plugins/iproov_sdk/ios`)
+  - iproov (from `.symlinks/plugins/iproov/ios`)
 
 SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
@@ -22,13 +22,13 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   Flutter:
     :path: Flutter
-  iproov_sdk:
-    :path: ".symlinks/plugins/iproov_sdk/ios"
+  iproov:
+    :path: ".symlinks/plugins/iproov/ios"
 
 SPEC CHECKSUMS:
-  Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
-  iProov: 867e796a694061aef01758a855f279ae5b1deb08
-  iproov_sdk: 50bb297b33be7ef1b8dc48a3eb1c655c54e2e56d
+  Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
+  iProov: 6156dfc838cc11970b5c16aa33608614f26af56c
+  iproov: ca3b5d9c259d7f42af3894fb0f3d8f989d8df93a
   Socket.IO-Client-Swift: 1e3e3a1f09f3312a167f0d781eb2f383d477357c
   Starscream: 4bb2f9942274833f7b4d296a55504dcfc7edb7b0
 
