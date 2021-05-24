@@ -15,3 +15,9 @@ build/
 pubspec.lock
 
 local.properties
+flutter_export_environment.sh
+Generated.xcconfig
+GeneratedPluginRegistrant.h
+GeneratedPluginRegistrant.m
+misc.xml
+runConfigurations.xml
