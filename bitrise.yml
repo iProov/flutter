@@ -11,6 +11,15 @@ trigger_map:
   workflow: test
 workflows:
   deploy:
+  steps:
+  - script@1:
+      title: Deploy to Flutter repo
+      inputs:
+      - content: |-
+          #!/usr/bin/env bash
+          # fail if any commands fails
+
+          ./Scripts/deploy-to-flutter-repo
     before_run:
     - _init
     - _test
@@ -42,6 +51,7 @@ workflows:
         - project_location: "$BITRISE_FLUTTER_PROJECT_LOCATION"
     - flutter-build@0:
         inputs:
+        - android_output_type: appbundle
         - project_location: "$BITRISE_FLUTTER_PROJECT_LOCATION"
 app:
   envs:
