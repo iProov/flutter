@@ -1,25 +1,25 @@
 ---
 format_version: '8'
-default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
+default_step_lib_source: 'https://github.com/bitrise-io/bitrise-steplib.git'
 project_type: flutter
 trigger_map:
 - push_branch: main
   workflow: deploy
 - push_branch: develop
   workflow: test
-- pull_request_source_branch: "*"
+- pull_request_source_branch: '*'
   workflow: test
 workflows:
   deploy:
-  steps:
-  - script@1:
-      title: Deploy to Flutter repo
-      inputs:
-      - content: |-
-          #!/usr/bin/env bash
-          # fail if any commands fails
+    steps:
+    - script@1:
+        title: Deploy to Flutter repo
+        inputs:
+        - content: |-
+            #!/usr/bin/env bash
+            # fail if any commands fails
 
-          ./Scripts/deploy-to-flutter-repo
+            ./Scripts/deploy-to-flutter-repo
     before_run:
     - _init
     - _test
@@ -35,7 +35,7 @@ workflows:
     steps:
     - activate-ssh-key@4:
         run_if: '{{getenv "SSH_RSA_PRIVATE_KEY" | ne ""}}'
-    - git-clone@4: {}
+    - git-clone@6.0: {}
     - flutter-installer@0:
         inputs:
         - is_update: 'false'
@@ -48,11 +48,11 @@ workflows:
     steps:
     - flutter-analyze@0:
         inputs:
-        - project_location: "$BITRISE_FLUTTER_PROJECT_LOCATION"
+        - project_location: $BITRISE_FLUTTER_PROJECT_LOCATION
     - flutter-build@0:
         inputs:
         - android_output_type: appbundle
-        - project_location: "$BITRISE_FLUTTER_PROJECT_LOCATION"
+        - project_location: $BITRISE_FLUTTER_PROJECT_LOCATION
 app:
   envs:
   - opts:
