@@ -21,3 +21,5 @@ GeneratedPluginRegistrant.h
 GeneratedPluginRegistrant.m
 misc.xml
 runConfigurations.xml
+
+.bitrise.secrets.yml
