@@ -12,8 +12,8 @@ import 'dart:async';
  */
 class IProovApiClient {
   final String _baseUrl = 'https://eu.rp.secure.iproov.me/api/v2/';
-  final String _apiKey = '<your api key here>';
-  final String _secret = '<your secret here>';
+  final String _apiKey = 'API_KEY';
+  final String _secret = 'API_SECRET';
 
   String get baseUrl => _baseUrl;
 

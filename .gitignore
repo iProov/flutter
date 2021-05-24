@@ -15,3 +15,5 @@ build/
 pubspec.lock
 
 local.properties
+
+.bitrise.secrets.yml
