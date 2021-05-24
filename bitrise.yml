@@ -28,31 +28,12 @@ workflows:
         run_if: '{{getenv "SSH_RSA_PRIVATE_KEY" | ne ""}}'
     - git-clone@4: {}
     - cache-pull@2: {}
-    - script@1:
-        inputs:
-        - content: |-
-            set -e -o pipefail
-
-            replace() {
-              sed -i '' "s/$1/$2/" $3
-            }
-
-            replace "API_KEY" ${API_KEY} "${BITRISE_FLUTTER_PROJECT_LOCATION}/lib/api_client.dart"
-            replace "API_SECRET" ${API_SECRET} "${BITRISE_FLUTTER_PROJECT_LOCATION}/lib/api_client.dart"
-        title: Replace Secrets Placeholders
     - flutter-installer@0:
         inputs:
         - is_update: 'false'
     - cache-pull@2: {}
   _finish:
     steps:
-    - script@1:
-        inputs:
-        - content: |-
-            set -e -o pipefail
-
-            git checkout HEAD -- "${BITRISE_FLUTTER_PROJECT_LOCATION}/lib/api_client.dart"
-        title: Reset Secrets Placeholders
     - deploy-to-bitrise-io@1: {}
     - cache-push@2: {}
   _test:
