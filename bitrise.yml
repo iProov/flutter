@@ -31,7 +31,6 @@ workflows:
     - flutter-installer@0:
         inputs:
         - is_update: 'false'
-    - cache-pull@2: {}
   _finish:
     steps:
     - deploy-to-bitrise-io@1: {}
