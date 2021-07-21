@@ -59,7 +59,7 @@ extension ClaimTypeToString on ClaimType {
   }
 }
 
-enum AssuranceType { genuinePresenceAssurance, liveness }
+enum AssuranceType { genuinePresenceAssurance, livenessAssurance }
 
 extension AssuranceTypeToString on AssuranceType {
   String value() {

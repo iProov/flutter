@@ -106,8 +106,12 @@ class IProov {
   IProov._();
 }
 
+String colorToString(Color color) {
+  return "#" + color.value.toRadixString(16);
+}
+
 class Options {
-  UI ui = new UI();
+  Ui ui = new Ui();
   Network network = new Network();
   Capture capture = new Capture();
 
@@ -118,44 +122,36 @@ class Options {
       };
 }
 
-class UI {
+class Ui {
+  GenuinePresenceUi genuinePresenceUi = new GenuinePresenceUi();
+  LivenessUi livenessUi = new LivenessUi();
   bool autoStartDisabled = false;
   Filter filter = Filter.shaded;
   Color lineColor = Color(0xFF404040);
   Color backgroundColor = Color(0xFFFAFAFA);
-  Color loadingTintColor = Color(0xFF5c5c5c);
-  Color notReadyTintColor = Color(0xFFf5a623);
-  Color readyTintColor = Color(0xFF01bf46);
-  Color livenessTintColor = Color(0xFF1756E5);
   String title;
   String fontPath;
   String fontResource;
   String logoImageResource;
 
   // Drawable logoImageDrawable = null;
-  bool scanLineDisabled = false;
   bool enableScreenshots = false;
   Orientation orientation = Orientation.portrait;
-  bool useLegacyConnectingUi = false;
   int activityCompatibilityRequestCode = -1;
 
   Map<String, dynamic> toJson() => removeNulls({
+        'genuine_presence_assurance': genuinePresenceUi.toJson(),
+        'liveness_assurance': livenessUi.toJson(),
         'auto_start_disabled': autoStartDisabled,
         'filter': filterToString(filter),
         'line_color': colorToString(lineColor),
         'background_color': colorToString(backgroundColor),
-        'loading_tint_color': colorToString(loadingTintColor),
-        'not_ready_tint_color': colorToString(notReadyTintColor),
-        'ready_tint_color': colorToString(readyTintColor),
-        'liveness_tint_color': colorToString(livenessTintColor),
         'title': title,
         'font_path': fontPath,
         'font_resource': fontResource,
         'logo_image_resource': logoImageResource,
-        'scan_line_disabled': scanLineDisabled,
         'enable_screenshots': enableScreenshots,
         'orientation': orientationToJson(orientation),
-        'use_legacy_connecting_ui': useLegacyConnectingUi,
         'activitycompatibility_request_code': activityCompatibilityRequestCode
       });
 
@@ -182,10 +178,28 @@ class UI {
         return "vibrant";
     }
   }
+}
 
-  static String colorToString(Color color) {
-    return "#" + color.value.toRadixString(16);
-  }
+class GenuinePresenceUi {
+  Color notReadyTintColor = Color(0xFFf5a623);
+  Color readyTintColor = Color(0xFF01bf46);
+  Color progressBarColor = Color(0xFF000000);
+
+  Map<String, dynamic> toJson() => removeNulls({
+    'not_ready_tint_color': colorToString(notReadyTintColor),
+    'ready_tint_color': colorToString(readyTintColor),
+    'progress_bar_color': colorToString(progressBarColor)
+  });
+}
+
+class LivenessUi {
+  Color livenessPrimaryColor = Color(0xFF1756E5);
+  Color livenessSecondaryColor = Color(0xFFA8A8A8);
+
+  Map<String, dynamic> toJson() => removeNulls({
+    'liveness_primary_color': colorToString(livenessPrimaryColor),
+    'liveness_secondary_color': colorToString(livenessSecondaryColor),
+  });
 }
 
 class Network {
