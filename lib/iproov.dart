@@ -193,12 +193,12 @@ class GenuinePresenceUi {
 }
 
 class LivenessUi {
-  Color livenessPrimaryColor = Color(0xFF1756E5);
-  Color livenessSecondaryColor = Color(0xFFA8A8A8);
+  Color primaryTintColor = Color(0xFF1756E5);
+  Color secondaryTintColor = Color(0xFFA8A8A8);
 
   Map<String, dynamic> toJson() => removeNulls({
-    'liveness_primary_color': colorToString(livenessPrimaryColor),
-    'liveness_secondary_color': colorToString(livenessSecondaryColor),
+    'primary_tint_color': colorToString(primaryTintColor),
+    'secondary_tint__color': colorToString(secondaryTintColor), //TODO Double underscore needs correcting in next SDK
   });
 }
 
