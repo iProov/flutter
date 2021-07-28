@@ -125,7 +125,6 @@ class Options {
 class Ui {
   GenuinePresenceUi genuinePresenceUi = new GenuinePresenceUi();
   LivenessUi livenessUi = new LivenessUi();
-  bool autoStartDisabled = false;
   Filter filter = Filter.shaded;
   Color lineColor = Color(0xFF404040);
   Color backgroundColor = Color(0xFFFAFAFA);
@@ -142,7 +141,6 @@ class Ui {
   Map<String, dynamic> toJson() => removeNulls({
         'genuine_presence_assurance': genuinePresenceUi.toJson(),
         'liveness_assurance': livenessUi.toJson(),
-        'auto_start_disabled': autoStartDisabled,
         'filter': filterToString(filter),
         'line_color': colorToString(lineColor),
         'background_color': colorToString(backgroundColor),
@@ -152,7 +150,7 @@ class Ui {
         'logo_image_resource': logoImageResource,
         'enable_screenshots': enableScreenshots,
         'orientation': orientationToJson(orientation),
-        'activitycompatibility_request_code': activityCompatibilityRequestCode
+        'activity_compatibility_request_code': activityCompatibilityRequestCode
       });
 
   static String orientationToJson(Orientation orientation) {
@@ -181,11 +179,13 @@ class Ui {
 }
 
 class GenuinePresenceUi {
+  bool autoStartDisabled = false;
   Color notReadyTintColor = Color(0xFFf5a623);
   Color readyTintColor = Color(0xFF01bf46);
   Color progressBarColor = Color(0xFF000000);
 
   Map<String, dynamic> toJson() => removeNulls({
+    'auto_start_disabled': autoStartDisabled,
     'not_ready_tint_color': colorToString(notReadyTintColor),
     'ready_tint_color': colorToString(readyTintColor),
     'progress_bar_color': colorToString(progressBarColor)
@@ -198,7 +198,7 @@ class LivenessUi {
 
   Map<String, dynamic> toJson() => removeNulls({
     'primary_tint_color': colorToString(primaryTintColor),
-    'secondary_tint__color': colorToString(secondaryTintColor), //TODO Double underscore needs correcting in next SDK
+    'secondary_tint_color': colorToString(secondaryTintColor),
   });
 }
 
