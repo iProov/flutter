@@ -3,30 +3,27 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
 
-/*
- * WARNING - this Api Client is ONLY intended for DEMONSTRATION and EVALUATION purposes.
- * We STRONGLY recommend that this code is NOT used in a production CLIENT.
- * The purpose of this code is to quickly enable the creation of a stand alone client before
- * investment is made in putting this functionality into a server, where it belongs
- * We also recommend NOT to put your apiKey and Secret into your GitHub repository.
- */
-class IProovApiClient {
-  final String _baseUrl = 'https://eu.rp.secure.iproov.me/api/v2/';
-  final String _apiKey = '<your api key here>';
-  final String _secret = '<your secret here>';
+/// THIS CODE IS PROVIDED FOR DEMO PURPOSES ONLY AND SHOULD NOT BE USED IN
+/// PRODUCTION! YOU SHOULD NEVER EMBED YOUR CREDENTIALS IN A PUBLIC APP RELEASE!
+///   THESE API CALLS SHOULD ONLY EVER BE MADE FROM YOUR BACK-END SERVER
 
-  String get baseUrl => _baseUrl;
+class ApiClient {
+  final String baseUrl;
+  final String apiKey;
+  final String secret;
+
+  ApiClient(this.baseUrl, this.apiKey, this.secret);
 
   Future<String> getToken(
       String userId, ClaimType claimType, AssuranceType assuranceType) async {
     try {
       final response = await http.post(
-        _baseUrl + 'claim/' + claimType.value() + '/token',
+        baseUrl + 'claim/' + claimType.value() + '/token',
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(<String, String>{
-          'api_key': _apiKey,
-          'secret': _secret,
-          'resource': 'com.iproov.iproov_sdk.flutter',
+          'api_key': apiKey,
+          'secret': secret,
+          'resource': 'com.iproov.flutter',
           'client': 'android',
           'user_id': userId,
           'assurance_type': assuranceType.value()
@@ -45,21 +42,21 @@ class IProovApiClient {
   }
 }
 
-enum ClaimType { enrol, verify }
+enum ClaimType {
+  enrol,
+  verify
+}
 
 extension ClaimTypeToString on ClaimType {
   String value() {
-    switch (this) {
-      case ClaimType.enrol:
-        return 'enrol';
-      case ClaimType.verify:
-      default: // Stupid compiler!
-        return 'verify';
-    }
+    return this.toString();
   }
 }
 
-enum AssuranceType { genuinePresenceAssurance, liveness }
+enum AssuranceType {
+  genuinePresenceAssurance,
+  liveness
+}
 
 extension AssuranceTypeToString on AssuranceType {
   String value() {

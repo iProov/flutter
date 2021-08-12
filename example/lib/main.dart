@@ -34,7 +34,13 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
-  IProovApiClient apiClient = IProovApiClient();
+  // TODO: Add your credentials here:
+  ApiClient apiClient = ApiClient(
+    "https://eu.rp.secure.iproov.me/api/v2/",
+    "< YOUR API KEY >",
+    "< YOUR SECRET >"
+  );
+
   Future<String> futureToken;
   Random random = new Random();
   StreamSubscription<IProovEvent> subscription;
