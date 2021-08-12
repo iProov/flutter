@@ -55,7 +55,7 @@ extension ClaimTypeToString on ClaimType {
 
 enum AssuranceType {
   genuinePresenceAssurance,
-  liveness
+  livenessAssurance
 }
 
 extension AssuranceTypeToString on AssuranceType {

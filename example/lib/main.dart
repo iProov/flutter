@@ -76,6 +76,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
     // You can just use Flutter/Dart Colors for all Color types
     //   options.ui.lineColor = Colors.red;
+    //   options.ui.backgroundColor = Colors.teal;
+    //   options.ui.genuinePresenceUi.notReadyTintColor = Colors.red;
+    //   options.ui.genuinePresenceUi.progressBarColor = Colors.cyan;
+    //   options.ui.genuinePresenceUi.readyTintColor = Colors.lightGreen;
+    //   options.ui.livenessUi.primaryTintColor = Colors.grey;
+    //   options.ui.livenessUi.secondaryTintColor = Colors.yellow;
 
     // For certificates you add them to the android/app/src/main/res/raw folder and reference them here like below (no extension)
     //   options.network.certificates = [ "raw/customer__certificate" ];
