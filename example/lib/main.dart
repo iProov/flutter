@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:bmprogresshud/bmprogresshud.dart';
 import 'package:iproov_sdk/iproov_sdk.dart';
 import 'package:iproov_sdk_example/api_client.dart';
 
@@ -14,12 +15,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'iProov Example',
       theme: ThemeData(
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(title: 'iProov Example'),
     );
   }
 }
@@ -77,36 +78,42 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void handleResponse(IProovEvent response) {
     if (response is IProovEventProgress) {
-      print('IProov: progress=${response.progress} message=${response.message}');
+      ProgressHud.show(ProgressHudType.progress, response.message);
+      ProgressHud.updateProgress(response.progress, response.message);
     } else if (response is IProovEventSuccess) {
-      print('IProov: Success token=${response.token}');
+      ProgressHud.showAndDismiss(ProgressHudType.success, "Success!");
     } else if (response is IProovEventFailure) {
-      print('IProov: Failure token=${response.token} reason=${response.reason} feedbackCode=${response.feedbackCode}');
+      ProgressHud.showAndDismiss(ProgressHudType.error, response.reason);
     } else if (response is IProovEventError) {
-      print('IProov: Error reason=${response.reason} message=${response.message} exception=${response.exception}');
+      ProgressHud.showAndDismiss(ProgressHudType.error, response.exception.toString());
     } else if (response is IProovEventConnecting) {
-      print('IProov: Connecting');
+      ProgressHud.show(ProgressHudType.loading, "Connecting...");
     } else if (response is IProovEventConnected) {
-      print('IProov: Connected');
+      ProgressHud.dismiss();
     } else if (response is IProovEventCancelled) {
-      print('IProov: Cancelled');
+      ProgressHud.dismiss();
     }
   }
 
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          // Here we take the value from the MyHomePage object that was created by
-          // the App.build method, and use it to set our appbar title.
           title: Text(widget.title),
         ),
-        body: Center(
-          // Center is a layout widget. It takes a single child and positions it
-          // in the middle of the parent.
+        body: ProgressHud(
+          isGlobalHud: true,
+          child: Center(
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 TextButton(
-                  child: Text('Launch'),
+                  child: Text(
+                    '🚀 Launch',
+                    style: TextStyle(
+                      fontSize: 20.0,
+                    ),
+                  ),
                   onPressed: () {
                     // UserID needs to change each time for enrol, unless already registered when can keep with verify
                     getToken('${random.nextInt(1000000)}flutter-example@iproov.com', ClaimType.enrol, AssuranceType.genuinePresenceAssurance);
@@ -114,6 +121,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 )
               ]
             )
+          )
         )
     );
   }
