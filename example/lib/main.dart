@@ -105,15 +105,8 @@ class _MyHomePageState extends State<MyHomePage> {
           // in the middle of the parent.
             child: Column(
               children: <Widget>[
-                FlatButton(
-                  color: Colors.red,
-                  child: Text(
-                    'Launch',
-                    style: TextStyle(
-                      fontSize: 20.0,
-                      color: Colors.white,
-                    ),
-                  ),
+                TextButton(
+                  child: Text('Launch'),
                   onPressed: () {
                     // UserID needs to change each time for enrol, unless already registered when can keep with verify
                     getToken('${random.nextInt(1000000)}flutter-example@iproov.com', ClaimType.enrol, AssuranceType.genuinePresenceAssurance);

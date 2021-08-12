@@ -49,7 +49,7 @@ enum ClaimType {
 
 extension ClaimTypeToString on ClaimType {
   String value() {
-    return this.toString();
+    return this.toString().split('.').last;
   }
 }
 
