@@ -38,11 +38,33 @@ public final class SwiftIProovSDKPlugin: NSObject {
         case success
     }
 
-    fileprivate enum PluginError {
+    private enum PluginError {
         case errorFromIProovSDK(LocalizedError)
         case launchArgumentsMissing
         case streamURLArgumentMissingOrEmpty
         case tokenArgumentMissingOrEmpty
+        case invalidOptions
+
+        var sinkError: [String: String?] {
+            let arg: String
+            switch self {
+            case let .errorFromIProovSDK(error):
+                arg = error.errorDescription ?? ""
+            case .launchArgumentsMissing:
+                arg = SwiftIProovSDKPlugin.FlutterMethod.launch.rawValue
+            case .streamURLArgumentMissingOrEmpty:
+                arg = SwiftIProovSDKPlugin.LaunchArguments.streamingURL.rawValue
+            case .tokenArgumentMissingOrEmpty:
+                arg = SwiftIProovSDKPlugin.LaunchArguments.token.rawValue
+            case .invalidOptions:
+                arg = "" // TODO: This needs fixing
+            }
+
+            return [
+                SwiftIProovSDKPlugin.SinkEventKey.event.rawValue: SwiftIProovSDKPlugin.SinkEventValue.error.rawValue,
+                SwiftIProovSDKPlugin.SinkEventKey.exception.rawValue: "iProov SDK \(arg) arguments missing or empty",
+            ]
+        }
     }
 
     private var sink: FlutterEventSink?
@@ -98,8 +120,13 @@ private extension SwiftIProovSDKPlugin {
         }
 
         let options: Options
-        if let optionsJSON = arguments[LaunchArguments.optionsJSON.rawValue] {
-            options = Options.from(jsonString: optionsJSON)
+
+        if let optionsJSONString = arguments[LaunchArguments.optionsJSON.rawValue] {
+            guard let dict = try? JSONSerialization.jsonObject(with: optionsJSONString.data(using: .utf8)!, options: []) as? [String: Any] else {
+                return launchError(PluginError.invalidOptions)
+            }
+
+            options = Options.from(json: dict)
         } else {
             options = Options()
         }
@@ -138,26 +165,5 @@ private extension SwiftIProovSDKPlugin {
         @unknown default:
             return nil
         }
-    }
-}
-
-private extension SwiftIProovSDKPlugin.PluginError {
-    var sinkError: [String: String?] {
-        let arg: String
-        switch self {
-        case let .errorFromIProovSDK(error):
-            arg = error.errorDescription ?? ""
-        case .launchArgumentsMissing:
-            arg = SwiftIProovSDKPlugin.FlutterMethod.launch.rawValue
-        case .streamURLArgumentMissingOrEmpty:
-            arg = SwiftIProovSDKPlugin.LaunchArguments.streamingURL.rawValue
-        case .tokenArgumentMissingOrEmpty:
-            arg = SwiftIProovSDKPlugin.LaunchArguments.token.rawValue
-        }
-
-        return [
-            SwiftIProovSDKPlugin.SinkEventKey.event.rawValue: SwiftIProovSDKPlugin.SinkEventValue.error.rawValue,
-            SwiftIProovSDKPlugin.SinkEventKey.exception.rawValue: "iProov SDK \(arg) arguments missing or empty",
-        ]
     }
 }
