@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
 import 'package:bmprogresshud/bmprogresshud.dart';
 import 'package:iproov_sdk/iproov_sdk.dart';
 import 'package:iproov_sdk_example/api_client.dart';
@@ -46,7 +47,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Random random = new Random();
   StreamSubscription<IProovEvent> subscription;
 
-  void getToken(String userID, ClaimType claimType, AssuranceType assuranceType) async {
+  void getTokenAndLaunchIProov(String userID, ClaimType claimType, AssuranceType assuranceType) async {
     String token = await apiClient.getToken(userID, claimType, assuranceType);
     Options options = Options();
 
@@ -70,29 +71,27 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void launchIProov(String token, Options options) {
     if (subscription == null) {
-      subscription = IProov.events.listen(handleResponse);
+      subscription = IProov.events.listen((event) {
+        if (event is IProovEventConnecting) {
+          ProgressHud.show(ProgressHudType.loading, "Connecting...");
+        } else if (event is IProovEventConnected) {
+          ProgressHud.dismiss();
+        } else if (event is IProovEventProgress) {
+          ProgressHud.show(ProgressHudType.progress, event.message);
+          ProgressHud.updateProgress(event.progress, event.message);
+        } else if (event is IProovEventCancelled) {
+          ProgressHud.dismiss();
+        } else if (event is IProovEventSuccess) {
+          ProgressHud.showAndDismiss(ProgressHudType.success, "Success!");
+        } else if (event is IProovEventFailure) {
+          ProgressHud.showAndDismiss(ProgressHudType.error, event.reason);
+        } else if (event is IProovEventError) {
+          ProgressHud.showAndDismiss(ProgressHudType.error, event.exception.toString());
+        }
+      });
     }
 
     IProov.launch(apiClient.baseUrl, token, options);
-  }
-
-  void handleResponse(IProovEvent response) {
-    if (response is IProovEventProgress) {
-      ProgressHud.show(ProgressHudType.progress, response.message);
-      ProgressHud.updateProgress(response.progress, response.message);
-    } else if (response is IProovEventSuccess) {
-      ProgressHud.showAndDismiss(ProgressHudType.success, "Success!");
-    } else if (response is IProovEventFailure) {
-      ProgressHud.showAndDismiss(ProgressHudType.error, response.reason);
-    } else if (response is IProovEventError) {
-      ProgressHud.showAndDismiss(ProgressHudType.error, response.exception.toString());
-    } else if (response is IProovEventConnecting) {
-      ProgressHud.show(ProgressHudType.loading, "Connecting...");
-    } else if (response is IProovEventConnected) {
-      ProgressHud.dismiss();
-    } else if (response is IProovEventCancelled) {
-      ProgressHud.dismiss();
-    }
   }
 
   Widget build(BuildContext context) {
@@ -115,8 +114,11 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   ),
                   onPressed: () {
-                    // UserID needs to change each time for enrol, unless already registered when can keep with verify
-                    getToken('${random.nextInt(1000000)}flutter-example@iproov.com', ClaimType.enrol, AssuranceType.genuinePresenceAssurance);
+                    String userId = Uuid().v1();  // Generate a random UUID as the User ID for testing purposes
+                    getTokenAndLaunchIProov(
+                        userId,
+                        ClaimType.enrol, // enrol or verify
+                        AssuranceType.genuinePresenceAssurance); // livenessAssurance or genuinePresenceAssurance
                   },
                 )
               ]
