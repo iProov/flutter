@@ -12,7 +12,7 @@ dependencies:
 
   http: ^0.12.1
 
-  iproov_sdk:
+  iproov_flutter:
     # When depending on this package from a real application you should use:
     #   iproov_sdk: ^x.y.z
     # See https://dart.dev/tools/pub/dependencies#version-constraints

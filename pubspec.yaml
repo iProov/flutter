@@ -1,8 +1,8 @@
-name: iproov_sdk
-description: A new flutter plugin project.
+name: iproov_flutter
+description: The iProov Biometrics SDK for Flutter
 version: 0.1.0
 author:
-homepage:
+homepage: https://github.com/iProov/flutter
 
 environment:
   sdk: ">=2.7.0 <3.0.0"

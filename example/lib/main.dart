@@ -4,7 +4,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 import 'package:bmprogresshud/bmprogresshud.dart';
-import 'package:iproov_sdk/iproov_sdk.dart';
+import 'package:iproov_flutter/iproov_flutter.dart';
 import 'package:iproov_sdk_example/api_client.dart';
 
 void main() {
@@ -48,7 +48,30 @@ class _MyHomePageState extends State<MyHomePage> {
   StreamSubscription<IProovEvent> subscription;
 
   void getTokenAndLaunchIProov(String userID, ClaimType claimType, AssuranceType assuranceType) async {
-    String token = await apiClient.getToken(userID, claimType, assuranceType);
+
+    String token;
+    try {
+      token = await apiClient.getToken(userID, claimType, assuranceType);
+    } on Exception catch (e) {
+
+      showDialog(context: context, builder: (context) {
+        return AlertDialog(
+          title: Text("Error"),
+          content: Text(e.toString()),
+          actions: [
+            TextButton(
+              child: Text("OK"),
+              onPressed: () {
+                Navigator.pop(context);
+              }
+            )
+          ]
+        );
+      });
+
+      return;
+    }
+
     Options options = Options();
 
     // You can just use Flutter/Dart Colors for all Color types

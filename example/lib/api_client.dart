@@ -34,7 +34,7 @@ class ApiClient {
         return token;
       } else {
         throw Exception(
-            'Failed to load token ${response.statusCode} ${response.body}');
+            'Error ${response.statusCode}: ${response.body}');
       }
     } on SocketException {
       throw Exception('No internet connection');

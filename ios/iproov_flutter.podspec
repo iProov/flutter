@@ -1,8 +1,12 @@
+require "yaml"
+
+pubspec = YAML.load_file('../pubspec.yaml')
+
 Pod::Spec.new do |s|
-  s.name             = 'iproov_sdk'
-  s.version          = '0.1.0-beta'
-  s.summary          = 'Flexible authentication for identity assurance'
-  s.homepage         = 'https://www.iproov.com/'
+  s.name             = pubspec["name"]
+  s.version          = pubspec["version"]
+  s.summary          = pubspec["description"]
+  s.homepage         = pubspec["homepage"]
   s.license          = { :type => 'commercial', :file => '../LICENSE.md' }
   s.author           = { 'iProov' => 'support@iproov.com' }
   s.source           = { :git => 'https://github.com/iProov/ios.git', :tag => s.version.to_s }
