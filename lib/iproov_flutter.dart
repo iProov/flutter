@@ -123,15 +123,15 @@ class Options {
 }
 
 class Ui {
-  GenuinePresenceUi genuinePresenceUi = new GenuinePresenceUi();
-  LivenessUi livenessUi = new LivenessUi();
+  GenuinePresenceUi genuinePresenceAssurance = new GenuinePresenceUi();
+  LivenessUi livenessAssurance = new LivenessUi();
   Filter filter = Filter.shaded;
   Color lineColor = Color(0xFF404040);
   Color backgroundColor = Color(0xFFFAFAFA);
   String title;
-  String fontPath;
-  String fontResource;
-  String logoImageResource;
+  String fontPath; // TODO: Not cross-platform
+  String fontResource; // TODO: Not cross-platform
+  String logoImageResource; // TODO: Not cross-platform
 
   // Drawable logoImageDrawable = null;
   bool enableScreenshots = false;
@@ -139,8 +139,8 @@ class Ui {
   int activityCompatibilityRequestCode = -1;
 
   Map<String, dynamic> toJson() => removeNulls({
-        'genuine_presence_assurance': genuinePresenceUi.toJson(),
-        'liveness_assurance': livenessUi.toJson(),
+        'genuine_presence_assurance': genuinePresenceAssurance.toJson(),
+        'liveness_assurance': livenessAssurance.toJson(),
         'filter': filterToString(filter),
         'line_color': colorToString(lineColor),
         'background_color': colorToString(backgroundColor),
@@ -204,14 +204,14 @@ class LivenessUi {
 
 class Network {
   bool disableCertificatePinning = false;
-  List<String> certificates;
-  int timeoutSecs = 10;
+  List<String> certificates;  // TODO: Not cross-platform
+  Duration timeout = Duration(seconds: 10);
   String path = "/socket.io/v2/";
 
   Map<String, dynamic> toJson() => removeNulls({
         'disable_certificate_pinning': disableCertificatePinning,
         'certificates': certificates,
-        'timeout': timeoutSecs,
+        'timeout': timeout.inSeconds,
         'path': path
       });
 }
