@@ -26,6 +26,7 @@ public final class SwiftIProovSDKPlugin: NSObject {
         case progress
         case reason
         case token
+        case frame
     }
 
     private enum SinkEventValue: String {
@@ -151,18 +152,30 @@ private extension SwiftIProovSDKPlugin {
             return [
                 SinkEventKey.event.rawValue: SinkEventValue.success.rawValue,
                 SinkEventKey.token.rawValue: result.token,
+                SinkEventKey.frame.rawValue: result.frame?.pngData()?.flutterData as Any
             ]
         case .cancelled:
             return [SinkEventKey.event.rawValue: SinkEventValue.cancelled.rawValue]
         case let .failure(result):
-            return [SinkEventKey.event.rawValue: SinkEventValue.failure.rawValue,
-                    SinkEventKey.token.rawValue: result.token,
-                    SinkEventKey.reason.rawValue: result.reason,
-                    SinkEventKey.feedbackCode.rawValue: result.feedbackCode]
+            return [
+                SinkEventKey.event.rawValue: SinkEventValue.failure.rawValue,
+                SinkEventKey.token.rawValue: result.token,
+                SinkEventKey.reason.rawValue: result.reason,
+                SinkEventKey.feedbackCode.rawValue: result.feedbackCode,
+                SinkEventKey.frame.rawValue: result.frame?.pngData()?.flutterData as Any
+            ]
         case let .error(error):
             return PluginError.iProovError(error).sinkError as [String: Any]
         @unknown default:
             return nil
         }
     }
+}
+
+private extension Data {
+
+    var flutterData: FlutterStandardTypedData? {
+        FlutterStandardTypedData(bytes: self)
+    }
+
 }

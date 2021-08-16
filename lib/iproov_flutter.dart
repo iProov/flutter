@@ -1,5 +1,8 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:image/image.dart' as Image; // TODO: Would be nice if we could move away from 3rd party image lib
 import 'dart:convert';
 
 abstract class IProovEvent {
@@ -10,10 +13,10 @@ abstract class IProovEvent {
   factory IProovEvent.progress(double progress, String message) =
       IProovEventProgress;
 
-  factory IProovEvent.success(String token) = IProovEventSuccess;
+  factory IProovEvent.success(String token, Image.Image frame) = IProovEventSuccess;
 
   factory IProovEvent.failure(
-      String token, String reason, String feedbackCode) = IProovEventFailure;
+      String token, String reason, String feedbackCode, Image.Image frame) = IProovEventFailure;
 
   factory IProovEvent.error(String reason, String message, String exception) =
       IProovEventError;
@@ -27,10 +30,17 @@ abstract class IProovEvent {
       case 'processing':
         return IProovEvent.progress(map['progress'], map['message']);
       case 'success':
-        return IProovEvent.success(map['token']);
+        Image.Image frame;
+        if (map['frame'] != null) {
+          frame = Image.decodePng(map['frame']);
+        }
+        return IProovEvent.success(map['token'], frame);
       case 'failure':
-        return IProovEvent.failure(
-            map['token'], map['reason'], map['feedbackCode']);
+        Image.Image frame;
+        if (map['frame'] != null) {
+          // frame = Image.
+        }
+        return IProovEvent.failure(map['token'], map['reason'], map['feedbackCode'], frame);
       case 'cancelled':
         return cancelled;
       case 'error':
@@ -61,16 +71,18 @@ class IProovEventProgress implements IProovEvent {
 
 class IProovEventSuccess implements IProovEvent {
   final String token;
+  final Image.Image frame;
 
-  const IProovEventSuccess(this.token);
+  const IProovEventSuccess(this.token, this.frame);
 }
 
 class IProovEventFailure implements IProovEvent {
   final String token;
   final String reason;
   final String feedbackCode;
+  final Image.Image frame;
 
-  const IProovEventFailure(this.token, this.reason, this.feedbackCode);
+  const IProovEventFailure(this.token, this.reason, this.feedbackCode, this.frame);
 }
 
 class IProovEventError implements IProovEvent {
