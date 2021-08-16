@@ -143,7 +143,8 @@ class Ui {
   String title;
   String fontPath; // TODO: Not cross-platform
   String fontResource; // TODO: Not cross-platform
-  String logoImageResource; // TODO: Not cross-platform
+  Image.Image logoImage;
+  // TODO: Close button tint color
 
   // Drawable logoImageDrawable = null;
   bool enableScreenshots = false;
@@ -159,7 +160,7 @@ class Ui {
         'title': title,
         'font_path': fontPath,
         'font_resource': fontResource,
-        'logo_image_resource': logoImageResource,
+        'logo_image': base64.encode(Image.encodePng(logoImage)),
         'enable_screenshots': enableScreenshots,
         'orientation': orientationToJson(orientation),
         'activity_compatibility_request_code': activityCompatibilityRequestCode
