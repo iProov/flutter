@@ -39,30 +39,29 @@ public final class SwiftIProovSDKPlugin: NSObject {
     }
 
     private enum PluginError {
-        case errorFromIProovSDK(LocalizedError)
-        case launchArgumentsMissing
-        case streamURLArgumentMissingOrEmpty
-        case tokenArgumentMissingOrEmpty
+        case noArguments
+        case missingArgument(String)
+        case iProovError(IProovError)
         case invalidOptions
 
         var sinkError: [String: String?] {
-            let arg: String
+
+            let errorMessage: String
+
             switch self {
-            case let .errorFromIProovSDK(error):
-                arg = error.errorDescription ?? ""
-            case .launchArgumentsMissing:
-                arg = SwiftIProovSDKPlugin.FlutterMethod.launch.rawValue
-            case .streamURLArgumentMissingOrEmpty:
-                arg = SwiftIProovSDKPlugin.LaunchArguments.streamingURL.rawValue
-            case .tokenArgumentMissingOrEmpty:
-                arg = SwiftIProovSDKPlugin.LaunchArguments.token.rawValue
+            case .noArguments:
+                errorMessage = "No arguments provided"
+            case let .missingArgument(arg):
+                errorMessage = "\(arg) argument missing or empty"
+            case let .iProovError(error):
+                errorMessage = error.localizedDescription
             case .invalidOptions:
-                arg = "" // TODO: This needs fixing
+                errorMessage = "Invalid options"
             }
 
             return [
                 SwiftIProovSDKPlugin.SinkEventKey.event.rawValue: SwiftIProovSDKPlugin.SinkEventValue.error.rawValue,
-                SwiftIProovSDKPlugin.SinkEventKey.exception.rawValue: "iProov SDK \(arg) arguments missing or empty",
+                SwiftIProovSDKPlugin.SinkEventKey.exception.rawValue: errorMessage,
             ]
         }
     }
@@ -108,15 +107,15 @@ extension SwiftIProovSDKPlugin: FlutterStreamHandler {
 private extension SwiftIProovSDKPlugin {
     func handleLaunch(arguments: Any?, launchError: (Any) -> Void) {
         guard let arguments = arguments as? [String: String] else {
-            return launchError(PluginError.launchArgumentsMissing.sinkError)
+            return launchError(PluginError.noArguments.sinkError)
         }
 
         guard let streamingURL = arguments[LaunchArguments.streamingURL.rawValue], !streamingURL.isEmpty else {
-            return launchError(PluginError.streamURLArgumentMissingOrEmpty.sinkError)
+            return launchError(PluginError.missingArgument(LaunchArguments.streamingURL.rawValue).sinkError)
         }
 
         guard let token = arguments[LaunchArguments.token.rawValue], !token.isEmpty else {
-            return launchError(PluginError.tokenArgumentMissingOrEmpty.sinkError)
+            return launchError(PluginError.missingArgument(LaunchArguments.token.rawValue).sinkError)
         }
 
         let options: Options
@@ -161,7 +160,7 @@ private extension SwiftIProovSDKPlugin {
                     SinkEventKey.reason.rawValue: result.reason,
                     SinkEventKey.feedbackCode.rawValue: result.feedbackCode]
         case let .error(error):
-            return PluginError.errorFromIProovSDK(error).sinkError as [String: Any]
+            return PluginError.iProovError(error).sinkError as [String: Any]
         @unknown default:
             return nil
         }
