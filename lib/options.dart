@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:ui';
 
-import 'package:image/image.dart' as Image; // TODO: Would be nice if we could move away from 3rd party image lib
+import 'package:image/image.dart' hide Color; // TODO: Would be nice if we could move away from 3rd party image lib
 import 'package:iproov_flutter/enums.dart';
 
 class Options {
@@ -25,8 +25,8 @@ class UiOptions {
   String? title;
   String? fontPath; // TODO: Not cross-platform
   String? fontResource; // TODO: Not cross-platform
-  Image.Image? logoImage;
-  Image.Image? closeButtonImage; // TODO: Not yet supported in iOS SDK
+  Image? logoImage;
+  Image? closeButtonImage; // TODO: Not yet supported in iOS SDK
   Color? closeButtonTintColor;
 
   // Drawable logoImageDrawable = null;
@@ -51,11 +51,11 @@ class UiOptions {
     });
 
     if (logoImage != null) {
-      map['logo_image'] = base64.encode(Image.encodePng(logoImage!));
+      map['logo_image'] = base64.encode(encodePng(logoImage!));
     }
 
     if (closeButtonImage != null) {
-      map['close_button_image'] = base64.encode(Image.encodePng(closeButtonImage!));
+      map['close_button_image'] = base64.encode(encodePng(closeButtonImage!));
     }
 
     return map;

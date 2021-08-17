@@ -21,7 +21,7 @@ class IProov {
 
   static Future<dynamic> launch(String streamingUrl, String token, [Options? options]) {
     return _iProovMethodChannel
-        .invokeMethod('launch', <String, dynamic>{
+        .invokeMethod('launch', {
           'streamingURL': streamingUrl,
           'token': token,
           'optionsJSON': json.encode(options)
