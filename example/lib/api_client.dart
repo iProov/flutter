@@ -14,8 +14,8 @@ class ApiClient {
 
   ApiClient(this.baseUrl, this.apiKey, this.secret);
 
-  Future<String> getToken(
-      String userId, ClaimType claimType, AssuranceType assuranceType) async {
+  Future<String> getToken(AssuranceType assuranceType, ClaimType claimType, String userId) async {
+
     try {
       final response = await http.post(
         baseUrl + 'claim/' + claimType.stringValue + '/token',
