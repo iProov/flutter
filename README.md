@@ -47,6 +47,10 @@ dependencies:
       url: git@github.com:iProov/flutter.git
 ```
 
+### iOS installation
+
+You must also add a `NSCameraUsageDescription` to your iOS app's Info.plist, with the reason why your app requires camera access (e.g. “To iProov you in order to verify your identity.”)
+
 ## Get started
 
 To use iProov to enrol or verify a user it is necessary to follow these steps:
