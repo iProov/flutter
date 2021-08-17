@@ -14,7 +14,7 @@
 
 ## Introduction
 
-The iProov Biometrics Flutter SDK wraps iProov's existing native [iOS](https://github.com/iProov/ios) (Swift) and [Android](https://github.com/iProov/android) (Java) SDKs behind a Dart interface for use from within your Flutter app.
+The iProov Biometrics Flutter SDK wraps iProov's native [iOS](https://github.com/iProov/ios) (Swift) and [Android](https://github.com/iProov/android) (Java) SDKs behind a Dart interface for use from within your Flutter app.
 
 We also provide an API Client written in Dart to call our [REST API v2](https://eu.rp.secure.iproov.me/docs.html) from a Flutter app, which can be used from your Flutter app to request tokens directly from the iProov API (note that this is not a secure way of getting tokens, and should only be used for demo/debugging purposes).
 
@@ -113,7 +113,7 @@ IProov.launch(streamingUrl, token, options);
 -  [iProov Biometrics iOS SDK documentation](https://github.com/iProov/ios)
 -  [Android Biometrics Android SDK documentation](https://github.com/iProov/android)
 
-which provide comprehensive details about the available customization options and other important details regarding the iOS SDK usage.
+These repositories provide comprehensive documentation about the available customization options and other important details regarding the SDK usage.
 
 ## Options
 
@@ -121,11 +121,11 @@ The `Options` class allows iProov to be customized in various ways.
 
 Most of these options are common to both Android and iOS, however, some are platform-specific (for example, iOS has a close button but Android does not).
 
-For full documentation, please read the respective [Android](https://github.com/iProov/android#options) and [iOS](https://github.com/iProov/ios#options) native SDK documentation.
+For full documentation, please read the respective [iOS](https://github.com/iProov/ios#options) and [Android](https://github.com/iProov/android#options) native SDK documentation.
 
 A summary of the support for the various SDK options in Flutter is summarised below:
 
-| Syntax | iOS | Android |
+| Option | iOS | Android |
 | --- | --- | --- |
 | **`Options.ui.`** |  |  |
 | `filter` | ✅ | ✅ |
