@@ -18,6 +18,13 @@ The iProov Biometrics Flutter SDK wraps iProov's existing native [iOS](https://g
 
 We also provide an API Client written in Dart to call our [REST API v2](https://eu.rp.secure.iproov.me/docs.html) from a Flutter app, which can be used from your Flutter app to request tokens directly from the iProov API (note that this is not a secure way of getting tokens, and should only be used for demo/debugging purposes).
 
+### Requirements
+
+- Dart SDK 2.12 and above
+- Flutter SDK 1.20 and above
+- iOS 10.0 and above
+- Android API Level 21 (Android 5 Lollipop) and above
+
 ### Preview
 
 The iProov Biometrics Flutter SDK is currently in preview, which means that there may be missing/broken functionality, and the API is still subject to change. Please [contact us](mailto:support@iproov.com) to provide your feedback regarding the iProov Biometrics Flutter SDK Preview.
