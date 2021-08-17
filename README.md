@@ -1,5 +1,5 @@
 ![iProov: Flexible authentication for identity assurance](images/banner.jpg)
-# iProov Biometrics Flutter SDK Plugin v0.1.0
+# iProov Biometrics Flutter SDK (Preview)
 
 ## Table of contents
 
@@ -9,29 +9,28 @@
 - [Installation](#installation)
 - [Get started](#get-started)
 - [Options](#options)
-- [String localization & customization](#string-localization--customization)
-- [Handling failures & errors](#handling-failures--errors)
-- [Alternative face detectors](#alternative-face-detectors)
 - [Sample code](#sample-code)
 - [Help & support](#help--support)
 
 ## Introduction
 
-The iProov Flutter SDK Plugin enables you to integrate iProov into your Flutter project and deploy onto Android and iOS platforms with native support for iProov Biometric features behind a Dart interface.
+The iProov Biometrics Flutter SDK wraps iProov's existing native [iOS](https://github.com/iProov/ios) (Swift) and [Android](https://github.com/iProov/android) (Java) SDKs behind a Dart interface for use from within your Flutter app.
 
-It supports both **Genuine Presence Assurance** and **Liveness Assurance** methods of face verification. Which method gets used depends on the token request and response. See [Get started](#get-started).
+We also provide an API Client written in Dart to call our [REST API v2](https://eu.rp.secure.iproov.me/docs.html) from a Flutter app, which can be used from your Flutter app to request tokens directly from the iProov API (note that this is not a secure way of getting tokens, and should only be used for demo/debugging purposes).
+
+### Preview
+
+The iProov Biometrics Flutter SDK is currently in preview, which means that there may be missing/broken functionality, and the API is still subject to change. Please [contact us](mailto:support@iproov.com) to provide your feedback regarding the iProov Biometrics Flutter SDK Preview.
 
 ## Repository contents
 
 The iProov Flutter SDK is provided via this repository, which contains the following:
 
 - **README.md** - This document
-- **LICENSE.txt** - License for this code
-- **LICENSES.md** - References to the iProov native SDKs' LICENSE.md files indicating third party licenses
-- **example** - Folder containing a demonstration Flutter App containing a Dart iProov Api Client implementation (for demonstrations only)
+- **example** - A demonstration Flutter App along with the Dart iProov API Client
 - **lib** - Folder containing the Flutter (Dart) side of the SDK Plugin
-- **android** - Folder containing the Android (Kotlin) side of the SDK Plugin
-- **ios** - Folder containing the iOS (Swift) side of the SDK Plugin
+- **android** - Folder containing the Android (Kotlin) native side of the SDK Plugin
+- **ios** - Folder containing the iOS (Swift) native side of the SDK Plugin
 
 ## Registration
 
@@ -39,11 +38,11 @@ You can obtain API credentials by registering on the [iProov Partner Portal](htt
 
 ## Installation
 
-Add the following to your project's `pubspec.yml` file. As you can see, our plugin is published via our public GitHub repository.
+Add the following to your project's `pubspec.yml` file:
 
 ```
 dependencies:
-  iproov_sdk: ^0.1.0
+  iproov_flutter: ^0.1.0
     git:
       url: git@github.com:iProov/flutter.git
 ```
@@ -52,138 +51,122 @@ dependencies:
 
 To use iProov to enrol or verify a user it is necessary to follow these steps:
 
-### Obtain a token
-
-Before being able to launch iProov, you need to get a token to iProov against. There are 2 different token types:
-
-1. A **verify** token - for logging-in an existing user
-2. An **enrol** token - for registering a new user
-
-In a production app, you normally would want to obtain the token via a server-to-server back-end call.
-For the purposes of on-device demos/testing, we provide Dart sample code for obtaining tokens via [iProov API v2](https://eu.rp.secure.iproov.me/docs.html) in the `api-client.dart` file inside the example app.
-
-### Launching and handling responses
-
-Once you have a valid token, you can `launch()` an iProov capture using the following:
+Once you have a valid token (obtained via the Dart API client or your own backend-to-backend call), you can `launch()` an iProov capture using the following:
 
 ```dart
-import 'package:iproov_sdk/iproov_sdk.dart';
+import 'package:iproov_flutter/iproov_flutter.dart';
 
-IProov.events.listen(handleResponse);
-IProov.launch(url, token, options);
+IProov.events.listen((event) {
+  if (event is IProovEventConnecting) {
+	// The SDK is connecting to the server. You should provide an indeterminate progress indicator
+	// to let the user know that the connection is taking place.
+  
+  } else if (event is IProovEventConnected) {
+	// The SDK has connected, and the iProov user interface will now be displayed. You should hide
+	// any progress indication at this point.
+  
+  } else if (event is IProovEventProgress) {
+	// The SDK will update your app with the progress of streaming to the server and authenticating
+	// the user. This will be called multiple time as the progress updates.
+  
+  } else if (event is IProovEventSuccess) {
+	// The user was successfully verified/enrolled and the token has been validated.
+	// You can access the following properties:
+	var token = result.token; // The token passed back will be the same as the one passed in to the original call
+	var frame = result.frame; // An optional image containing a single frame of the user, if enabled for your service provider
+  
+  } else if (event is IProovEventCancelled) {
+	// The user cancelled iProov, either by pressing the close button at the top right, or sending
+	// the app to the background.
+  
+  } else if (event is IProovEventFailure) {
+	// The user was not successfully verified/enrolled, as their identity could not be verified,
+	// or there was another issue with their verification/enrollment. A reason (as a string)
+	// is provided as to why the claim failed, along with a feedback code from the back-end.
+	var feedbackCode = event.feedbackCode;
+	var reason = event.reason;
+  
+  } else if (event is IProovEventError) {
+	// The user was not successfully verified/enrolled due to an error (e.g. lost internet connection).
+	// You will be provided with an NSError. You can check the error code against the IPErrorCode constants
+	// to determine the type of error.
+	// It will be called once, or never.
+  }
+});
+
+IProov.launch(streamingUrl, token, options);
 ```
 
-The `launch()` function takes three parameters (the third is optional):
+👉 You should now familiarise yourself with the following resources:
 
-1. `url` - this is the url of the server handling your authentication
-2. `token` - was obtained from an initial call via your server (or using `api-client.dart` for testing ONLY)
-3. `options` - these are all the configurations that can be applied to customize iProov. You can read up on the way they are presented in Dart [below](#options), and in greater detail in the respective [Android](https://github.com/iProov/android) and [iOS](https://github.com/iProov/ios) native SDK documentation.
+-  [iProov Biometrics iOS SDK documentation](https://github.com/iProov/ios)
+-  [Android Biometrics Android SDK documentation](https://github.com/iProov/android)
 
-The `events` field represents a `Stream<IProovEvent>` indicating the progress of the IProov scan.
-In the example, a function called `handleResponse` is used to handle all the responses. There are many types of response and each one is represented by a subclass of `IProovEvent`.
-
-### Responses
-
-The `IProovEvent` subclasses represent the various states an iProov capture goes through from `launch()` (making connections), via the UI (showing progress), and after the UI has finished (more progress then a single terminal event).
-
-After `launch()` iProov goes through two stages before displaying the UI and these are repesented by `IProovEventConnecting` and then `IProovEventConnected`.
-
-Once the UI is displayed, iProov begins sending a sequence of `IProovEventProgress` events. These have a `progress` value from 0 to 1 and a human readable `message`. These events can continue after the UI has ended.
-
-iProov can terminate in one of four ways:
-
-1. `IProovEventCancelled` - the user cancelled, by pressing back or moving to another app.
-2. `IProovEventError` - if there was an unrecoverable error such as a network failure.
-3. `IProovEventFailure` - if the iProov was unsuccessful for many reasons. These are outlined in detail in the respective [Android](https://github.com/iProov/android#handling-failures--errors) and [iOS](https://github.com/iProov/ios#handling-failures--errors) native SDK documentation. This usually means that the face was either not verified or the conditions were not met to determine that a real face was seen.
-4. `IProovEventSuccess` - when iProov successfully accepts a new face or verifies it as a real match.
-
-### Important notes
-
-> **⚠️ SECURITY NOTICE:** You should never use iProov as a local authentication method. You cannot rely on the fact that the success result was returned to prove that the user was authenticated or enrolled successfully (it is possible the iProov process could be manipulated locally by a malicious user). You can treat the success callback as a hint to your app to update the UI, etc. but you must always independently validate the token server-side (using the validate API call) before performing any authenticated user actions.
+which provide comprehensive details about the available customization options and other important details regarding the iOS SDK usage.
 
 ## Options
 
-The `Options` allow iProov to be customized: for example by changing the UI (colors, fonts, icon, face representation, scan line), defining the network access, selecting a [face detector](#alternative-face-detectors), etc.
+The `Options` class allows iProov to be customized in various ways.
 
-Most of these options are common to both Android and iOS, however, some are platform specific (for example Android resources). For a full description, please read the respective [Android](https://github.com/iProov/android#options) and [iOS](https://github.com/iProov/ios#options) native SDK documentation.
+Most of these options are common to both Android and iOS, however, some are platform-specific (for example, iOS has a close button but Android does not).
 
-### Android
+For full documentation, please read the respective [Android](https://github.com/iProov/android#options) and [iOS](https://github.com/iProov/ios#options) native SDK documentation.
 
-These examples are in the example app and demonstrate the differences in Android handling of options.
+A summary of the support for the various SDK options in Flutter is summarised below:
 
-```dart
-// For font assets in the android/app/src/main/assets folder we just give the full name plus extension
-options.ui.fontPath = "montserrat_regular.ttf";
+| Syntax | iOS | Android |
+| --- | --- | --- |
+| **`Options.ui.`** |  |  |
+| `filter` | ✅ | ✅ |
+| `lineColor` | ✅ | ✅ | 
+| `backgroundColor` | ✅ | ✅ |
+| `title` | ✅ | ✅ |
+| `fontPath` |  | ⚠️ (1) |
+| `fontResource` |  | ⚠️ (1) |
+| `font` | ⚠️ (1) |  |
+| `logoImage` | ✅ | ✅ |
+| `closeButtonImage` | ✅ |  |
+| `closeButtonTintColor` | ✅ |  |
+| `enableScreenshots` |  | ✅  |
+| `orientation` |  | ✅ |
+| `activityCompatibilityRequestCode` |  | ✅ |
+| **`Options.ui.genuinePresenceAssurance.`** |  |  |
+| `autoStartDisabled` | ✅ | ✅ |
+| `notReadyTintColor` | ✅ | ✅ |
+| `readyTintColor` | ✅ | ✅ |
+| `progressBarColor` | ✅ | ✅ |
+| **`Options.ui.livenessAssurance.`** |  |  |
+| `primaryTintColor` | ✅ | ✅ |
+| `secondaryTintColor` | ✅ | ✅ |
+| **`Options.network.`** |  |  |
+| `certificates` | ⚠️ (2) | ⚠️ (2) |
+| `timeout` | ✅ | ✅ |
+| `path` | ✅ | ✅ |
+| **`Options.capture.`** |  |  |
+| `camera` |   | ✅ |
+| `faceDetector` |  | ✅ |
+| **`Options.capture.genuinePresenceAssurance.`** |  |  |
+| `maxPitch` | ✅ (3) | ✅ (3) |
+| `maxYaw` | ✅ (3) | ✅ (3) |
+| `maxRoll` | ✅ (3) | ✅ (3) |
 
-// For font resources in the android/app/src/main/res/font folder we just give the name without extension
-options.ui.fontResource = "montserrat_bold";
+(1) There are currently different ways of setting fonts on iOS & Android. Fonts should be added to the respective iOS app bundle or Android project (`android/app/src/main/res/font`) and can then be set by name via this API. This is due to be revised in a future release.
 
-// For logo, only logoImageResource is available, in the android/app/src/main/res/drawable folder we just give the name without extension
-options.ui.logoImageResource = "ic_launcher";
+(2) The certificates must be added to the respective iOS app bundle or Android project (`android/app/src/main/res/raw`) and the respective native option can then be set for the current platform (via `Platform.isAndroid` or `Platform.isIOS`). This is set to be improved in a future release.
 
-// For certificates you add them to the android/app/src/main/res/raw folder and reference them here like below (no extension)
-options.network.certificates = [ "raw/customer__certificate" ];
-
-// You can just use Flutter/Dart Colors for all Color types
-options.ui.lineColor = Colors.red;
-```
-
-To address Android specific options, such as font and icon resources, we have to do something different in Flutter. For example, instead of passing an `R` integer such as `R.font.montserrat_bold`, we just pass the String `"montserrat_bold"` into `options.ui.fontResource` and this then references a font in the `res/font/` folder of the android module of your app. 
-
-Similarly for Drawables, for example, `options.ui.logoImageResource = "ic_launcher";`
-
-When using `options.ui.fontPath` then the ttf file will be expected in the `android/app/src/main/assets` folder of the android module of your app. However, this time the extension name is required: `options.ui.fontPath = "montserrat_regular.ttf";`
-
-Similary for the certificates, although no extension is required. Since there can be many certificates then an array of Strings is expected. Certificate files are expected in the `android/app/src/main/res/raw` folder of the android module of your app. For example, `options.network.certificates = [ "raw/customer__certificate" ];`
-
-Colors are all Flutter based. For example, `options.ui.lineColor = Colors.red;`
-
-## String localization & customization
-
-Please read the respective [Android](https://github.com/iProov/android#string-localization--customization) and [iOS](https://github.com/iProov/ios#localization) native SDK documentation.
-
-### Android
-
-With Android, any alternate strings.xml will need to be put into the android module of your app. 
-
-## Handling failures & errors
-
-Please read the respective [Android](https://github.com/iProov/android#handling-failures--errors) and [iOS](https://github.com/iProov/ios#handling-failures--errors) native SDK documentation.
-
-### Android
-
-In Android, the `IProovEventError` event is triggered by an exception represented by a Java `Exception` called `IProovException`. This cannot readily be passed over to Dart and so only the String representation is provided in the field `exception`.
-
-## Alternative face detectors
-
-### Android
-
-The Android SDK supports a classic face detector built in and two others: Blazeface and MLKit - to find out more, and to help you decide whether to use them over the classic, have a look at the [Android documentation](https://github.com/iProov/android-sdk#alternative-face-detectors).
-
-To add MLKit, you need to add this to the build.gradle in the android module of your app.
-
-```
-dependencies {
-    implementation "com.iproov.sdk:iproov-mlkit:6.3.1"
-}
-```
-
-Similarly to add Blazeface, you need to add this to the build.gradle in the android module of your app.
-
-```
-dependencies {
-    implementation "com.iproov.sdk:iproov-blazeface:6.3.1"
-}
-```
-
-Once you have added one or both of these you can select which to use in the [Options](#options).
+(3) This is an advanced option and not recommended for general usage. If you wish to use this option, contact iProov for for further details.
 
 ## Sample code
 
-For an out-of-the-box demonstration, the `example` app in the repo shows how to use iProov. It also includes a Dart version of our Api Client, which allows the client (under strictly non-production apps) to obtain the relevant token to start an iProov Capture - in a production app the Api Client functionality should be implemented on your servers for secure server to server communications. The client is thus never considered to be secure.
+For a simple iProov experience that is ready to run out-of-the-box, check out the Flutter example project which also makes use of the Dart API Client.
+
+> NOTE: iProov is not supported on the iOS or Android simulator, you must use a physical device in order to iProov.
 
 ## Help & support
 
-You may find your question is answered in our FAQs: [Android](https://github.com/iProov/android/wiki/Frequently-Asked-Questions) [iOS](https://github.com/iProov/ios/wiki/Frequently-Asked-Questions) or one of our other Wiki pages: [Android](https://github.com/iProov/android/wiki) [iOS](https://github.com/iProov/ios/wiki).
+You may find your question is answered in the documentation of our native SDKs:
+
+- iOS - [Documentation](https://github.com/iProov/ios), [FAQs](https://github.com/iProov/ios/wiki/Frequently-Asked-Questions)
+- Android - [Documentation](https://github.com/iProov/android), [FAQs](https://github.com/iProov/android/wiki/Frequently-Asked-Questions)
 
 For further help with integrating the SDK, please contact [support@iproov.com](mailto:support@iproov.com).
