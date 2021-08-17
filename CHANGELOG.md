@@ -2,5 +2,7 @@
 
 ## 0.1
 
-* iOS 8.2.0
-* Android 6.3.1
+Initial preview release
+
+* iOS SDK 9.0.1
+* Android SDK 7.0.2
