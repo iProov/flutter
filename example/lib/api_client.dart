@@ -19,7 +19,7 @@ class ApiClient {
 
   Future<String> getToken(AssuranceType assuranceType, ClaimType claimType, String userId) async {
     try {
-      final response = await http.post('${baseUrl}claim/${claimType.stringValue}/token',
+      final response = await http.post('${baseUrl.withSlash}claim/${claimType.stringValue}/token',
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'api_key': apiKey,
@@ -43,7 +43,7 @@ class ApiClient {
 
   Future<String> enrolPhoto(String token, Image image, PhotoSource source) async {
     try {
-      var request = http.MultipartRequest('POST', Uri.parse('${baseUrl}claim/enrol/image'))
+      var request = http.MultipartRequest('POST', Uri.parse('${baseUrl.withSlash}claim/enrol/image'))
         ..fields['api_key'] = apiKey
         ..fields['secret'] = secret
         ..fields['rotation'] = "0"
@@ -83,7 +83,7 @@ enum PhotoSource {
   opticalID
 }
 
-extension PhotoSourceToString on PhotoSource {
+extension _PhotoSourceToString on PhotoSource {
   String get stringValue {
     if (this == PhotoSource.electronicID) {
       return "eid";
@@ -98,7 +98,7 @@ enum ClaimType {
   verify
 }
 
-extension ClaimTypeToString on ClaimType {
+extension _ClaimTypeToString on ClaimType {
   String get stringValue => toString().split('.').last;
 }
 
@@ -107,7 +107,7 @@ enum AssuranceType {
   livenessAssurance
 }
 
-extension AssuranceTypeToString on AssuranceType {
+extension _AssuranceTypeToString on AssuranceType {
   String get stringValue {
     if (this == AssuranceType.genuinePresenceAssurance)
       return 'genuine_presence';
@@ -115,4 +115,8 @@ extension AssuranceTypeToString on AssuranceType {
       return 'liveness';
     }
   }
+}
+
+extension _StringSlash on String {
+  String get withSlash => endsWith("/") ? this : this + "/";
 }
