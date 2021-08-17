@@ -18,7 +18,7 @@ class ApiClient {
       String userId, ClaimType claimType, AssuranceType assuranceType) async {
     try {
       final response = await http.post(
-        baseUrl + 'claim/' + claimType.value() + '/token',
+        baseUrl + 'claim/' + claimType.stringValue + '/token',
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(<String, String>{
           'api_key': apiKey,
@@ -48,9 +48,7 @@ enum ClaimType {
 }
 
 extension ClaimTypeToString on ClaimType {
-  String value() {
-    return this.toString().split('.').last;
-  }
+  String get stringValue => toString().split('.').last;
 }
 
 enum AssuranceType {
