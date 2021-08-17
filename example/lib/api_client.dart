@@ -18,9 +18,9 @@ class ApiClient {
 
     try {
       final response = await http.post(
-        baseUrl + 'claim/' + claimType.stringValue + '/token',
+        '$baseUrl/claim/${claimType.stringValue}/token',
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode(<String, String>{
+        body: jsonEncode({
           'api_key': apiKey,
           'secret': secret,
           'resource': 'com.iproov.flutter',
@@ -29,13 +29,12 @@ class ApiClient {
           'assurance_type': assuranceType.value()
         }),
       );
+
       if (response.statusCode == 200) {
         var token = jsonDecode(response.body)['token'];
         return token;
-      } else {
-        throw Exception(
-            'Error ${response.statusCode}: ${response.body}');
-      }
+      } else throw Exception('Error ${response.statusCode}: ${response.body}');
+
     } on SocketException {
       throw Exception('No internet connection');
     }
