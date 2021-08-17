@@ -19,14 +19,12 @@ class IProov {
       .receiveBroadcastStream()
       .map((result) => IProovEvent.fromMap(result));
 
-  static Future<dynamic> launch(String streamingUrl, String token, [Options? options]) {
-    return _iProovMethodChannel
-        .invokeMethod('launch', {
-          'streamingURL': streamingUrl,
-          'token': token,
-          'optionsJSON': json.encode(options)
-        });
-  }
+  static Future<dynamic> launch(String streamingUrl, String token, [Options? options]) => _iProovMethodChannel
+      .invokeMethod('launch', {
+        'streamingURL': streamingUrl,
+        'token': token,
+        'optionsJSON': json.encode(options)
+      });
 
   // Private constructor
   IProov._();

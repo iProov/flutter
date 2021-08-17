@@ -1,4 +1,4 @@
-import 'package:image/image.dart'; // TODO: Would be nice if we could move away from 3rd party image lib
+import 'package:image/image.dart';
 
 abstract class IProovEvent {
   static const connecting = const IProovEventConnecting();

@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:ui';
 
-import 'package:image/image.dart' hide Color; // TODO: Would be nice if we could move away from 3rd party image lib
+import 'package:image/image.dart' hide Color;
 import 'package:iproov_flutter/enums.dart';
 
 class Options {
@@ -25,6 +25,7 @@ class UiOptions {
   String? title;
   String? fontPath; // TODO: Not cross-platform
   String? fontResource; // TODO: Not cross-platform
+  String? font;  // TODO: Not cross-platform
   Image? logoImage;
   Image? closeButtonImage; // TODO: Not yet supported in iOS SDK
   Color? closeButtonTintColor;
@@ -44,6 +45,7 @@ class UiOptions {
       'title': title,
       'font_path': fontPath,
       'font_resource': fontResource,
+      'font': font,
       'enable_screenshots': enableScreenshots,
       'orientation': orientation?.stringValue,
       'activity_compatibility_request_code': activityCompatibilityRequestCode,
@@ -102,12 +104,12 @@ class NetworkOptions {
 class CaptureOptions {
   GenuinePresenceAssuranceCaptureOptions genuinePresenceAssurance = new GenuinePresenceAssuranceCaptureOptions();
   Camera? camera;
-  FaceDetector faceDetector = FaceDetector.auto;
+  FaceDetector? faceDetector;
 
   Map<String, dynamic> toJson() => removeNulls({
     'genuine_presence_assurance': genuinePresenceAssurance.toJson(),
     'camera': camera?.stringValue,
-    'face_detector': faceDetector.stringValue
+    'face_detector': faceDetector?.stringValue
   });
 }
 
