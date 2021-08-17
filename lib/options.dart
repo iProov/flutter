@@ -100,20 +100,27 @@ class NetworkOptions {
 }
 
 class CaptureOptions {
+  GenuinePresenceAssuranceCaptureOptions genuinePresenceAssurance = new GenuinePresenceAssuranceCaptureOptions();
+  Camera? camera;
+  FaceDetector faceDetector = FaceDetector.auto;
+
+  Map<String, dynamic> toJson() => removeNulls({
+    'genuine_presence_assurance': genuinePresenceAssurance.toJson(),
+    'camera': camera?.stringValue,
+    'face_detector': faceDetector.stringValue
+  });
+}
+
+class GenuinePresenceAssuranceCaptureOptions {
   double? maxPitch;
   double? maxYaw;
   double? maxRoll;
-  Camera? camera;
-  FaceDetector faceDetector = FaceDetector.auto;
 
   Map<String, dynamic> toJson() => removeNulls({
     'max_pitch': maxPitch,
     'max_yaw': maxYaw,
     'max_roll': maxRoll,
-    'camera': camera?.stringValue,
-    'face_detector': faceDetector.stringValue
   });
-
 }
 
 extension ColorToHex on Color {
