@@ -38,7 +38,7 @@ abstract class IProovEvent {
       case 'failure':
         Image.Image frame;
         if (map['frame'] != null) {
-          // frame = Image.
+          frame = Image.decodePng(map['frame']);
         }
         return IProovEvent.failure(map['token'], map['reason'], map['feedbackCode'], frame);
       case 'cancelled':
@@ -123,20 +123,20 @@ String colorToString(Color color) {
 }
 
 class Options {
-  Ui ui = new Ui();
-  Network network = new Network();
-  Capture capture = new Capture();
+  UiOptions ui = new UiOptions();
+  NetworkOptions network = new NetworkOptions();
+  CaptureOptions capture = new CaptureOptions();
 
   Map<String, dynamic> toJson() => {
-        'ui': ui.toJson(),
-        'network': network.toJson(),
-        'capture': capture.toJson()
-      };
+    'ui': ui.toJson(),
+    'network': network.toJson(),
+    'capture': capture.toJson()
+  };
 }
 
-class Ui {
-  GenuinePresenceUi genuinePresenceAssurance = new GenuinePresenceUi();
-  LivenessUi livenessAssurance = new LivenessUi();
+class UiOptions {
+  GenuinePresenceAssuranceUiOptions genuinePresenceAssurance = new GenuinePresenceAssuranceUiOptions();
+  LivenessAssuranceUiOptions livenessAssurance = new LivenessAssuranceUiOptions();
   Filter filter = Filter.shaded;
   Color lineColor = Color(0xFF404040);
   Color backgroundColor = Color(0xFFFAFAFA);
@@ -144,29 +144,42 @@ class Ui {
   String fontPath; // TODO: Not cross-platform
   String fontResource; // TODO: Not cross-platform
   Image.Image logoImage;
-  // TODO: Close button tint color
+  Image.Image closeButtonImage; // TODO: Not yet supported in iOS SDK
+  Color closeButtonTintColor = Color(0xFFFFFFFF);
 
   // Drawable logoImageDrawable = null;
   bool enableScreenshots = false;
   Orientation orientation = Orientation.portrait;
   int activityCompatibilityRequestCode = -1;
 
-  Map<String, dynamic> toJson() => removeNulls({
-        'genuine_presence_assurance': genuinePresenceAssurance.toJson(),
-        'liveness_assurance': livenessAssurance.toJson(),
-        'filter': filterToString(filter),
-        'line_color': colorToString(lineColor),
-        'background_color': colorToString(backgroundColor),
-        'title': title,
-        'font_path': fontPath,
-        'font_resource': fontResource,
-        'logo_image': base64.encode(Image.encodePng(logoImage)),
-        'enable_screenshots': enableScreenshots,
-        'orientation': orientationToJson(orientation),
-        'activity_compatibility_request_code': activityCompatibilityRequestCode
-      });
+  Map<String, dynamic> toJson() {
+    var map = removeNulls({
+      'genuine_presence_assurance': genuinePresenceAssurance.toJson(),
+      'liveness_assurance': livenessAssurance.toJson(),
+      'filter': filterToString(filter),
+      'line_color': colorToString(lineColor),
+      'background_color': colorToString(backgroundColor),
+      'title': title,
+      'font_path': fontPath,
+      'font_resource': fontResource,
+      'enable_screenshots': enableScreenshots,
+      'orientation': orientationToString(orientation),
+      'activity_compatibility_request_code': activityCompatibilityRequestCode,
+      'close_button_tint_color': colorToString(closeButtonTintColor),
+    });
 
-  static String orientationToJson(Orientation orientation) {
+    if (logoImage != null) {
+      map['logo_image'] = base64.encode(Image.encodePng(logoImage));
+    }
+
+    if (closeButtonImage != null) {
+      map['close_button_image'] = base64.encode(Image.encodePng(closeButtonImage));
+    }
+
+    return map;
+  }
+
+  static String orientationToString(Orientation orientation) {
     switch (orientation) {
       case Orientation.portrait:
         return "portrait";
@@ -191,10 +204,10 @@ class Ui {
   }
 }
 
-class GenuinePresenceUi {
+class GenuinePresenceAssuranceUiOptions {
   bool autoStartDisabled = false;
-  Color notReadyTintColor = Color(0xFFf5a623);
-  Color readyTintColor = Color(0xFF01bf46);
+  Color notReadyTintColor = Color(0xFFF5A623);
+  Color readyTintColor = Color(0xFF01BF46);
   Color progressBarColor = Color(0xFF000000);
 
   Map<String, dynamic> toJson() => removeNulls({
@@ -205,7 +218,7 @@ class GenuinePresenceUi {
   });
 }
 
-class LivenessUi {
+class LivenessAssuranceUiOptions {
   Color primaryTintColor = Color(0xFF1756E5);
   Color secondaryTintColor = Color(0xFFA8A8A8);
 
@@ -215,7 +228,7 @@ class LivenessUi {
   });
 }
 
-class Network {
+class NetworkOptions {
   bool disableCertificatePinning = false;
   List<String> certificates;  // TODO: Not cross-platform
   Duration timeout = Duration(seconds: 10);
@@ -229,7 +242,7 @@ class Network {
       });
 }
 
-class Capture {
+class CaptureOptions {
   double maxPitch;
   double maxYaw;
   double maxRoll;
@@ -237,12 +250,12 @@ class Capture {
   FaceDetector faceDetector = FaceDetector.auto;
 
   Map<String, dynamic> toJson() => removeNulls({
-        'max_pitch': maxPitch,
-        'max_yaw': maxYaw,
-        'max_roll': maxRoll,
-        'camera': cameraToString(camera),
-        'face_detector': faceDetectorToString(faceDetector)
-      });
+    'max_pitch': maxPitch,
+    'max_yaw': maxYaw,
+    'max_roll': maxRoll,
+    'camera': cameraToString(camera),
+    'face_detector': faceDetectorToString(faceDetector)
+  });
 
   static String cameraToString(Camera camera) {
     switch (camera) {
