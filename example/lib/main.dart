@@ -47,11 +47,11 @@ class _MyHomePageState extends State<MyHomePage> {
   Random random = new Random();
   StreamSubscription<IProovEvent> subscription;
 
-  void getTokenAndLaunchIProov(String userID, ClaimType claimType, AssuranceType assuranceType) async {
+  void getTokenAndLaunchIProov(AssuranceType assuranceType, ClaimType claimType, String userId) async {
 
     String token;
     try {
-      token = await apiClient.getToken(userID, claimType, assuranceType);
+      token = await apiClient.getToken(assuranceType, claimType, userId);
     } on Exception catch (e) {
 
       showDialog(context: context, builder: (context) {
@@ -74,26 +74,14 @@ class _MyHomePageState extends State<MyHomePage> {
 
     Options options = Options();
 
-    // You can just use Flutter/Dart Colors for all Color types
-    //   options.ui.lineColor = Colors.red;
-    //   options.ui.backgroundColor = Colors.teal;
-    //   options.ui.genuinePresenceUi.notReadyTintColor = Colors.red;
-    //   options.ui.genuinePresenceUi.progressBarColor = Colors.cyan;
-    //   options.ui.genuinePresenceUi.readyTintColor = Colors.lightGreen;
-    //   options.ui.livenessUi.primaryTintColor = Colors.grey;
-    //   options.ui.livenessUi.secondaryTintColor = Colors.yellow;
-
-    // For certificates you add them to the android/app/src/main/res/raw folder and reference them here like below (no extension)
-    //   options.network.certificates = [ "raw/customer__certificate" ];
-
-    // For font assets in the android/app/src/main/assets folder we just give the full name plus extension
-    //   options.ui.fontPath = "montserrat_regular.ttf";
-
-    // For font resources in the android/app/src/main/res/font folder we just give the name without extension
-    //   options.ui.fontResource = "montserrat_bold";
-
-    // For logo, only logoImageResource is available, in the android/app/src/main/res/drawable folder we just give the name without extension
-    //   options.ui.logoImageResource = "ic_launcher";
+    // Examples:
+    // options.ui.lineColor = Colors.red;
+    // options.ui.backgroundColor = Colors.teal;
+    // options.ui.genuinePresenceAssurance.notReadyTintColor = Colors.red;
+    // options.ui.genuinePresenceAssurance.progressBarColor = Colors.cyan;
+    // options.ui.genuinePresenceAssurance.readyTintColor = Colors.lightGreen;
+    // options.ui.livenessAssurance.primaryTintColor = Colors.grey;
+    // options.ui.livenessAssurance.secondaryTintColor = Colors.yellow;
 
     launchIProov(token, options);
   }
@@ -145,9 +133,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   onPressed: () {
                     String userId = Uuid().v1();  // Generate a random UUID as the User ID for testing purposes
                     getTokenAndLaunchIProov(
-                        userId,
-                        ClaimType.enrol, // enrol or verify
-                        AssuranceType.genuinePresenceAssurance); // livenessAssurance or genuinePresenceAssurance
+                      AssuranceType.genuinePresenceAssurance, // livenessAssurance or genuinePresenceAssurance
+                      ClaimType.enrol, // enrol or verify
+                      userId);
                   },
                 )
               ]
