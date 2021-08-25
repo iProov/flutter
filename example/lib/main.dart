@@ -38,9 +38,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   // TODO: Add your credentials here:
   ApiClient apiClient = ApiClient(
-    "https://eu.rp.secure.iproov.me/api/v2/",
-    "< YOUR API KEY >",
-    "< YOUR SECRET >"
+      "https://eu.rp.secure.iproov.me/api/v2/",
+      "< YOUR API KEY >",
+      "< YOUR SECRET >"
   );
 
   Future<String> futureToken;
@@ -100,6 +100,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ProgressHud.dismiss();
         } else if (event is IProovEventSuccess) {
           ProgressHud.showAndDismiss(ProgressHudType.success, "Success!");
+          //TODO Display the event.frame? and maybe event.token?
         } else if (event is IProovEventFailure) {
           ProgressHud.showAndDismiss(ProgressHudType.error, event.reason);
         } else if (event is IProovEventError) {
