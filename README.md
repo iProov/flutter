@@ -9,12 +9,13 @@
 - [Installation](#installation)
 - [Get started](#get-started)
 - [Options](#options)
+- [API Client](#api-client)
 - [Sample code](#sample-code)
 - [Help & support](#help--support)
 
 ## Introduction
 
-The iProov Biometrics Flutter SDK wraps iProov's native [iOS](https://github.com/iProov/ios) (Swift) and [Android](https://github.com/iProov/android) (Java) SDKs behind a Dart interface for use from within your Flutter app.
+The iProov Biometrics Flutter SDK wraps iProov's native [iOS](https://github.com/iProov/ios) (Swift) and [Android](https://github.com/iProov/android) (Java) SDKs behind a Dart interface for use from within your Flutter iOS or Android app.
 
 We also provide an API Client written in Dart to call our [REST API v2](https://eu.rp.secure.iproov.me/docs.html) from a Flutter app, which can be used from your Flutter app to request tokens directly from the iProov API (note that this is not a secure way of getting tokens, and should only be used for demo/debugging purposes).
 
@@ -47,11 +48,15 @@ You can obtain API credentials by registering on the [iProov Partner Portal](htt
 
 Add the following to your project's `pubspec.yml` file:
 
-```
+```yaml
 dependencies:
   iproov_flutter: ^0.1.0
-    git:
-      url: git@github.com:iProov/flutter.git
+```
+
+You can then install it with:
+
+```
+flutter pub get
 ```
 
 ### iOS installation
@@ -166,6 +171,39 @@ A summary of the support for the various SDK options in Flutter is summarised be
 (2) The certificates must be added to the respective iOS app bundle or Android project (`android/app/src/main/res/raw`) and the respective native option can then be set for the current platform (via `Platform.isAndroid` or `Platform.isIOS`). This is set to be improved in a future release.
 
 (3) This is an advanced option and not recommended for general usage. If you wish to use this option, contact iProov for for further details.
+
+## API Client
+
+The Dart API Client provides a convenient wrapper to call iProov's REST API v2 from a Dart/Flutter app. It is a useful tool to assist with testing, debugging and demos, but should not be used in production mobile apps. You could also adapt this code to run on your back-end to perform server-to-server calls.
+
+> ⚠️ **SECURITY NOTICE:** Use of the Dart API Client requires providing it with your API secret. **You should never embed your API secret within a production app.**
+
+The Dart API client can be found in `api_client.dart` in the Example project.
+
+### Functionality
+
+The Dart API Client supports the following functionality:
+
+- `getToken()` - Get an enrol/verify token
+- `enrolPhoto()` - Perform a photo enrolment (either from an electronic or optical image). The image must be provided as an [`Image`](https://pub.dev/packages/image).
+- `enrolPhotoAndGetVerifyToken()` - A convenience method which first gets an enrolment token, then enrols the photo against that token, and then gets a verify token for the user to iProov against.
+
+### Getting a token
+
+The most basic thing you can do with the API Client is get a token to either enrol or verify a user, using either iProov's Genuine Presence Assurance or Liveness Assurance.
+
+This is achieved as follows:
+
+```dart
+var apiClient = ApiClient(
+  "https://eu.rp.secure.iproov.me/api/v2/", // Substitute URL as appropriate
+  "< YOUR API KEY >",
+  "< YOUR SECRET >"
+);
+var token = await apiClient.getToken(AssuranceType.genuinePresenceAssurance, ClaimType.enrol, "name@example.com");
+```
+
+You can then launch the iProov SDK with this token.
 
 ## Sample code
 
