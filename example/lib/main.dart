@@ -72,7 +72,7 @@ class _MyHomePageState extends State<MyHomePage> {
       return;
     }
 
-    Options options = Options();
+    var options = Options();
 
     // Examples:
     // options.ui.lineColor = Colors.red;
@@ -100,11 +100,10 @@ class _MyHomePageState extends State<MyHomePage> {
           ProgressHud.dismiss();
         } else if (event is IProovEventSuccess) {
           ProgressHud.showAndDismiss(ProgressHudType.success, "Success!");
-          //TODO Display the event.frame? and maybe event.token?
         } else if (event is IProovEventFailure) {
           ProgressHud.showAndDismiss(ProgressHudType.error, event.reason);
         } else if (event is IProovEventError) {
-          ProgressHud.showAndDismiss(ProgressHudType.error, event.exception.toString());
+          ProgressHud.showAndDismiss(ProgressHudType.error, event.error.message);
         }
       });
     }

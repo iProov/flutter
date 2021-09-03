@@ -9,6 +9,7 @@
 - [Installation](#installation)
 - [Get started](#get-started)
 - [Options](#options)
+- [Handling errors](#handling-errors)
 - [API Client](#api-client)
 - [Sample code](#sample-code)
 - [Help & support](#help--support)
@@ -104,8 +105,7 @@ IProov.events.listen((event) {
   
   } else if (event is IProovEventError) {
 	// The user was not successfully verified/enrolled due to an error (e.g. lost internet connection).
-	// You will be provided with an NSError. You can check the error code against the IPErrorCode constants
-	// to determine the type of error.
+	// You will be provided with an Exception (see below).
 	// It will be called once, or never.
   }
 });
@@ -171,6 +171,23 @@ A summary of the support for the various SDK options in Flutter is summarised be
 (2) The certificates must be added to the respective iOS app bundle or Android project (`android/app/src/main/res/raw`) and the respective native option can then be set for the current platform (via `Platform.isAndroid` or `Platform.isIOS`). This is set to be improved in a future release.
 
 (3) This is an advanced option and not recommended for general usage. If you wish to use this option, contact iProov for for further details.
+
+## Handling errors
+
+All errors from the native SDKs are re-mapped to Flutter exceptions:
+
+| Exception | iOS | Android | Description |
+| --- | --- | --- | --- |
+| `CaptureAlreadyActiveException` | ✅ | ✅ | An existing iProov capture is already in progress. Wait until the current capture completes before starting a new one.
+| `NetworkError` | ✅ | ✅ | An error occurred with the video streaming process. Consult the `message` value for more information.
+| `CameraPermissionError` | ✅ | ✅ |  The user disallowed access to the camera when prompted. You should direct the user to re-enable camera access.
+| `ServerException` | ✅ | ✅ | A server-side error/token invalidation occurred. The associated `message` will contain further information about the error.
+| `UnexpectedErrorException` | ✅ | ✅ | An unexpected and unrecoverable error has occurred. These errors should be reported to iProov for further investigation.
+| `ListenerNotRegisteredException` |  | ✅ | The SDK was launched before a listener was registered.
+| `MultiWindowUnsupportedException` |  | ✅ | The user attempted to iProov in split-screen/multi-screen mode, which is not supported.
+| `CameraException` |  | ✅ | An error occurred acquiring or using the camera. This could happen when a non-phone is used with/without an external/USB camera.
+| `FaceDetectorException` |  | ✅ | An error occurred with the face detector.
+| `InvalidOptionsException` |  | ✅ | An error occurred when trying to apply your options.
 
 ## API Client
 

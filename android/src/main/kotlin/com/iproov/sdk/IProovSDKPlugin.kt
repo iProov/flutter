@@ -4,7 +4,17 @@ import android.content.Context
 import android.util.Log
 import androidx.annotation.NonNull
 import com.iproov.sdk.bridge.OptionsBridge
+import com.iproov.sdk.core.exception.CameraException
+import com.iproov.sdk.core.exception.CameraPermissionException
+import com.iproov.sdk.core.exception.CaptureAlreadyActiveException
+import com.iproov.sdk.core.exception.FaceDetectorException
 import com.iproov.sdk.core.exception.IProovException
+import com.iproov.sdk.core.exception.ListenerNotRegisteredException
+import com.iproov.sdk.core.exception.MultiWindowUnsupportedException
+import com.iproov.sdk.core.exception.NetworkException
+import com.iproov.sdk.core.exception.ServerException
+import com.iproov.sdk.core.exception.UnexpectedErrorException
+import com.iproov.sdk.core.exception.UnsupportedDeviceException
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall
@@ -34,13 +44,67 @@ class IProovSDKPlugin: FlutterPlugin {
     // Callbacks ----
 
     private val iProovListener = object : IProov.Listener {
-        override fun onConnecting() { listenerEventSink?.success(hashMapOf("event" to "connecting")) }
-        override fun onConnected() { listenerEventSink?.success(hashMapOf("event" to "connected")) }
-        override fun onProcessing(progress: Double, message: String?) { listenerEventSink?.success(hashMapOf("event" to "processing", "progress" to progress, "message" to message)) }
-        override fun onSuccess(result: IProov.SuccessResult) { listenerEventSink?.success(hashMapOf("event" to "success", "token" to result.token)) }
-        override fun onFailure(result: IProov.FailureResult) { listenerEventSink?.success(hashMapOf("event" to "failure", "token" to result.token, "reason" to result.reason, "feedbackCode" to result.feedbackCode)) }
-        override fun onCancelled() { listenerEventSink?.success(hashMapOf("event" to "cancelled")) }
-        override fun onError(e: IProovException) { listenerEventSink?.success(hashMapOf("event" to "error", "reason" to e.reason, "message" to e.message, "exception" to e.toString())) }
+        override fun onConnecting() {
+            listenerEventSink?.success(hashMapOf(
+                    "event" to "connecting"
+            ))
+        }
+
+        override fun onConnected() {
+            listenerEventSink?.success(hashMapOf(
+                    "event" to "connected"
+            ))
+        }
+
+        override fun onProcessing(progress: Double, message: String?) {
+            listenerEventSink?.success(hashMapOf(
+                    "event" to "processing",
+                    "progress" to progress,
+                    "message" to message
+            ))
+        }
+
+        override fun onSuccess(result: IProov.SuccessResult) {
+            listenerEventSink?.success(hashMapOf(
+                    "event" to "success",
+                    "token" to result.token
+            ))
+        }
+
+        override fun onFailure(result: IProov.FailureResult) {
+            listenerEventSink?.success(hashMapOf(
+                    "event" to "failure",
+                    "token" to result.token,
+                    "reason" to result.reason,
+                    "feedbackCode" to result.feedbackCode
+            )) }
+
+        override fun onCancelled() {
+            listenerEventSink?.success(hashMapOf(
+                    "event" to "cancelled"
+            ))
+        }
+        override fun onError(e: IProovException) {
+
+            val exceptionName = when(e) {
+                is CaptureAlreadyActiveException -> "capture_already_active"
+                is NetworkException -> "network"
+                is CameraPermissionException -> "camera_permission"
+                is ServerException -> "server"
+                is ListenerNotRegisteredException -> "listener_not_registered"
+                is MultiWindowUnsupportedException -> "multi_window_unsupported"
+                is CameraException -> "camera"
+                is FaceDetectorException -> "face_detector"
+                is UnsupportedDeviceException -> "unsupported_device"
+                else -> "unexpected_error" // includes UnexpectedErrorException
+            }
+
+            listenerEventSink?.success(hashMapOf(
+                    "event" to "error",
+                    "error" to exceptionName,
+                    "message" to e.message
+            ))
+        }
     }
 
     private val methodCallHandler = object : MethodChannel.MethodCallHandler {

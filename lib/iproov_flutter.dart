@@ -3,6 +3,7 @@ import 'dart:convert';
 export 'package:iproov_flutter/options.dart';
 export 'package:iproov_flutter/enums.dart';
 export 'package:iproov_flutter/events.dart';
+export 'package:iproov_flutter/exceptions.dart';
 
 import 'package:flutter/services.dart';
 import 'package:iproov_flutter/options.dart';

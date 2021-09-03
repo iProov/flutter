@@ -1,20 +1,20 @@
 import 'package:image/image.dart';
+import 'package:iproov_flutter/exceptions.dart';
 
 abstract class IProovEvent {
   static const connecting = const IProovEventConnecting();
   static const connected = const IProovEventConnected();
   static const cancelled = const IProovEventCancelled();
 
-  factory IProovEvent.progress(double progress, String message) =
-  IProovEventProgress;
+  factory IProovEvent.progress(double progress, String message) = IProovEventProgress;
 
   factory IProovEvent.success(String token, Image? frame) = IProovEventSuccess;
 
-  factory IProovEvent.failure(
-      String token, String reason, String feedbackCode, Image? frame) = IProovEventFailure;
+  factory IProovEvent.failure(String token, String reason, String feedbackCode, Image? frame) = IProovEventFailure;
 
-  factory IProovEvent.error(String reason, String message, String exception) =
-  IProovEventError;
+  factory IProovEvent.error(String error, String title, String? message) {
+    return IProovEventError(IProovException.error(error, title, message));
+  }
 
   factory IProovEvent.fromMap(Map map) {
     switch (map['event']) {
@@ -39,7 +39,7 @@ abstract class IProovEvent {
       case 'cancelled':
         return cancelled;
       case 'error':
-        return IProovEvent.error(map['reason'], map['message'], map['exception']);
+        return IProovEvent.error(map['error'], map['title'], map['message']);
     }
     throw Exception('Invalid event');
   }
@@ -81,9 +81,7 @@ class IProovEventFailure implements IProovEvent {
 }
 
 class IProovEventError implements IProovEvent {
-  final String reason;
-  final String message;
-  final String exception;
+  final IProovException error;
 
-  const IProovEventError(this.reason, this.message, this.exception);
+  const IProovEventError(this.error);
 }
