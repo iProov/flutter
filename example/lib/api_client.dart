@@ -52,8 +52,7 @@ class ApiClient {
         ..files.add(http.MultipartFile.fromBytes(
             'image',
             encodeJpg(image),
-            filename:
-            'image.jpg',
+            filename: 'image.jpg',
             contentType: MediaType.parse('image/jpeg')
         ));
 
