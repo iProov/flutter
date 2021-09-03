@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 export 'package:iproov_flutter/options.dart';
@@ -20,15 +21,23 @@ class IProov {
       .receiveBroadcastStream()
       .map((result) => IProovEvent.fromMap(result));
 
-  static launch(String streamingUrl, String token, [Options? options]) => _iProovMethodChannel
-      .invokeMethod('launch', {
-        'streamingURL': streamingUrl,
-        'token': token,
-        'optionsJSON': json.encode(options)
-      });
+  static launch(String streamingUrl, String token, {Options? options, required Function(IProovEvent) callback}) {
+    StreamSubscription<IProovEvent>? subscription;
+
+    subscription = events.listen((event) {
+      if (event.isFinal) {
+        subscription?.cancel();
+      }
+      callback(event);
+    });
+
+    _iProovMethodChannel.invokeMethod('launch', {
+      'streamingURL': streamingUrl,
+      'token': token,
+      'optionsJSON': json.encode(options)
+    });
+  }
 
   // Private constructor
   IProov._();
 }
-
-

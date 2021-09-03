@@ -2,6 +2,8 @@ import 'package:image/image.dart';
 import 'package:iproov_flutter/exceptions.dart';
 
 abstract class IProovEvent {
+  abstract final bool isFinal;
+
   static const connecting = const IProovEventConnecting();
   static const connected = const IProovEventConnected();
   static const cancelled = const IProovEventCancelled();
@@ -46,18 +48,34 @@ abstract class IProovEvent {
 }
 
 class IProovEventConnecting implements IProovEvent {
+
+  @override
+  final bool isFinal = false;
+
   const IProovEventConnecting();
 }
 
 class IProovEventConnected implements IProovEvent {
+
+  @override
+  final bool isFinal = false;
+
   const IProovEventConnected();
 }
 
 class IProovEventCancelled implements IProovEvent {
+
+  @override
+  final bool isFinal = true;
+
   const IProovEventCancelled();
 }
 
 class IProovEventProgress implements IProovEvent {
+
+  @override
+  final bool isFinal = false;
+
   final double progress;
   final String message;
 
@@ -65,6 +83,10 @@ class IProovEventProgress implements IProovEvent {
 }
 
 class IProovEventSuccess implements IProovEvent {
+
+  @override
+  final bool isFinal = true;
+
   final String token;
   final Image? frame;
 
@@ -72,6 +94,10 @@ class IProovEventSuccess implements IProovEvent {
 }
 
 class IProovEventFailure implements IProovEvent {
+
+  @override
+  final bool isFinal = true;
+
   final String token;
   final String reason;
   final String feedbackCode;
@@ -81,6 +107,10 @@ class IProovEventFailure implements IProovEvent {
 }
 
 class IProovEventError implements IProovEvent {
+
+  @override
+  final bool isFinal = true;
+
   final IProovException error;
 
   const IProovEventError(this.error);

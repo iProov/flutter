@@ -1,6 +1,3 @@
-import 'dart:async';
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 import 'package:bmprogresshud/bmprogresshud.dart';
@@ -43,10 +40,6 @@ class _MyHomePageState extends State<MyHomePage> {
       "< YOUR SECRET >"
   );
 
-  Future<String> futureToken;
-  Random random = new Random();
-  StreamSubscription<IProovEvent> subscription;
-
   void getTokenAndLaunchIProov(AssuranceType assuranceType, ClaimType claimType, String userId) async {
 
     String token;
@@ -87,28 +80,26 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void launchIProov(String token, Options options) {
-    if (subscription == null) {
-      subscription = IProov.events.listen((event) {
-        if (event is IProovEventConnecting) {
-          ProgressHud.show(ProgressHudType.loading, "Connecting...");
-        } else if (event is IProovEventConnected) {
-          ProgressHud.dismiss();
-        } else if (event is IProovEventProgress) {
-          ProgressHud.show(ProgressHudType.progress, event.message);
-          ProgressHud.updateProgress(event.progress, event.message);
-        } else if (event is IProovEventCancelled) {
-          ProgressHud.dismiss();
-        } else if (event is IProovEventSuccess) {
-          ProgressHud.showAndDismiss(ProgressHudType.success, "Success!");
-        } else if (event is IProovEventFailure) {
-          ProgressHud.showAndDismiss(ProgressHudType.error, event.reason);
-        } else if (event is IProovEventError) {
-          ProgressHud.showAndDismiss(ProgressHudType.error, event.error.message);
-        }
-      });
-    }
 
-    IProov.launch(apiClient.baseUrl, token, options);
+    IProov.launch(apiClient.baseUrl, token, options: options, callback: (event) {
+      if (event is IProovEventConnecting) {
+        ProgressHud.show(ProgressHudType.loading, "Connecting...");
+      } else if (event is IProovEventConnected) {
+        ProgressHud.dismiss();
+      } else if (event is IProovEventProgress) {
+        ProgressHud.show(ProgressHudType.progress, event.message);
+        ProgressHud.updateProgress(event.progress, event.message);
+      } else if (event is IProovEventCancelled) {
+        ProgressHud.dismiss();
+      } else if (event is IProovEventSuccess) {
+        ProgressHud.showAndDismiss(ProgressHudType.success, "Success!");
+      } else if (event is IProovEventFailure) {
+        ProgressHud.showAndDismiss(ProgressHudType.error, event.reason);
+      } else if (event is IProovEventError) {
+        ProgressHud.showAndDismiss(ProgressHudType.error, event.error.message);
+      }
+    });
+
   }
 
   Widget build(BuildContext context) {

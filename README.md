@@ -66,15 +66,14 @@ You must also add a `NSCameraUsageDescription` to your iOS app's Info.plist, wit
 
 ## Get started
 
-To use iProov to enrol or verify a user it is necessary to follow these steps:
-
-Once you have a valid token (obtained via the Dart API client or your own backend-to-backend call), you can `launch()` an iProov capture using the following:
+Once you have a valid token (obtained via the Dart API client or your own backend-to-backend call), you can `launch()` an iProov capture and handle the callback events as follows:
 
 ```dart
 import 'package:iproov_flutter/iproov_flutter.dart';
 
-IProov.events.listen((event) {
-  if (event is IProovEventConnecting) {
+IProov.launch(streamingUrl, token, options: options, callback: (event) {
+
+ if (event is IProovEventConnecting) {
 	// The SDK is connecting to the server. You should provide an indeterminate progress indicator
 	// to let the user know that the connection is taking place.
   
@@ -108,9 +107,8 @@ IProov.events.listen((event) {
 	// You will be provided with an Exception (see below).
 	// It will be called once, or never.
   }
+  
 });
-
-IProov.launch(streamingUrl, token, options);
 ```
 
 👉 You should now familiarise yourself with the following resources:
@@ -128,7 +126,7 @@ Most of these options are common to both Android and iOS, however, some are plat
 
 For full documentation, please read the respective [iOS](https://github.com/iProov/ios#options) and [Android](https://github.com/iProov/android#options) native SDK documentation.
 
-A summary of the support for the various SDK options in Flutter is summarised below:
+A summary of the support for the various SDK options in Flutter is provided below:
 
 | Option | iOS | Android |
 | --- | --- | --- |
