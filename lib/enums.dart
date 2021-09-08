@@ -1,6 +1,6 @@
 enum Camera {
   front,
-  external
+  external,
 }
 
 extension CameraToString on Camera {
@@ -11,7 +11,7 @@ enum FaceDetector {
   auto,
   classic,
   mlKit,
-  blazeface
+  blazeface,
 }
 
 extension FaceDetectorToString on FaceDetector {
@@ -21,7 +21,7 @@ extension FaceDetectorToString on FaceDetector {
 enum Filter {
   classic,
   shaded,
-  vibrant
+  vibrant,
 }
 
 extension FilterToString on Filter {
@@ -32,7 +32,7 @@ enum Orientation {
   portrait,
   landscape,
   reversePortrait,
-  reverseLandscape
+  reverseLandscape,
 }
 
 extension OrientationToString on Orientation {
@@ -40,7 +40,9 @@ extension OrientationToString on Orientation {
 }
 
 String _enumCaseToString(String enumCase) {
-  String text = enumCase.split('.').last;
-  RegExp exp = RegExp(r'(?<=[a-z])[A-Z]'); // camelCase to underscore_separated
-  return text.replaceAllMapped(exp, (Match m) => ('_' + m.group(0)!)).toLowerCase();
+  final text = enumCase.split('.').last;
+  final exp = RegExp(r'(?<=[a-z])[A-Z]'); // camelCase to underscore_separated
+  return text
+      .replaceAllMapped(exp, (Match m) => ('_' + m.group(0)!))
+      .toLowerCase();
 }
