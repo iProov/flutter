@@ -10,6 +10,8 @@ import 'package:flutter/services.dart';
 import 'package:iproov_flutter/options.dart';
 import 'package:iproov_flutter/events.dart';
 
+typedef IProovEventCallback = void Function(IProovEvent);
+
 class IProov {
   static const MethodChannel _iProovMethodChannel =
       const MethodChannel('com.iproov.sdk');
@@ -17,16 +19,28 @@ class IProov {
   static const EventChannel _iProovListenerEventChannel =
       EventChannel('com.iproov.sdk.listener');
 
-  static final events = _iProovListenerEventChannel
+  // Private constructor
+  IProov._();
+
+  /// If only an instance can ever be created by the client, this can be done with this singleton
+  static final instance = IProov._();
+
+  Stream<IProovEvent> _events() => _iProovListenerEventChannel
       .receiveBroadcastStream()
       .map((result) => IProovEvent.fromMap(result));
 
-  static launch(String streamingUrl, String token, {Options? options, required Function(IProovEvent) callback}) {
-    StreamSubscription<IProovEvent>? subscription;
+  StreamSubscription<IProovEvent>? _subscription;
 
-    subscription = events.listen((event) {
+  void launch(String streamingUrl, String token,
+      {Options? options, required IProovEventCallback callback}) {
+    // Some defensive code needed if client calls launch more than one time (and this is not allowed)
+    if (_subscription != null) {
+      throw AssertionError('launch() method was called more than once');
+    }
+
+    _subscription = _events().listen((event) {
       if (event.isFinal) {
-        subscription?.cancel();
+        _subscription?.cancel();
       }
       callback(event);
     });
@@ -38,6 +52,7 @@ class IProov {
     });
   }
 
-  // Private constructor
-  IProov._();
+  void dispose() {
+    _subscription?.cancel();
+  }
 }
