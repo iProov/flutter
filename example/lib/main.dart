@@ -32,35 +32,35 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   // TODO: Add your credentials here:
   ApiClient apiClient = ApiClient(
-      "https://eu.rp.secure.iproov.me/api/v2/",
-      "< YOUR API KEY >",
-      "< YOUR SECRET >"
+    "https://eu.rp.secure.iproov.me/api/v2/",
+    "< YOUR API KEY >",
+    "< YOUR SECRET >",
   );
 
-  void getTokenAndLaunchIProov(AssuranceType assuranceType, ClaimType claimType, String userId) async {
+  final iProov = IProov.instance;
 
+  void getTokenAndLaunchIProov(
+      AssuranceType assuranceType, ClaimType claimType, String userId) async {
     String token;
     try {
       token = await apiClient.getToken(assuranceType, claimType, userId);
     } on Exception catch (e) {
-
-      showDialog(context: context, builder: (context) {
-        return AlertDialog(
-          title: Text("Error"),
-          content: Text(e.toString()),
-          actions: [
-            TextButton(
-              child: Text("OK"),
-              onPressed: () {
-                Navigator.pop(context);
-              }
-            )
-          ]
-        );
-      });
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+                title: Text("Error"),
+                content: Text(e.toString()),
+                actions: [
+                  TextButton(
+                      child: Text("OK"),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      })
+                ]);
+          });
 
       return;
     }
@@ -80,8 +80,8 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void launchIProov(String token, Options options) {
-
-    IProov.launch(apiClient.baseUrl, token, options: options, callback: (event) {
+    iProov.launch(apiClient.baseUrl, token, options: options,
+        callback: (event) {
       if (event is IProovEventConnecting) {
         ProgressHud.show(ProgressHudType.loading, "Connecting...");
       } else if (event is IProovEventConnected) {
@@ -99,40 +99,41 @@ class _MyHomePageState extends State<MyHomePage> {
         ProgressHud.showAndDismiss(ProgressHudType.error, event.error.message);
       }
     });
-
   }
 
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text(widget.title),
-        ),
-        body: ProgressHud(
-          isGlobalHud: true,
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                TextButton(
-                  child: Text(
-                    '🚀 Launch',
-                    style: TextStyle(
-                      fontSize: 20.0,
-                    ),
+      appBar: AppBar(
+        title: Text(widget.title),
+      ),
+      body: ProgressHud(
+        isGlobalHud: true,
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              TextButton(
+                child: Text(
+                  '🚀 Launch',
+                  style: TextStyle(
+                    fontSize: 20.0,
                   ),
-                  onPressed: () {
-                    String userId = Uuid().v1();  // Generate a random UUID as the User ID for testing purposes
-                    getTokenAndLaunchIProov(
-                      AssuranceType.genuinePresenceAssurance, // livenessAssurance or genuinePresenceAssurance
+                ),
+                onPressed: () {
+                  String userId = Uuid()
+                      .v1(); // Generate a random UUID as the User ID for testing purposes
+                  getTokenAndLaunchIProov(
+                      AssuranceType
+                          .genuinePresenceAssurance, // livenessAssurance or genuinePresenceAssurance
                       ClaimType.enrol, // enrol or verify
                       userId);
-                  },
-                )
-              ]
-            )
-          )
-        )
+                },
+              )
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
