@@ -1,10 +1,12 @@
+import 'package:flutter/foundation.dart';
+
 enum Camera {
   front,
   external,
 }
 
 extension CameraToString on Camera {
-  String get stringValue => _enumCaseToString(toString());
+  String get stringValue => _enumCaseToString(describeEnum(this));
 }
 
 enum FaceDetector {
@@ -15,7 +17,7 @@ enum FaceDetector {
 }
 
 extension FaceDetectorToString on FaceDetector {
-  String get stringValue => _enumCaseToString(toString());
+  String get stringValue => _enumCaseToString(describeEnum(this));
 }
 
 enum Filter {
@@ -25,7 +27,7 @@ enum Filter {
 }
 
 extension FilterToString on Filter {
-  String get stringValue => _enumCaseToString(toString());
+  String get stringValue => _enumCaseToString(describeEnum(this));
 }
 
 enum Orientation {
@@ -36,11 +38,10 @@ enum Orientation {
 }
 
 extension OrientationToString on Orientation {
-  String get stringValue => _enumCaseToString(toString());
+  String get stringValue => _enumCaseToString(describeEnum(this));
 }
 
-String _enumCaseToString(String enumCase) {
-  final text = enumCase.split('.').last;
+String _enumCaseToString(String text) {
   final exp = RegExp(r'(?<=[a-z])[A-Z]'); // camelCase to underscore_separated
   return text
       .replaceAllMapped(exp, (Match m) => ('_' + m.group(0)!))
