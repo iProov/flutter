@@ -1,6 +1,6 @@
 # iProov Biometrics SDK
 
-## 0.1.1
+## 0.2.0
 
 * **Breaking**: Made `IProov` constructor public. Now takes `streamingUrl`, `token` and `options` as arguments
 * **Breaking**: `launch()` is now an instance method that takes a `IProovEventCallback` and returns a `Future<IProovEvent>`
