@@ -1,14 +1,14 @@
 import 'dart:async';
 import 'dart:convert';
 
-export 'package:iproov_flutter/options.dart';
+import 'package:flutter/services.dart';
+import 'package:iproov_flutter/events.dart';
+import 'package:iproov_flutter/options.dart';
+
 export 'package:iproov_flutter/enums.dart';
 export 'package:iproov_flutter/events.dart';
 export 'package:iproov_flutter/exceptions.dart';
-
-import 'package:flutter/services.dart';
-import 'package:iproov_flutter/options.dart';
-import 'package:iproov_flutter/events.dart';
+export 'package:iproov_flutter/options.dart';
 
 typedef IProovEventCallback = void Function(IProovEvent);
 
@@ -22,7 +22,7 @@ class IProov {
   // Private constructor
   IProov._();
 
-  /// If only an instance can ever be created by the client, this can be done with this singleton
+  /// If only an instance can ever be created by the client, expose this singleton
   static final instance = IProov._();
 
   Stream<IProovEvent> _events() => _iProovListenerEventChannel
@@ -33,7 +33,8 @@ class IProov {
 
   void launch(String streamingUrl, String token,
       {Options? options, required IProovEventCallback callback}) {
-    // Some defensive code needed if client calls launch more than one time (and this is not allowed)
+    // ? Is it valid for the client to call launch() more than once?
+    // ? If not, some defensive code with an assertion error is appropriate here
     if (_subscription != null) {
       throw AssertionError('launch() method was called more than once');
     }
