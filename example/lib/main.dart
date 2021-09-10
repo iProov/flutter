@@ -30,6 +30,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  var _scanInProgress = false;
+
   // ! This code is for demo purposes only. Do not hardcode your API keys in production.
   // TODO: Add your credentials here:
   ApiClient apiClient = ApiClient(
@@ -41,6 +43,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void getTokenAndLaunchIProov(
       AssuranceType assuranceType, ClaimType claimType, String userId) async {
     try {
+      setState(() => _scanInProgress = true);
       final token = await apiClient.getToken(assuranceType, claimType, userId);
       final options = Options();
       // Example configuration
@@ -60,8 +63,7 @@ class _MyHomePageState extends State<MyHomePage> {
       //     ),
       //   ),
       // );
-
-      launchIProov(token, options);
+      await launchIProov(token, options);
     } on Exception catch (e) {
       showDialog(
         context: context,
@@ -78,10 +80,12 @@ class _MyHomePageState extends State<MyHomePage> {
           );
         },
       );
+    } finally {
+      setState(() => _scanInProgress = false);
     }
   }
 
-  void launchIProov(String token, Options options) {
+  Future<void> launchIProov(String token, Options options) async {
     final iProov =
         IProov(streamingUrl: apiClient.baseUrl, token: token, options: options);
     iProov.launch((event) {
@@ -121,16 +125,18 @@ class _MyHomePageState extends State<MyHomePage> {
                   '🚀 Launch',
                   style: TextStyle(fontSize: 20.0),
                 ),
-                onPressed: () {
-                  final userId = Uuid()
-                      .v1(); // Generate a random UUID as the User ID for testing purposes
-                  getTokenAndLaunchIProov(
-                    AssuranceType
-                        .genuinePresenceAssurance, // livenessAssurance or genuinePresenceAssurance
-                    ClaimType.enrol, // enrol or verify
-                    userId,
-                  );
-                },
+                onPressed: _scanInProgress
+                    ? null
+                    : () {
+                        final userId = Uuid()
+                            .v1(); // Generate a random UUID as the User ID for testing purposes
+                        getTokenAndLaunchIProov(
+                          AssuranceType
+                              .genuinePresenceAssurance, // livenessAssurance or genuinePresenceAssurance
+                          ClaimType.enrol, // enrol or verify
+                          userId,
+                        );
+                      },
               )
             ],
           ),
