@@ -2,6 +2,7 @@ import 'package:bmprogresshud/bmprogresshud.dart';
 import 'package:flutter/material.dart';
 import 'package:iproov_flutter/iproov_flutter.dart';
 import 'package:iproov_sdk_example/api_client.dart';
+import 'package:iproov_sdk_example/api_keys.dart';
 import 'package:uuid/uuid.dart';
 
 void main() {
@@ -36,8 +37,8 @@ class _MyHomePageState extends State<MyHomePage> {
   // TODO: Add your credentials here:
   ApiClient apiClient = ApiClient(
     "https://eu.rp.secure.iproov.me/api/v2/",
-    "< YOUR API KEY >",
-    "< YOUR SECRET >",
+    kApiKey,
+    kSecret,
   );
 
   final iProov = IProov.instance;
