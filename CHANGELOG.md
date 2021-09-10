@@ -2,9 +2,12 @@
 
 ## 0.1.1
 
-* **Breaking**: An `IProov` instance can now only be obtained with `IProov.instance` (singleton)
+* **Breaking**: Made `IProov` constructor public. Now takes `streamingUrl`, `token` and `options` as arguments
+* **Breaking**: `launch()` is now an instance method that takes a `IProovEventCallback` and returns a `Future<IProovEvent>`
+* **Breaking**: All `Options` classes are now immutable with final properties
 * Added `flutter_lints` dependency to package and example app
-* Various code-style improvements (same functionality as before)
+* Improved coding style
+* Improved example app
 
 ## 0.1.0
 
