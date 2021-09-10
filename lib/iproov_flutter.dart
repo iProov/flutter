@@ -34,7 +34,7 @@ class IProov {
   /// Configuration options
   final Options options;
 
-  /// Whether a streaming session is already im progress
+  /// Whether a streaming session is already in progress
   bool get isStreaming => _subscription != null;
 
   Stream<IProovEvent> _events() => _iProovListenerEventChannel
