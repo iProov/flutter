@@ -12,18 +12,25 @@ export 'package:iproov_flutter/options.dart';
 
 typedef IProovEventCallback = void Function(IProovEvent);
 
+const MethodChannel _iProovMethodChannel =
+    const MethodChannel('com.iproov.sdk');
+
+const EventChannel _iProovListenerEventChannel =
+    EventChannel('com.iproov.sdk.listener');
+
 class IProov {
-  static const MethodChannel _iProovMethodChannel =
-      const MethodChannel('com.iproov.sdk');
+  IProov({
+    required this.streamingUrl,
+    required this.token,
+    this.options,
+  });
 
-  static const EventChannel _iProovListenerEventChannel =
-      EventChannel('com.iproov.sdk.listener');
+  final String streamingUrl;
+  final String token;
+  final Options? options;
 
-  // Private constructor
-  IProov._();
-
-  /// If only an instance can ever be created by the client, expose this singleton
-  static final instance = IProov._();
+  /// Whether a streaming session is already im progress
+  bool get isStreaming => _subscription != null;
 
   Stream<IProovEvent> _events() => _iProovListenerEventChannel
       .receiveBroadcastStream()
@@ -31,17 +38,15 @@ class IProov {
 
   StreamSubscription<IProovEvent>? _subscription;
 
-  void launch(String streamingUrl, String token,
-      {Options? options, required IProovEventCallback callback}) {
-    // ? Is it valid for the client to call launch() more than once?
-    // ? If not, some defensive code with an assertion error is appropriate here
-    if (_subscription != null) {
-      throw AssertionError('launch() method was called more than once');
+  void launch(IProovEventCallback callback) {
+    if (isStreaming) {
+      throw AssertionError('A streaming session is already in progress');
     }
 
     _subscription = _events().listen((event) {
       if (event.isFinal) {
         _subscription?.cancel();
+        _subscription = null;
       }
       callback(event);
     });
@@ -51,9 +56,5 @@ class IProov {
       'token': token,
       'optionsJSON': json.encode(options)
     });
-  }
-
-  void dispose() {
-    _subscription?.cancel();
   }
 }
