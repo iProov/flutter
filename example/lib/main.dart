@@ -88,7 +88,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<void> launchIProov(String token, Options options) async {
     final iProov =
         IProov(streamingUrl: apiClient.baseUrl, token: token, options: options);
-    iProov.launch((event) {
+    await iProov.launch((event) {
       if (event is IProovEventConnecting) {
         ProgressHud.show(ProgressHudType.loading, "Connecting...");
       } else if (event is IProovEventConnected) {
