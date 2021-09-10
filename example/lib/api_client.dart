@@ -1,6 +1,6 @@
-import 'dart:io';
-import 'dart:convert';
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
 
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
@@ -17,9 +17,11 @@ class ApiClient {
 
   ApiClient(this.baseUrl, this.apiKey, this.secret);
 
-  Future<String> getToken(AssuranceType assuranceType, ClaimType claimType, String userId) async {
+  Future<String> getToken(
+      AssuranceType assuranceType, ClaimType claimType, String userId) async {
     try {
-      final response = await http.post('${baseUrl.withSlash}claim/${claimType.stringValue}/token',
+      final response = await http.post(
+        '${baseUrl.withSlash}claim/${claimType.stringValue}/token',
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'api_key': apiKey,
@@ -32,37 +34,35 @@ class ApiClient {
       );
 
       if (response.statusCode == 200) {
-        var json = jsonDecode(response.body);
+        final json = jsonDecode(response.body);
         return json['token'];
-      } else throw Exception('Error ${response.statusCode}: ${response.body}');
-
+      } else
+        throw Exception('Error ${response.statusCode}: ${response.body}');
     } on SocketException {
       throw Exception('No internet connection');
     }
   }
 
-  Future<String> enrolPhoto(String token, Image image, PhotoSource source) async {
+  Future<String> enrolPhoto(
+      String token, Image image, PhotoSource source) async {
     try {
-      var request = http.MultipartRequest('POST', Uri.parse('${baseUrl.withSlash}claim/enrol/image'))
+      final request = http.MultipartRequest(
+          'POST', Uri.parse('${baseUrl.withSlash}claim/enrol/image'))
         ..fields['api_key'] = apiKey
         ..fields['secret'] = secret
         ..fields['rotation'] = "0"
         ..fields['token'] = token
         ..fields['source'] = source.stringValue
-        ..files.add(http.MultipartFile.fromBytes(
-            'image',
-            encodeJpg(image),
-            filename: 'image.jpg',
-            contentType: MediaType.parse('image/jpeg')
-        ));
+        ..files.add(http.MultipartFile.fromBytes('image', encodeJpg(image),
+            filename: 'image.jpg', contentType: MediaType.parse('image/jpeg')));
 
-      var response = await request.send();
+      final response = await request.send();
       if (response.statusCode != 200) {
         throw Exception('Error ${response.statusCode}');
       }
 
-      var bytes = await response.stream.toBytes();
-      var json = jsonDecode(utf8.decode(bytes));
+      final bytes = await response.stream.toBytes();
+      final json = jsonDecode(utf8.decode(bytes));
 
       return json['token'];
     } on SocketException {
@@ -70,41 +70,35 @@ class ApiClient {
     }
   }
 
-  Future<String> enrolPhotoAndGetVerifyToken(String userId, Image image, PhotoSource source) async {
-    var enrolToken = await getToken(AssuranceType.genuinePresenceAssurance, ClaimType.enrol, userId);
+  Future<String> enrolPhotoAndGetVerifyToken(
+      String userId, Image image, PhotoSource source) async {
+    final enrolToken = await getToken(
+        AssuranceType.genuinePresenceAssurance, ClaimType.enrol, userId);
     await enrolPhoto(enrolToken, image, source);
-    return await getToken(AssuranceType.genuinePresenceAssurance, ClaimType.verify, userId);
+    return await getToken(
+        AssuranceType.genuinePresenceAssurance, ClaimType.verify, userId);
   }
 }
 
-enum PhotoSource {
-  electronicID,
-  opticalID
-}
+enum PhotoSource { electronicID, opticalID }
 
 extension _PhotoSourceToString on PhotoSource {
   String get stringValue {
     if (this == PhotoSource.electronicID) {
-      return "eid";
+      return 'eid';
     } else {
-      return "oid";
+      return 'oid';
     }
   }
 }
 
-enum ClaimType {
-  enrol,
-  verify
-}
+enum ClaimType { enrol, verify }
 
 extension _ClaimTypeToString on ClaimType {
   String get stringValue => toString().split('.').last;
 }
 
-enum AssuranceType {
-  genuinePresenceAssurance,
-  livenessAssurance
-}
+enum AssuranceType { genuinePresenceAssurance, livenessAssurance }
 
 extension _AssuranceTypeToString on AssuranceType {
   String get stringValue {
@@ -117,5 +111,5 @@ extension _AssuranceTypeToString on AssuranceType {
 }
 
 extension _StringSlash on String {
-  String get withSlash => endsWith("/") ? this : this + "/";
+  String get withSlash => endsWith('/') ? this : this + '/';
 }

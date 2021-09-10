@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
-import 'package:uuid/uuid.dart';
 import 'package:bmprogresshud/bmprogresshud.dart';
+import 'package:flutter/material.dart';
 import 'package:iproov_flutter/iproov_flutter.dart';
 import 'package:iproov_sdk_example/api_client.dart';
+import 'package:uuid/uuid.dart';
 
 void main() {
   runApp(MyApp());
@@ -32,6 +32,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  // ! This code is for demo purposes only. Do not hardcode your API keys in production.
   // TODO: Add your credentials here:
   ApiClient apiClient = ApiClient(
     "https://eu.rp.secure.iproov.me/api/v2/",
