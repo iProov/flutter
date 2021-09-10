@@ -1,5 +1,6 @@
 abstract class IProovException implements Exception {
-  final String title; // TODO: Title is not currently being populated from either iOS or Android, pending SDK updates
+  final String
+      title; // TODO: Title is not currently being populated from either iOS or Android, pending SDK updates
   final String? message;
   IProovException(this.title, [this.message]);
 
@@ -48,29 +49,36 @@ class ServerException extends IProovException {
 }
 
 class UnexpectedErrorException extends IProovException {
-  UnexpectedErrorException(String title, String? message) : super(title, message);
+  UnexpectedErrorException(String title, String? message)
+      : super(title, message);
 }
 
-class ListenerNotRegisteredException extends IProovException {  // Android only
+class ListenerNotRegisteredException extends IProovException {
+  // Android only
   ListenerNotRegisteredException(String title) : super(title);
 }
 
-class MultiWindowUnsupportedException extends IProovException {  // Android only
+class MultiWindowUnsupportedException extends IProovException {
+  // Android only
   MultiWindowUnsupportedException(String title) : super(title);
 }
 
-class CameraException extends IProovException {  // Android only
+class CameraException extends IProovException {
+  // Android only
   CameraException(String title, String? message) : super(title, message);
 }
 
-class FaceDetectorException extends IProovException {  // Android only
+class FaceDetectorException extends IProovException {
+  // Android only
   FaceDetectorException(String title, String? message) : super(title, message);
 }
 
-class UnsupportedDeviceException extends IProovException { // Android only
+class UnsupportedDeviceException extends IProovException {
+  // Android only
   UnsupportedDeviceException(String title) : super(title);
 }
 
-class InvalidOptionsException extends IProovException {  // Android only
+class InvalidOptionsException extends IProovException {
+  // Android only
   InvalidOptionsException(String title) : super(title);
 }
