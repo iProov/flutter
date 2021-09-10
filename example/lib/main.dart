@@ -19,15 +19,12 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MyHomePage(title: 'iProov Example'),
+      home: MyHomePage(),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-  final String title;
-
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
@@ -41,49 +38,53 @@ class _MyHomePageState extends State<MyHomePage> {
     kSecret,
   );
 
-  final iProov = IProov.instance;
-
   void getTokenAndLaunchIProov(
       AssuranceType assuranceType, ClaimType claimType, String userId) async {
-    String token;
     try {
-      token = await apiClient.getToken(assuranceType, claimType, userId);
+      final token = await apiClient.getToken(assuranceType, claimType, userId);
+      final options = Options();
+      // Example configuration
+      // final options = Options(
+      //   ui: UiOptions(
+      //     lineColor: Colors.red,
+      //     backgroundColor: Colors.teal,
+      //     genuinePresenceAssurance: GenuinePresenceAssuranceUiOptions(
+      //       autoStartDisabled: true,
+      //       notReadyTintColor: Colors.red,
+      //       progressBarColor: Colors.cyan,
+      //       readyTintColor: Colors.lightGreen,
+      //     ),
+      //     livenessAssurance: LivenessAssuranceUiOptions(
+      //       primaryTintColor: Colors.grey,
+      //       secondaryTintColor: Colors.yellow,
+      //     ),
+      //   ),
+      // );
+
+      launchIProov(token, options);
     } on Exception catch (e) {
       showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-                title: Text("Error"),
-                content: Text(e.toString()),
-                actions: [
-                  TextButton(
-                      child: Text("OK"),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      })
-                ]);
-          });
-
-      return;
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text("Error"),
+            content: Text(e.toString()),
+            actions: [
+              TextButton(
+                child: Text("OK"),
+                onPressed: () => Navigator.pop(context),
+              )
+            ],
+          );
+        },
+      );
     }
-
-    var options = Options();
-
-    // Examples:
-    // options.ui.lineColor = Colors.red;
-    // options.ui.backgroundColor = Colors.teal;
-    // options.ui.genuinePresenceAssurance.notReadyTintColor = Colors.red;
-    // options.ui.genuinePresenceAssurance.progressBarColor = Colors.cyan;
-    // options.ui.genuinePresenceAssurance.readyTintColor = Colors.lightGreen;
-    // options.ui.livenessAssurance.primaryTintColor = Colors.grey;
-    // options.ui.livenessAssurance.secondaryTintColor = Colors.yellow;
-
-    launchIProov(token, options);
   }
 
   void launchIProov(String token, Options options) {
-    iProov.launch(apiClient.baseUrl, token, options: options,
-        callback: (event) {
+    final iProov =
+        IProov(streamingUrl: apiClient.baseUrl, token: token, options: options);
+    iProov.launch((event) {
       if (event is IProovEventConnecting) {
         ProgressHud.show(ProgressHudType.loading, "Connecting...");
       } else if (event is IProovEventConnected) {
@@ -106,7 +107,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text('iProov Example'),
       ),
       body: ProgressHud(
         isGlobalHud: true,
@@ -118,18 +119,17 @@ class _MyHomePageState extends State<MyHomePage> {
               TextButton(
                 child: Text(
                   '🚀 Launch',
-                  style: TextStyle(
-                    fontSize: 20.0,
-                  ),
+                  style: TextStyle(fontSize: 20.0),
                 ),
                 onPressed: () {
-                  String userId = Uuid()
+                  final userId = Uuid()
                       .v1(); // Generate a random UUID as the User ID for testing purposes
                   getTokenAndLaunchIProov(
-                      AssuranceType
-                          .genuinePresenceAssurance, // livenessAssurance or genuinePresenceAssurance
-                      ClaimType.enrol, // enrol or verify
-                      userId);
+                    AssuranceType
+                        .genuinePresenceAssurance, // livenessAssurance or genuinePresenceAssurance
+                    ClaimType.enrol, // enrol or verify
+                    userId,
+                  );
                 },
               )
             ],

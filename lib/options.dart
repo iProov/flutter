@@ -5,29 +5,18 @@ import 'package:image/image.dart' hide Color;
 import 'package:iproov_flutter/enums.dart';
 
 // TODO: For all the classes in this file, identify which properties need to be null
-// and which ones don't (non-nullable should be the default).
-// Then, declare them all as final and add a constructor.
-//
-// Example:
-// class LivenessAssuranceUiOptions {
-//   LivenessAssuranceUiOptions({
-//     required this.primaryTintColor,
-//     required this.secondaryTintColor,
-//   });
-//   final Color primaryTintColor;
-//   final Color secondaryTintColor;
-
-//   Map<String, dynamic> toJson() => removeNulls({
-//         'primary_tint_color': primaryTintColor.hex,
-//         'secondary_tint_color': secondaryTintColor.hex,
-//       });
-// }
-// Then the [removeNulls] function may become redundant
+// and which ones don't. Non-nullable should be the default.
+// Note: non-nullable variables need to be required or have a default value in the constructor.
 
 class Options {
-  UiOptions ui = UiOptions();
-  NetworkOptions network = NetworkOptions();
-  CaptureOptions capture = CaptureOptions();
+  Options({
+    this.ui = const UiOptions(),
+    this.network = const NetworkOptions(),
+    this.capture = const CaptureOptions(),
+  });
+  final UiOptions ui;
+  final NetworkOptions network;
+  final CaptureOptions capture;
 
   Map<String, dynamic> toJson() => {
         'ui': ui.toJson(),
@@ -37,23 +26,40 @@ class Options {
 }
 
 class UiOptions {
-  final genuinePresenceAssurance = GenuinePresenceAssuranceUiOptions();
-  final livenessAssurance = LivenessAssuranceUiOptions();
-  Filter? filter;
-  Color? lineColor;
-  Color? backgroundColor;
-  String? title;
-  String? fontPath; // TODO: Not cross-platform
-  String? fontResource; // TODO: Not cross-platform
-  String? font; // TODO: Not cross-platform
-  Image? logoImage;
-  Image? closeButtonImage; // TODO: Not yet supported in iOS SDK
-  Color? closeButtonTintColor;
+  const UiOptions({
+    this.genuinePresenceAssurance = const GenuinePresenceAssuranceUiOptions(),
+    this.livenessAssurance = const LivenessAssuranceUiOptions(),
+    this.filter,
+    this.lineColor,
+    this.backgroundColor,
+    this.title,
+    this.fontPath,
+    this.fontResource,
+    this.font,
+    this.logoImage,
+    this.closeButtonImage,
+    this.closeButtonTintColor,
+    this.enableScreenshots,
+    this.orientation,
+    this.activityCompatibilityRequestCode,
+  });
+  final GenuinePresenceAssuranceUiOptions genuinePresenceAssurance;
+  final LivenessAssuranceUiOptions livenessAssurance;
+  final Filter? filter;
+  final Color? lineColor;
+  final Color? backgroundColor;
+  final String? title;
+  final String? fontPath; // TODO: Not cross-platform
+  final String? fontResource; // TODO: Not cross-platform
+  final String? font; // TODO: Not cross-platform
+  final Image? logoImage;
+  final Image? closeButtonImage; // TODO: Not yet supported in iOS SDK
+  final Color? closeButtonTintColor;
 
-  // Drawable logoImageDrawable = null;
-  bool? enableScreenshots;
-  Orientation? orientation;
-  int? activityCompatibilityRequestCode;
+  // final Drawable logoImageDrawable = null;
+  final bool? enableScreenshots;
+  final Orientation? orientation;
+  final int? activityCompatibilityRequestCode;
 
   Map<String, dynamic> toJson() {
     return removeNulls({
@@ -78,10 +84,16 @@ class UiOptions {
 }
 
 class GenuinePresenceAssuranceUiOptions {
-  bool? autoStartDisabled;
-  Color? notReadyTintColor;
-  Color? readyTintColor;
-  Color? progressBarColor;
+  const GenuinePresenceAssuranceUiOptions({
+    this.autoStartDisabled,
+    this.notReadyTintColor,
+    this.readyTintColor,
+    this.progressBarColor,
+  });
+  final bool? autoStartDisabled;
+  final Color? notReadyTintColor;
+  final Color? readyTintColor;
+  final Color? progressBarColor;
 
   Map<String, dynamic> toJson() => removeNulls({
         'auto_start_disabled': autoStartDisabled,
@@ -92,8 +104,10 @@ class GenuinePresenceAssuranceUiOptions {
 }
 
 class LivenessAssuranceUiOptions {
-  Color? primaryTintColor;
-  Color? secondaryTintColor;
+  const LivenessAssuranceUiOptions(
+      {this.primaryTintColor, this.secondaryTintColor});
+  final Color? primaryTintColor;
+  final Color? secondaryTintColor;
 
   Map<String, dynamic> toJson() => removeNulls({
         'primary_tint_color': primaryTintColor?.hex,
@@ -102,9 +116,14 @@ class LivenessAssuranceUiOptions {
 }
 
 class NetworkOptions {
-  List<String>? certificates; // TODO: Not cross-platform
-  Duration? timeout;
-  String? path;
+  const NetworkOptions({
+    this.certificates,
+    this.timeout,
+    this.path,
+  });
+  final List<String>? certificates; // TODO: Not cross-platform
+  final Duration? timeout;
+  final String? path;
 
   Map<String, dynamic> toJson() => removeNulls({
         'certificates': certificates,
@@ -114,10 +133,15 @@ class NetworkOptions {
 }
 
 class CaptureOptions {
-  GenuinePresenceAssuranceCaptureOptions genuinePresenceAssurance =
-      GenuinePresenceAssuranceCaptureOptions();
-  Camera? camera;
-  FaceDetector? faceDetector;
+  const CaptureOptions({
+    this.genuinePresenceAssurance =
+        const GenuinePresenceAssuranceCaptureOptions(),
+    this.camera,
+    this.faceDetector,
+  });
+  final GenuinePresenceAssuranceCaptureOptions genuinePresenceAssurance;
+  final Camera? camera;
+  final FaceDetector? faceDetector;
 
   Map<String, dynamic> toJson() => removeNulls({
         'genuine_presence_assurance': genuinePresenceAssurance.toJson(),
@@ -127,9 +151,14 @@ class CaptureOptions {
 }
 
 class GenuinePresenceAssuranceCaptureOptions {
-  double? maxPitch;
-  double? maxYaw;
-  double? maxRoll;
+  const GenuinePresenceAssuranceCaptureOptions({
+    this.maxPitch,
+    this.maxYaw,
+    this.maxRoll,
+  });
+  final double? maxPitch;
+  final double? maxYaw;
+  final double? maxRoll;
 
   Map<String, dynamic> toJson() => removeNulls({
         'max_pitch': maxPitch,
