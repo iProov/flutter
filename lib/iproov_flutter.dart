@@ -22,12 +22,12 @@ class IProov {
   IProov({
     required this.streamingUrl,
     required this.token,
-    this.options,
+    this.options = const Options(),
   });
 
   final String streamingUrl;
   final String token;
-  final Options? options;
+  final Options options;
 
   /// Whether a streaming session is already im progress
   bool get isStreaming => _subscription != null;

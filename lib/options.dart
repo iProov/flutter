@@ -9,7 +9,7 @@ import 'package:iproov_flutter/enums.dart';
 // Note: non-nullable variables need to be required or have a default value in the constructor.
 
 class Options {
-  Options({
+  const Options({
     this.ui = const UiOptions(),
     this.network = const NetworkOptions(),
     this.capture = const CaptureOptions(),
