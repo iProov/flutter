@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:iproov_flutter/events.dart';
 import 'package:iproov_flutter/options.dart';
@@ -70,4 +71,11 @@ class IProov {
     });
     return completer.future;
   }
+
+  @visibleForTesting
+  Map<String, dynamic> launchPayload() => {
+        'streamingURL': streamingUrl,
+        'token': token,
+        'optionsJSON': json.encode(options)
+      };
 }

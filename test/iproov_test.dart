@@ -3,14 +3,15 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:iproov_flutter/iproov_flutter.dart';
 
 void main() {
-  const MethodChannel _channel = MethodChannel('com.iproov.sdk');
+  late MethodChannelMock cameraChannelMock;
+  late MethodChannelMock streamChannelMock;
 
   setUp(() async {
     TestWidgetsFlutterBinding.ensureInitialized();
-    _channel.setMockMethodCallHandler((MethodCall call) async {
-      if (call.method == 'launch') return null;
-      throw MissingPluginException();
-    });
+    cameraChannelMock = MethodChannelMock(
+        channelName: 'com.iproov.sdk', methods: {'launch': {}});
+    streamChannelMock = MethodChannelMock(
+        channelName: 'com.iproov.sdk.listener', methods: {'listen': {}});
   });
 
   test('constructor doesn\'t start streaming', () async {
@@ -20,13 +21,18 @@ void main() {
 
   test('launch starts streaming', () async {
     final iProov = IProov(streamingUrl: 'abc', token: '123');
-    iProov.launch((event) {});
+    await iProov.launch((event) {});
     expect(iProov.isStreaming, true);
+    // check that platform channel methods are called
+    expect(cameraChannelMock.log,
+        <Matcher>[isMethodCall('launch', arguments: iProov.launchPayload())]);
+    expect(streamChannelMock.log,
+        <Matcher>[isMethodCall('listen', arguments: null)]);
   });
 
   test('launch twice throws exception', () async {
     final iProov = IProov(streamingUrl: 'abc', token: '123');
-    iProov.launch((event) {});
+    await iProov.launch((event) {});
     expect(() => iProov.launch((event) {}), throwsAssertionError);
   });
 
@@ -46,4 +52,38 @@ void main() {
 
   test('launch after subscription closed starts stream again', () async {},
       skip: true);
+}
+
+// borrowed from the camera plugin test code
+class MethodChannelMock {
+  final Duration? delay;
+  final MethodChannel methodChannel;
+  final Map<String, dynamic> methods;
+  final log = <MethodCall>[];
+
+  MethodChannelMock({
+    required String channelName,
+    this.delay,
+    required this.methods,
+  }) : methodChannel = MethodChannel(channelName) {
+    methodChannel.setMockMethodCallHandler(_handler);
+  }
+
+  Future _handler(MethodCall methodCall) async {
+    log.add(methodCall);
+
+    if (!methods.containsKey(methodCall.method)) {
+      throw MissingPluginException('No implementation found for method '
+          '${methodCall.method} on channel ${methodChannel.name}');
+    }
+
+    return Future.delayed(delay ?? Duration.zero, () {
+      final result = methods[methodCall.method];
+      if (result is Exception) {
+        throw result;
+      }
+
+      return Future.value(result);
+    });
+  }
 }
