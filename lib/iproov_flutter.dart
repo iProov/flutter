@@ -25,8 +25,13 @@ class IProov {
     this.options = const Options(),
   });
 
+  /// Streaming URL to use
   final String streamingUrl;
+
+  /// Token obtained from the API
   final String token;
+
+  /// Configuration options
   final Options options;
 
   /// Whether a streaming session is already im progress
@@ -38,6 +43,11 @@ class IProov {
 
   StreamSubscription<IProovEvent>? _subscription;
 
+  /// Launch the verification process
+  ///
+  /// The [IProovEventCallback] callback will be called multiple times
+  ///
+  /// When the process is completed, the last event is returned
   Future<IProovEvent> launch(IProovEventCallback callback) {
     final completer = Completer<IProovEvent>();
     if (isStreaming) {
