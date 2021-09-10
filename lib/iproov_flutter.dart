@@ -38,7 +38,8 @@ class IProov {
 
   StreamSubscription<IProovEvent>? _subscription;
 
-  void launch(IProovEventCallback callback) {
+  Future<IProovEvent> launch(IProovEventCallback callback) {
+    final completer = Completer<IProovEvent>();
     if (isStreaming) {
       throw AssertionError('A streaming session is already in progress');
     }
@@ -47,6 +48,7 @@ class IProov {
       if (event.isFinal) {
         _subscription?.cancel();
         _subscription = null;
+        completer.complete(event);
       }
       callback(event);
     });
@@ -56,5 +58,6 @@ class IProov {
       'token': token,
       'optionsJSON': json.encode(options)
     });
+    return completer.future;
   }
 }
