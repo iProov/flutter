@@ -128,41 +128,41 @@ For full documentation, please read the respective [iOS](https://github.com/iPro
 
 A summary of the support for the various SDK options in Flutter is provided below:
 
-| Option | iOS | Android |
-| --- | --- | --- |
-| **`Options.ui.`** |  |  |
-| `filter` | ✅ | ✅ |
-| `lineColor` | ✅ | ✅ | 
-| `backgroundColor` | ✅ | ✅ |
-| `title` | ✅ | ✅ |
-| `fontPath` |  | ⚠️ (1) |
-| `fontResource` |  | ⚠️ (1) |
-| `font` | ⚠️ (1) |  |
-| `logoImage` | ✅ | ✅ |
-| `closeButtonImage` | ✅ |  |
-| `closeButtonTintColor` | ✅ |  |
-| `enableScreenshots` |  | ✅  |
-| `orientation` |  | ✅ |
-| `activityCompatibilityRequestCode` |  | ✅ |
-| **`Options.ui.genuinePresenceAssurance.`** |  |  |
-| `autoStartDisabled` | ✅ | ✅ |
-| `notReadyTintColor` | ✅ | ✅ |
-| `readyTintColor` | ✅ | ✅ |
-| `progressBarColor` | ✅ | ✅ |
-| **`Options.ui.livenessAssurance.`** |  |  |
-| `primaryTintColor` | ✅ | ✅ |
-| `secondaryTintColor` | ✅ | ✅ |
-| **`Options.network.`** |  |  |
-| `certificates` | ⚠️ (2) | ⚠️ (2) |
-| `timeout` | ✅ | ✅ |
-| `path` | ✅ | ✅ |
-| **`Options.capture.`** |  |  |
-| `camera` |   | ✅ |
-| `faceDetector` |  | ✅ |
-| **`Options.capture.genuinePresenceAssurance.`** |  |  |
-| `maxPitch` | ✅ (3) | ✅ (3) |
-| `maxYaw` | ✅ (3) | ✅ (3) |
-| `maxRoll` | ✅ (3) | ✅ (3) |
+| Option                                          | iOS   | Android |
+| ----------------------------------------------- | ----- | ------- |
+| **`Options.ui.`**                               |       |         |
+| `filter`                                        | ✅     | ✅       |
+| `lineColor`                                     | ✅     | ✅       |
+| `backgroundColor`                               | ✅     | ✅       |
+| `title`                                         | ✅     | ✅       |
+| `fontPath`                                      |       | ⚠️ (1)   |
+| `fontResource`                                  |       | ⚠️ (1)   |
+| `font`                                          | ⚠️ (1) |         |
+| `logoImage`                                     | ✅     | ✅       |
+| `closeButtonImage`                              | ✅     |         |
+| `closeButtonTintColor`                          | ✅     |         |
+| `enableScreenshots`                             |       | ✅       |
+| `orientation`                                   |       | ✅       |
+| `activityCompatibilityRequestCode`              |       | ✅       |
+| **`Options.ui.genuinePresenceAssurance.`**      |       |         |
+| `autoStartDisabled`                             | ✅     | ✅       |
+| `notReadyTintColor`                             | ✅     | ✅       |
+| `readyTintColor`                                | ✅     | ✅       |
+| `progressBarColor`                              | ✅     | ✅       |
+| **`Options.ui.livenessAssurance.`**             |       |         |
+| `primaryTintColor`                              | ✅     | ✅       |
+| `secondaryTintColor`                            | ✅     | ✅       |
+| **`Options.network.`**                          |       |         |
+| `certificates`                                  | ⚠️ (2) | ⚠️ (2)   |
+| `timeout`                                       | ✅     | ✅       |
+| `path`                                          | ✅     | ✅       |
+| **`Options.capture.`**                          |       |         |
+| `camera`                                        |       | ✅       |
+| `faceDetector`                                  |       | ✅       |
+| **`Options.capture.genuinePresenceAssurance.`** |       |         |
+| `maxPitch`                                      | ✅ (3) | ✅ (3)   |
+| `maxYaw`                                        | ✅ (3) | ✅ (3)   |
+| `maxRoll`                                       | ✅ (3) | ✅ (3)   |
 
 (1) There are currently different ways of setting fonts on iOS & Android. Fonts should be added to the respective iOS app bundle or Android project (`android/app/src/main/res/font`) and can then be set by name via this API. This is due to be revised in a future release.
 
@@ -174,26 +174,28 @@ A summary of the support for the various SDK options in Flutter is provided belo
 
 All errors from the native SDKs are re-mapped to Flutter exceptions:
 
-| Exception | iOS | Android | Description |
-| --- | --- | --- | --- |
-| `CaptureAlreadyActiveException` | ✅ | ✅ | An existing iProov capture is already in progress. Wait until the current capture completes before starting a new one.
-| `NetworkError` | ✅ | ✅ | An error occurred with the video streaming process. Consult the `message` value for more information.
-| `CameraPermissionError` | ✅ | ✅ |  The user disallowed access to the camera when prompted. You should direct the user to re-enable camera access.
-| `ServerException` | ✅ | ✅ | A server-side error/token invalidation occurred. The associated `message` will contain further information about the error.
-| `UnexpectedErrorException` | ✅ | ✅ | An unexpected and unrecoverable error has occurred. These errors should be reported to iProov for further investigation.
-| `ListenerNotRegisteredException` |  | ✅ | The SDK was launched before a listener was registered.
-| `MultiWindowUnsupportedException` |  | ✅ | The user attempted to iProov in split-screen/multi-screen mode, which is not supported.
-| `CameraException` |  | ✅ | An error occurred acquiring or using the camera. This could happen when a non-phone is used with/without an external/USB camera.
-| `FaceDetectorException` |  | ✅ | An error occurred with the face detector.
-| `InvalidOptionsException` |  | ✅ | An error occurred when trying to apply your options.
+| Exception                         | iOS | Android | Description                                                                                                                      |
+| --------------------------------- | --- | ------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `CaptureAlreadyActiveException`   | ✅   | ✅       | An existing iProov capture is already in progress. Wait until the current capture completes before starting a new one.           |
+| `NetworkError`                    | ✅   | ✅       | An error occurred with the video streaming process. Consult the `message` value for more information.                            |
+| `CameraPermissionError`           | ✅   | ✅       | The user disallowed access to the camera when prompted. You should direct the user to re-enable camera access.                   |
+| `ServerException`                 | ✅   | ✅       | A server-side error/token invalidation occurred. The associated `message` will contain further information about the error.      |
+| `UnexpectedErrorException`        | ✅   | ✅       | An unexpected and unrecoverable error has occurred. These errors should be reported to iProov for further investigation.         |
+| `ListenerNotRegisteredException`  |     | ✅       | The SDK was launched before a listener was registered.                                                                           |
+| `MultiWindowUnsupportedException` |     | ✅       | The user attempted to iProov in split-screen/multi-screen mode, which is not supported.                                          |
+| `CameraException`                 |     | ✅       | An error occurred acquiring or using the camera. This could happen when a non-phone is used with/without an external/USB camera. |
+| `FaceDetectorException`           |     | ✅       | An error occurred with the face detector.                                                                                        |
+| `InvalidOptionsException`         |     | ✅       | An error occurred when trying to apply your options.                                                                             |
 
 ## API Client
 
 The Dart API Client provides a convenient wrapper to call iProov's REST API v2 from a Dart/Flutter app. It is a useful tool to assist with testing, debugging and demos, but should not be used in production mobile apps. You could also adapt this code to run on your back-end to perform server-to-server calls.
 
-> ⚠️ **SECURITY NOTICE:** Use of the Dart API Client requires providing it with your API secret. **You should never embed your API secret within a production app.**
-
 The Dart API client can be found in `api_client.dart` in the Example project.
+
+The Dart API keys can be set inside `api_keys.dart` in the Example project.
+
+> ⚠️ **SECURITY NOTICE:** Use of the Dart API Client requires providing it with your API secret. **You should never embed your API secret within a production app.**
 
 ### Functionality
 
