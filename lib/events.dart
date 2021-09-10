@@ -21,7 +21,7 @@ abstract class IProovEvent {
     return IProovEventError(IProovException.error(error, title, message));
   }
 
-  factory IProovEvent.fromMap(Map<String, dynamic> map) {
+  factory IProovEvent.fromMap(Map map) {
     switch (map['event']) {
       case 'connecting':
         return connecting;
