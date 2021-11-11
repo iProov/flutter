@@ -1,5 +1,4 @@
 abstract class IProovException implements Exception {
-  // TODO: Title is not currently being populated from Android, pending SDK update
   final String title;
   final String? message;
   IProovException(this.title, [this.message]);

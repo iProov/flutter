@@ -102,6 +102,7 @@ class IProovSDKPlugin: FlutterPlugin {
             listenerEventSink?.success(hashMapOf(
                     "event" to "error",
                     "error" to exceptionName,
+                    "title" to e.getReason(),
                     "message" to e.message
             ))
         }
