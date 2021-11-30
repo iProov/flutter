@@ -153,7 +153,10 @@ class IProovSDKPlugin: FlutterPlugin {
         }
 
         private fun handleException(exception: Exception) {
-            listenerEventSink?.success(hashMapOf("event" to "error", "exception" to exception.toString()))
+            listenerEventSink?.success(hashMapOf(
+                "event" to "error",
+                "exception" to exception.toString()
+            ))
         }
     }
 
