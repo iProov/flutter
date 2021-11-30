@@ -102,6 +102,7 @@ class IProovSDKPlugin: FlutterPlugin {
             listenerEventSink?.success(hashMapOf(
                     "event" to "error",
                     "error" to exceptionName,
+                    "title" to e.getReason(),
                     "message" to e.message
             ))
         }
@@ -132,25 +133,30 @@ class IProovSDKPlugin: FlutterPlugin {
                 token.isNullOrEmpty() -> {
                     handleException(IllegalArgumentException(METHOD_LAUNCH_PARAM_TOKEN))
                 }
-                else -> {
-
-                    if (optionsJson.isNullOrEmpty()) {
+                optionsJson.isNullOrEmpty() -> {
+                    try {
                         IProov.launch(context, streamingUrl, token)
-                    } else {
-                        try {
-                            val json = JSONObject(optionsJson)
-                            val options = OptionsBridge.fromJson(context, json)
-                            IProov.launch(context, streamingUrl, token, options)
-                        } catch (ex: IProovException) {
-                            handleException(ex)
-                        }
+                    } catch (e: Exception) {
+                        handleException(e)
+                    }
+                }
+                else -> {
+                    try {
+                        val json = JSONObject(optionsJson)
+                        val options = OptionsBridge.fromJson(context, json)
+                        IProov.launch(context, streamingUrl, token, options)
+                    } catch (e: Exception) {
+                        handleException(e)
                     }
                 }
             }
         }
 
         private fun handleException(exception: Exception) {
-            listenerEventSink?.success(hashMapOf("event" to "error", "exception" to exception.toString()))
+            listenerEventSink?.success(hashMapOf(
+                "event" to "error",
+                "exception" to exception.toString()
+            ))
         }
     }
 

@@ -2,7 +2,7 @@ group 'com.iproov.flutter_sdk_plugin'
 version '1.0.0'
 
 buildscript {
-    ext.kotlin_version = '1.5.10'
+    ext.kotlin_version = '1.5.30'
     repositories {
         google()
         mavenCentral()
@@ -41,5 +41,5 @@ android {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation "com.iproov.sdk:iproov:7.0.3"
+    implementation "com.iproov.sdk:iproov:7.1.0"
 }

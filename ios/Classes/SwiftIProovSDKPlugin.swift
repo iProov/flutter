@@ -11,6 +11,7 @@ private enum EventKey: String {
     case reason
     case token
     case frame
+    case title
 }
 
 private enum EventName: String {
@@ -141,30 +142,29 @@ private extension Data {
 private extension IProovError {
 
     var serialized: [String: String?] {
-
         var result = [String: String?]()
-        result["event"] = "error"
+        result[EventKey.event.rawValue] = "error"
+        result[EventKey.error.rawValue] = errorName
+        result[EventKey.title.rawValue] = localizedTitle
+        result[EventKey.message.rawValue] = localizedMessage
+        return result
+    }
 
+    private var errorName: String {
         switch self {
         case .captureAlreadyActive:
-            result[EventKey.error.rawValue] = "capture_already_active"
-        case let .networkError(message):
-            result[EventKey.error.rawValue] = "network"
-            result[EventKey.message.rawValue] = message
+            return "capture_already_active"
+        case .networkError:
+            return "network"
         case .cameraPermissionDenied:
-            result[EventKey.error.rawValue] = "camera_permission"
-        case let .serverError(message):
-            result[EventKey.error.rawValue] = "server_error"
-            result[EventKey.message.rawValue] = message
-        case let .unexpectedError(message):
-            result[EventKey.error.rawValue] = "unexpected_error"
-            result[EventKey.message.rawValue] = message
+            return "camera_permission"
+        case .serverError:
+            return "server_error"
+        case .unexpectedError:
+            fallthrough
         @unknown default:
-            result[EventKey.error.rawValue] = "unexpected_error"
-            result[EventKey.message.rawValue] = "Unhandled error"
+            return "unexpected_error"
         }
-
-        return result
     }
 
 }

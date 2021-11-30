@@ -2,17 +2,20 @@ import 'package:image/image.dart';
 import 'package:iproov_flutter/exceptions.dart';
 
 abstract class IProovEvent {
-  abstract final bool isFinal;
+  bool get isFinal;
 
-  static const connecting = const IProovEventConnecting();
-  static const connected = const IProovEventConnected();
-  static const cancelled = const IProovEventCancelled();
+  static const connecting = IProovEventConnecting();
+  static const connected = IProovEventConnected();
+  static const cancelled = IProovEventCancelled();
 
-  factory IProovEvent.progress(double progress, String message) = IProovEventProgress;
+  factory IProovEvent.progress(double progress, String message) =
+      IProovEventProgress;
 
   factory IProovEvent.success(String token, Image? frame) = IProovEventSuccess;
 
-  factory IProovEvent.failure(String token, String reason, String feedbackCode, Image? frame) = IProovEventFailure;
+  factory IProovEvent.failure(
+          String token, String reason, String feedbackCode, Image? frame) =
+      IProovEventFailure;
 
   factory IProovEvent.error(String error, String title, String? message) {
     return IProovEventError(IProovException.error(error, title, message));
@@ -27,17 +30,14 @@ abstract class IProovEvent {
       case 'processing':
         return IProovEvent.progress(map['progress'], map['message']);
       case 'success':
-        Image? frame;
-        if (map['frame'] != null) {
-          frame = decodePng(map['frame']!);
-        }
+        final frameData = map['frame'];
+        final frame = frameData != null ? decodePng(frameData) as Image : null;
         return IProovEvent.success(map['token'], frame);
       case 'failure':
-        Image? frame;
-        if (map['frame'] != null) {
-          frame = decodePng(map['frame']!);
-        }
-        return IProovEvent.failure(map['token'], map['reason'], map['feedbackCode'], frame);
+        final frameData = map['frame'];
+        final frame = frameData != null ? decodePng(frameData) as Image : null;
+        return IProovEvent.failure(
+            map['token'], map['reason'], map['feedbackCode'], frame);
       case 'cancelled':
         return cancelled;
       case 'error':
@@ -48,33 +48,29 @@ abstract class IProovEvent {
 }
 
 class IProovEventConnecting implements IProovEvent {
-
   @override
-  final bool isFinal = false;
+  bool get isFinal => false;
 
   const IProovEventConnecting();
 }
 
 class IProovEventConnected implements IProovEvent {
-
   @override
-  final bool isFinal = false;
+  bool get isFinal => false;
 
   const IProovEventConnected();
 }
 
 class IProovEventCancelled implements IProovEvent {
-
   @override
-  final bool isFinal = true;
+  bool get isFinal => true;
 
   const IProovEventCancelled();
 }
 
 class IProovEventProgress implements IProovEvent {
-
   @override
-  final bool isFinal = false;
+  bool get isFinal => false;
 
   final double progress;
   final String message;
@@ -83,9 +79,8 @@ class IProovEventProgress implements IProovEvent {
 }
 
 class IProovEventSuccess implements IProovEvent {
-
   @override
-  final bool isFinal = true;
+  bool get isFinal => true;
 
   final String token;
   final Image? frame;
@@ -94,22 +89,21 @@ class IProovEventSuccess implements IProovEvent {
 }
 
 class IProovEventFailure implements IProovEvent {
-
   @override
-  final bool isFinal = true;
+  bool get isFinal => true;
 
   final String token;
   final String reason;
   final String feedbackCode;
   final Image? frame;
 
-  const IProovEventFailure(this.token, this.reason, this.feedbackCode, this.frame);
+  const IProovEventFailure(
+      this.token, this.reason, this.feedbackCode, this.frame);
 }
 
 class IProovEventError implements IProovEvent {
-
   @override
-  final bool isFinal = true;
+  bool get isFinal => true;
 
   final IProovException error;
 
