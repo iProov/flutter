@@ -22,6 +22,7 @@
 ### Android
 
 * Upgraded SDK to v7.1.0
+* Passing certificates directly as `List<int>` is now supported
 * Error handling improvements
 
 ## 0.1.0

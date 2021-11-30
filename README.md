@@ -159,22 +159,20 @@ A summary of the support for the various SDK options in Flutter is provided belo
 | `primaryTintColor`                              | ✅     | ✅       |
 | `secondaryTintColor`                            | ✅     | ✅       |
 | **`Options.network.`**                          |       |         |
-| `certificates`                                  | ✅     | ❌ (2)   |
+| `certificates`                                  | ✅     | ✅       |
 | `timeout`                                       | ✅     | ✅       |
 | `path`                                          | ✅     | ✅       |
 | **`Options.capture.`**                          |       |         |
 | `camera`                                        |       | ✅       |
 | `faceDetector`                                  |       | ✅       |
 | **`Options.capture.genuinePresenceAssurance.`** |       |         |
-| `maxPitch`                                      | ✅ (3) | ✅ (3)   |
-| `maxYaw`                                        | ✅ (3) | ✅ (3)   |
-| `maxRoll`                                       | ✅ (3) | ✅ (3)   |
+| `maxPitch`                                      | ✅ (2) | ✅ (2)   |
+| `maxYaw`                                        | ✅ (2) | ✅ (2)   |
+| `maxRoll`                                       | ✅ (2) | ✅ (2)   |
 
 (1) There are currently different ways of setting fonts on iOS & Android. Fonts should be added to the respective iOS app bundle or Android project (`android/app/src/main/res/font`) and can then be set by name via this API. This is due to be revised in a future release.
 
-(2) Support for setting certificates on Android is currently unavailable in v0.2.0. This functionality will be restored in a future update (alternatively, you can downgrade to v0.1.0 and set certificates using the old method).
-
-(3) This is an advanced option and not recommended for general usage. If you wish to use this option, contact iProov for for further details.
+(2) This is an advanced option and not recommended for general usage. If you wish to use this option, contact iProov for for further details.
 
 ## Handling errors
 

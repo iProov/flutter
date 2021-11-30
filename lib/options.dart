@@ -90,7 +90,7 @@ class LivenessAssuranceUiOptions {
 }
 
 class NetworkOptions {
-  List<List<int>>? certificates; // TODO: Not yet supported in Android
+  List<List<int>>? certificates;
   Duration? timeout;
   String? path;
 
