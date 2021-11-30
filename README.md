@@ -1,4 +1,4 @@
-![iProov: Flexible authentication for identity assurance](images/banner.jpg)
+![iProov: Flexible authentication for identity assurance](https://github.com/iProov/flutter/raw/main/images/banner.jpg)
 # iProov Biometrics Flutter SDK (Preview)
 
 ## Table of contents
