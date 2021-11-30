@@ -40,8 +40,8 @@ class _MyHomePageState extends State<MyHomePage> {
   // in production!
   ApiClient apiClient = ApiClient(
     "https://eu.rp.secure.iproov.me/api/v2/",
-    kApiKey,
-    kSecret,
+    apiKey,
+    secret,
   );
 
   void getTokenAndLaunchIProov(
