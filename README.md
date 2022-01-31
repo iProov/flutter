@@ -62,7 +62,35 @@ flutter pub get
 
 ### iOS installation
 
-You must also add a `NSCameraUsageDescription` to your iOS app's Info.plist, with the reason why your app requires camera access (e.g. “To iProov you in order to verify your identity.”)
+There are a couple of extra steps required for iOS:
+
+1. You must also add a `NSCameraUsageDescription` to your iOS app's Info.plist, with the reason why your app requires camera access (e.g. “To iProov you in order to verify your identity.”)
+
+2. Open the Podfile relating to the iOS project (this can be found at the path _ios/Podfile_). Scroll to the bottom of the file and locate the following:
+
+	```ruby
+	post_install do |installer|
+	  installer.pods_project.targets.each do |target|
+	    flutter_additional_ios_build_settings(target)
+	  end
+	end
+	```
+	
+	This should be changed to:
+	
+	```ruby
+	post_install do |installer|
+	  installer.pods_project.targets.each do |target|
+	    flutter_additional_ios_build_settings(target)
+	    	    
+	    if ['iProov', 'Socket.IO-Client-Swift', 'Starscream'].include? target.name
+	      target.build_configurations.each do |config|
+	        config.build_settings['BUILD_LIBRARY_FOR_DISTRIBUTION'] = 'YES'
+	      end
+	    end
+	  end
+	end
+	```
 
 ## Get started
 
