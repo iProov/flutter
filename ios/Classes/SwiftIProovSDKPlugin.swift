@@ -85,7 +85,7 @@ private extension SwiftIProovSDKPlugin {
                 return launchError(IProovError.unexpectedError("Invalid options"))
             }
 
-            options = Options.from(json: dict)
+            options = Options.from(flutterJSON: dict)
         } else {
             options = Options()
         }
@@ -128,6 +128,45 @@ private extension SwiftIProovSDKPlugin {
         @unknown default:
             return nil
         }
+    }
+
+}
+
+private extension Options {
+
+    // Handle any Flutter-specific requirements, e.g. custom fonts
+    static func from(flutterJSON dict: [String : Any]) -> Options {
+
+        let options = Options.from(json: dict)
+
+        // Handle custom fonts:
+        if let ui = dict["ui"] as? [String: Any],
+           let fontPath = ui["font_path"] as? String {
+
+            installFont(path: fontPath)
+            let fontName = String(fontPath.split(separator: "/").last!.split(separator: ".").first!)
+            options.ui.font = fontName
+        }
+
+        return options
+    }
+}
+
+// Load font from Flutter assets:
+private func installFont(path: String) {
+    let fontKey = FlutterDartProject.lookupKey(forAsset: path)
+    guard let url = Bundle.main.url(forResource: fontKey, withExtension: nil),
+          let fontData = try? Data(contentsOf: url),
+          let dataProvider = CGDataProvider(data: fontData as CFData) else {
+              fatalError("Failed to load font at path: \(path)")
+    }
+
+    let fontRef = CGFont(dataProvider)
+    var error: Unmanaged<CFError>? = nil
+    CTFontManagerRegisterGraphicsFont(fontRef!, &error)
+
+    if let error = error {
+        fatalError("Failed to install font at path: \(path), error: \(error)")
     }
 }
 

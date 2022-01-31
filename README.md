@@ -1,5 +1,5 @@
 ![iProov: Flexible authentication for identity assurance](https://github.com/iProov/flutter/raw/main/images/banner.jpg)
-# iProov Biometrics Flutter SDK (Preview)
+# iProov Biometrics Flutter SDK
 
 ## Table of contents
 
@@ -24,12 +24,8 @@ We also provide an API Client written in Dart to call our [REST API v2](https://
 
 - Dart SDK 2.12 and above
 - Flutter SDK 1.20 and above
-- iOS 10.0 and above
+- iOS 10 and above
 - Android API Level 21 (Android 5 Lollipop) and above
-
-### Preview
-
-The iProov Biometrics Flutter SDK is currently in preview, which means that there may be missing/broken functionality, and the API is still subject to change. Please [contact us](mailto:support@iproov.com) to provide your feedback regarding the iProov Biometrics Flutter SDK Preview.
 
 ## Repository contents
 
@@ -51,7 +47,7 @@ Add the following to your project's `pubspec.yml` file:
 
 ```yaml
 dependencies:
-  iproov_flutter: ^0.2.0
+  iproov_flutter: ^1.0.0
 ```
 
 You can then install it with:
@@ -62,7 +58,35 @@ flutter pub get
 
 ### iOS installation
 
-You must also add a `NSCameraUsageDescription` to your iOS app's Info.plist, with the reason why your app requires camera access (e.g. “To iProov you in order to verify your identity.”)
+There are a couple of extra steps required for iOS:
+
+1. You must also add a `NSCameraUsageDescription` to your iOS app's Info.plist, with the reason why your app requires camera access (e.g. “To iProov you in order to verify your identity.”)
+
+2. Open the Podfile relating to the iOS project (this can be found at the path _ios/Podfile_). Scroll to the bottom of the file and locate the following:
+
+	```ruby
+	post_install do |installer|
+	  installer.pods_project.targets.each do |target|
+	    flutter_additional_ios_build_settings(target)
+	  end
+	end
+	```
+	
+	This should be changed to:
+	
+	```ruby
+	post_install do |installer|
+	  installer.pods_project.targets.each do |target|
+	    flutter_additional_ios_build_settings(target)
+	    	    
+	    if ['iProov', 'Socket.IO-Client-Swift', 'Starscream'].include? target.name
+	      target.build_configurations.each do |config|
+	        config.build_settings['BUILD_LIBRARY_FOR_DISTRIBUTION'] = 'YES'
+	      end
+	    end
+	  end
+	end
+	```
 
 ## Get started
 
@@ -128,49 +152,48 @@ Most of these options are common to both Android and iOS, however, some are plat
 
 For full documentation, please read the respective [iOS](https://github.com/iProov/ios#options) and [Android](https://github.com/iProov/android#options) native SDK documentation.
 
-A summary of the support for the various SDK options in Flutter is provided below:
+A summary of the support for the various SDK options in Flutter is provided below. All options are nullable and any options not set will default to their platform-specific default value.
 
-| Option                                          | iOS   | Android |
-| ----------------------------------------------- | ----- | ------- |
-| **`Options.ui.`**                               |       |         |
-| `filter`                                        | ✅     | ✅       |
-| `lineColor`                                     | ✅     | ✅       |
-| `backgroundColor`                               | ✅     | ✅       |
-| `headerBackgroundColor`                         | ✅     | ✅       |
-| `footerBackgroundColor`                         | ✅     | ✅       |
-| `headerTextColor`                               | ✅     | ✅       |
-| `footerTextColor`                               | ✅     | ✅       |
-| `title`                                         | ✅     | ✅       |
-| `fontPath`                                      |       | ⚠️ (1)   |
-| `fontResource`                                  |       | ⚠️ (1)   |
-| `font`                                          | ⚠️ (1) |         |
-| `logoImage`                                     | ✅     | ✅       |
-| `closeButtonImage`                              | ✅     |         |
-| `closeButtonTintColor`                          | ✅     |         |
-| `enableScreenshots`                             |       | ✅       |
-| `orientation`                                   |       | ✅       |
-| `activityCompatibilityRequestCode`              |       | ✅       |
-| **`Options.ui.genuinePresenceAssurance.`**      |       |         |
-| `autoStartDisabled`                             | ✅     | ✅       |
-| `notReadyTintColor`                             | ✅     | ✅       |
-| `readyTintColor`                                | ✅     | ✅       |
-| `progressBarColor`                              | ✅     | ✅       |
-| **`Options.ui.livenessAssurance.`**             |       |         |
-| `primaryTintColor`                              | ✅     | ✅       |
-| `secondaryTintColor`                            | ✅     | ✅       |
-| **`Options.network.`**                          |       |         |
-| `certificates`                                  | ✅     | ✅       |
-| `timeout`                                       | ✅     | ✅       |
-| `path`                                          | ✅     | ✅       |
-| **`Options.capture.`**                          |       |         |
-| `camera`                                        |       | ✅       |
-| `faceDetector`                                  |       | ✅       |
-| **`Options.capture.genuinePresenceAssurance.`** |       |         |
-| `maxPitch`                                      | ✅ (2) | ✅ (2)   |
-| `maxYaw`                                        | ✅ (2) | ✅ (2)   |
-| `maxRoll`                                       | ✅ (2) | ✅ (2)   |
+| Option                                          | Type               | iOS   | Android |
+|-------------------------------------------------|--------------------|-------|---------|
+| **`Options.ui.`**                               |                    |       |         |
+| `filter`                                        | `Filter?`          | ✅     | ✅       |
+| `lineColor`                                     | `Color?`           | ✅     | ✅       |
+| `backgroundColor`                               | `Color?`           | ✅     | ✅       |
+| `headerBackgroundColor`                         | `Color?`           | ✅     | ✅       |
+| `footerBackgroundColor`                         | `Color?`           | ✅     | ✅       |
+| `headerTextColor`                               | `Color?`           | ✅     | ✅       |
+| `promptTextColor`                               | `Color?`           | ✅     | ✅       |
+| `floatingPromptEnabled`                         | `bool?`            | ✅     | ✅       |
+| `title`                                         | `String?`          | ✅     | ✅       |
+| `fontPath`                                      | `String?`          | ✅ (1) | ✅ (1)   |
+| `logoImage`                                     | `Image?`           | ✅     | ✅       |
+| `closeButtonImage`                              | `Image?`           | ✅     |         |
+| `closeButtonTintColor`                          | `Color?`           | ✅     |         |
+| `enableScreenshots`                             | `bool?`            |       | ✅       |
+| `orientation`                                   | `Orientation?`     |       | ✅       |
+| `activityCompatibilityRequestCode`              | `int?`             |       | ✅       |
+| **`Options.ui.genuinePresenceAssurance.`**      |                    |       |         |
+| `autoStartDisabled`                             | `bool?`            | ✅     | ✅       |
+| `notReadyTintColor`                             | `Color?`           | ✅     | ✅       |
+| `readyTintColor`                                | `Color?`           | ✅     | ✅       |
+| `progressBarColor`                              | `Color?`           | ✅     | ✅       |
+| **`Options.ui.livenessAssurance.`**             |                    |       |         |
+| `primaryTintColor`                              | `Color?`           | ✅     | ✅       |
+| `secondaryTintColor`                            | `Color?`           | ✅     | ✅       |
+| **`Options.network.`**                          |                    |       |         |
+| `certificates`                                  | `List<List<int>>?` | ✅     | ✅       |
+| `timeout`                                       | `Duration?`        | ✅     | ✅       |
+| `path`                                          | `String?`          | ✅     | ✅       |
+| **`Options.capture.`**                          |                    |       |         |
+| `camera`                                        | `Camera?`          |       | ✅       |
+| `faceDetector`                                  | `FaceDetector?`    |       | ✅       |
+| **`Options.capture.genuinePresenceAssurance.`** |                    |       |         |
+| `maxPitch`                                      | `double?`          | ✅ (2) | ✅ (2)   |
+| `maxYaw`                                        | `double?`          | ✅ (2) | ✅ (2)   |
+| `maxRoll`                                       | `double?`          | ✅ (2) | ✅ (2)   |
 
-(1) There are currently different ways of setting fonts on iOS & Android. Fonts should be added to the respective iOS app bundle or Android project (`android/app/src/main/res/font`) and can then be set by name via this API. This is due to be revised in a future release.
+(1) Fonts should be added to your Flutter app (TTF or OTF formats are supported). You can then set (for example) `options.ui.fontPath = 'fonts/Lobster-Regula.ttf'` - note that the font filename must match the font name.
 
 (2) This is an advanced option and not recommended for general usage. If you wish to use this option, contact iProov for for further details.
 
@@ -197,7 +220,7 @@ The Dart API Client provides a convenient wrapper to call iProov's REST API v2 f
 
 The Dart API client can be found in `api_client.dart` in the Example project.
 
-Your API key and secret for the example app can be set inside `api_keys.dart` in the Example project.
+Your API key and secret for the example app can be set inside `credentials.dart` in the Example project.
 
 > ⚠️ **SECURITY NOTICE:** Use of the Dart API Client requires providing it with your API secret. **You should never embed your API secret within a production app.**
 
@@ -229,6 +252,8 @@ You can then launch the iProov SDK with this token.
 ## Sample code
 
 For a simple iProov experience that is ready to run out-of-the-box, check out the Flutter example project which also makes use of the Dart API Client.
+
+In the example app folder, copy the `credentials.example.dart` file to `credentials.dart` and add your credentials obtained from the [iProov portal](https://portal.iproov.com/).
 
 > NOTE: iProov is not supported on the iOS or Android simulator, you must use a physical device in order to iProov.
 

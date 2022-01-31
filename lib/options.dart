@@ -20,18 +20,17 @@ class UiOptions {
   GenuinePresenceAssuranceUiOptions genuinePresenceAssurance =
       GenuinePresenceAssuranceUiOptions();
   LivenessAssuranceUiOptions livenessAssurance = LivenessAssuranceUiOptions();
-  Filter? filter;
 
+  Filter? filter;
   Color? lineColor;
   Color? backgroundColor;
   Color? headerBackgroundColor;
   Color? footerBackgroundColor;
   Color? headerTextColor;
-  Color? footerTextColor;
+  Color? promptTextColor;
+  bool? floatingPromptEnabled;
   String? title;
-  String? fontPath; // TODO: Not cross-platform
-  String? fontResource; // TODO: Not cross-platform
-  String? font; // TODO: Not cross-platform
+  String? fontPath;
   Image? logoImage;
   Image? closeButtonImage; // Supported in iOS 9.1+
   Color? closeButtonTintColor;
@@ -49,11 +48,10 @@ class UiOptions {
       'header_background_color': headerBackgroundColor?.hex,
       'footer_background_color': footerBackgroundColor?.hex,
       'header_text_color': headerTextColor?.hex,
-      'footer_text_color': footerTextColor?.hex,
+      'prompt_text_color': promptTextColor?.hex,
+      'floating_prompt_enabled': floatingPromptEnabled,
       'title': title,
       'font_path': fontPath,
-      'font_resource': fontResource,
-      'font': font,
       'enable_screenshots': enableScreenshots,
       'orientation': orientation?.stringValue,
       'activity_compatibility_request_code': activityCompatibilityRequestCode,
