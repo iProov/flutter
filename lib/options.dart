@@ -30,9 +30,7 @@ class UiOptions {
   Color? promptTextColor;
   bool? floatingPromptEnabled;
   String? title;
-  String? fontPath; // TODO: Not cross-platform
-  String? fontResource; // TODO: Not cross-platform
-  String? font; // TODO: Not cross-platform
+  String? fontPath;
   Image? logoImage;
   Image? closeButtonImage; // Supported in iOS 9.1+
   Color? closeButtonTintColor;
@@ -54,8 +52,6 @@ class UiOptions {
       'floating_prompt_enabled': floatingPromptEnabled,
       'title': title,
       'font_path': fontPath,
-      'font_resource': fontResource,
-      'font': font,
       'enable_screenshots': enableScreenshots,
       'orientation': orientation?.stringValue,
       'activity_compatibility_request_code': activityCompatibilityRequestCode,
