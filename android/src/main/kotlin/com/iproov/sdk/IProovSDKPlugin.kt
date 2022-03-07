@@ -1,7 +1,6 @@
 package com.iproov.sdk
 
 import android.content.Context
-import android.util.Log
 import androidx.annotation.NonNull
 import com.iproov.sdk.bridge.OptionsBridge
 import com.iproov.sdk.core.exception.CameraException
@@ -13,8 +12,8 @@ import com.iproov.sdk.core.exception.ListenerNotRegisteredException
 import com.iproov.sdk.core.exception.MultiWindowUnsupportedException
 import com.iproov.sdk.core.exception.NetworkException
 import com.iproov.sdk.core.exception.ServerException
-import com.iproov.sdk.core.exception.UnexpectedErrorException
 import com.iproov.sdk.core.exception.UnsupportedDeviceException
+import io.flutter.FlutterInjector
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall
@@ -40,8 +39,6 @@ class IProovSDKPlugin: FlutterPlugin {
 
     private var listenerEventSink: EventChannel.EventSink? = null
     private var flutterPluginBinding: FlutterPlugin.FlutterPluginBinding? = null
-
-    // Callbacks ----
 
     private val iProovListener = object : IProov.Listener {
         override fun onConnecting() {
@@ -144,6 +141,11 @@ class IProovSDKPlugin: FlutterPlugin {
                     try {
                         val json = JSONObject(optionsJson)
                         val options = OptionsBridge.fromJson(context, json)
+
+                        if (options.ui.fontPath != null) { // Remap custom font paths to assets path
+                            options.ui.fontPath = getFontPath(options.ui.fontPath!!)
+                        }
+
                         IProov.launch(context, streamingUrl, token, options)
                     } catch (e: Exception) {
                         handleException(e)
@@ -159,8 +161,6 @@ class IProovSDKPlugin: FlutterPlugin {
             ))
         }
     }
-
-    // Functions ----
 
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         this.flutterPluginBinding = flutterPluginBinding
@@ -188,5 +188,10 @@ class IProovSDKPlugin: FlutterPlugin {
         iProovMethodChannel.setMethodCallHandler(null)
         listenerEventChannel.setStreamHandler(null)
         this.flutterPluginBinding = null
+    }
+
+    private fun getFontPath(assetPath: String): String {
+        val loader = FlutterInjector.instance().flutterLoader()
+        return loader.getLookupKeyForAsset("fonts/Lobster-Regular.ttf")
     }
 }
