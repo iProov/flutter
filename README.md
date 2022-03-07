@@ -1,5 +1,5 @@
 ![iProov: Flexible authentication for identity assurance](https://github.com/iProov/flutter/raw/main/images/banner.jpg)
-# iProov Biometrics Flutter SDK (Preview)
+# iProov Biometrics Flutter SDK
 
 ## Table of contents
 
@@ -24,12 +24,8 @@ We also provide an API Client written in Dart to call our [REST API v2](https://
 
 - Dart SDK 2.12 and above
 - Flutter SDK 1.20 and above
-- iOS 10.0 and above
+- iOS 10 and above
 - Android API Level 21 (Android 5 Lollipop) and above
-
-### Preview
-
-The iProov Biometrics Flutter SDK is currently in preview, which means that there may be missing/broken functionality, and the API is still subject to change. Please [contact us](mailto:support@iproov.com) to provide your feedback regarding the iProov Biometrics Flutter SDK Preview.
 
 ## Repository contents
 
@@ -51,7 +47,7 @@ Add the following to your project's `pubspec.yml` file:
 
 ```yaml
 dependencies:
-  iproov_flutter: ^0.2.0
+  iproov_flutter: ^1.0.0
 ```
 
 You can then install it with:
@@ -156,7 +152,7 @@ Most of these options are common to both Android and iOS, however, some are plat
 
 For full documentation, please read the respective [iOS](https://github.com/iProov/ios#options) and [Android](https://github.com/iProov/android#options) native SDK documentation.
 
-A summary of the support for the various SDK options in Flutter is provided below:
+A summary of the support for the various SDK options in Flutter is provided below. All options are nullable and any options not set will default to their platform-specific default value.
 
 | Option                                          | Type               | iOS   | Android |
 |-------------------------------------------------|--------------------|-------|---------|
