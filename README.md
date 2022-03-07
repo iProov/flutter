@@ -170,9 +170,7 @@ A summary of the support for the various SDK options in Flutter is provided belo
 | `promptTextColor`                               | `Color?`           | ✅     | ✅       |
 | `floatingPromptEnabled`                         | `bool?`            | ✅     | ✅       |
 | `title`                                         | `String?`          | ✅     | ✅       |
-| `fontPath`                                      | `String?`          |       | ⚠️ (1)   |
-| `fontResource`                                  | `String?`          |       | ⚠️ (1)   |
-| `font`                                          | `String?`          | ⚠️ (1) |         |
+| `fontPath`                                      | `String?`          | ✅ (1) | ✅ (1)   |
 | `logoImage`                                     | `Image?`           | ✅     | ✅       |
 | `closeButtonImage`                              | `Image?`           | ✅     |         |
 | `closeButtonTintColor`                          | `Color?`           | ✅     |         |
@@ -198,7 +196,8 @@ A summary of the support for the various SDK options in Flutter is provided belo
 | `maxPitch`                                      | `double?`          | ✅ (2) | ✅ (2)   |
 | `maxYaw`                                        | `double?`          | ✅ (2) | ✅ (2)   |
 | `maxRoll`                                       | `double?`          | ✅ (2) | ✅ (2)   |
-(1) There are currently different ways of setting fonts on iOS & Android. Fonts should be added to the respective iOS app bundle or Android project (`android/app/src/main/res/font`) and can then be set by name via this API. This is due to be revised in a future release.
+
+(1) Fonts should be added to your Flutter app (TTF or OTF formats are supported). You can then set (for example) `options.ui.fontPath = 'fonts/Lobster-Regula.ttf'` - note that the font filename must match the font name.
 
 (2) This is an advanced option and not recommended for general usage. If you wish to use this option, contact iProov for for further details.
 
