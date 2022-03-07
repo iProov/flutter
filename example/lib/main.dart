@@ -1,5 +1,6 @@
 import 'package:bmprogresshud/bmprogresshud.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:iproov_flutter/iproov_flutter.dart';
 import 'package:iproov_sdk_example/api_client.dart';
 import 'package:iproov_sdk_example/api_keys.dart';
@@ -123,6 +124,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     return Scaffold(
       appBar: AppBar(
         title: const Text('iProov Example'),
