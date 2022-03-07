@@ -77,6 +77,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
 
     final options = Options();
+    options.ui.floatingPromptEnabled = true;
     // Example configuration
     // options.ui.lineColor = Colors.red;
     // options.ui.backgroundColor = Colors.teal;

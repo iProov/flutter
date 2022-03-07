@@ -158,46 +158,46 @@ For full documentation, please read the respective [iOS](https://github.com/iPro
 
 A summary of the support for the various SDK options in Flutter is provided below:
 
-| Option                                          | iOS   | Android |
-| ----------------------------------------------- | ----- | ------- |
-| **`Options.ui.`**                               |       |         |
-| `filter`                                        | ✅     | ✅       |
-| `lineColor`                                     | ✅     | ✅       |
-| `backgroundColor`                               | ✅     | ✅       |
-| `headerBackgroundColor`                         | ✅     | ✅       |
-| `footerBackgroundColor`                         | ✅     | ✅       |
-| `headerTextColor`                               | ✅     | ✅       |
-| `footerTextColor`                               | ✅     | ✅       |
-| `title`                                         | ✅     | ✅       |
-| `fontPath`                                      |       | ⚠️ (1)   |
-| `fontResource`                                  |       | ⚠️ (1)   |
-| `font`                                          | ⚠️ (1) |         |
-| `logoImage`                                     | ✅     | ✅       |
-| `closeButtonImage`                              | ✅     |         |
-| `closeButtonTintColor`                          | ✅     |         |
-| `enableScreenshots`                             |       | ✅       |
-| `orientation`                                   |       | ✅       |
-| `activityCompatibilityRequestCode`              |       | ✅       |
-| **`Options.ui.genuinePresenceAssurance.`**      |       |         |
-| `autoStartDisabled`                             | ✅     | ✅       |
-| `notReadyTintColor`                             | ✅     | ✅       |
-| `readyTintColor`                                | ✅     | ✅       |
-| `progressBarColor`                              | ✅     | ✅       |
-| **`Options.ui.livenessAssurance.`**             |       |         |
-| `primaryTintColor`                              | ✅     | ✅       |
-| `secondaryTintColor`                            | ✅     | ✅       |
-| **`Options.network.`**                          |       |         |
-| `certificates`                                  | ✅     | ✅       |
-| `timeout`                                       | ✅     | ✅       |
-| `path`                                          | ✅     | ✅       |
-| **`Options.capture.`**                          |       |         |
-| `camera`                                        |       | ✅       |
-| `faceDetector`                                  |       | ✅       |
-| **`Options.capture.genuinePresenceAssurance.`** |       |         |
-| `maxPitch`                                      | ✅ (2) | ✅ (2)   |
-| `maxYaw`                                        | ✅ (2) | ✅ (2)   |
-| `maxRoll`                                       | ✅ (2) | ✅ (2)   |
-
+| Option                                          | Type               | iOS   | Android |
+|-------------------------------------------------|--------------------|-------|---------|
+| **`Options.ui.`**                               |                    |       |         |
+| `filter`                                        | `Filter?`          | ✅     | ✅       |
+| `lineColor`                                     | `Color?`           | ✅     | ✅       |
+| `backgroundColor`                               | `Color?`           | ✅     | ✅       |
+| `headerBackgroundColor`                         | `Color?`           | ✅     | ✅       |
+| `footerBackgroundColor`                         | `Color?`           | ✅     | ✅       |
+| `headerTextColor`                               | `Color?`           | ✅     | ✅       |
+| `promptTextColor`                               | `Color?`           | ✅     | ✅       |
+| `floatingPromptEnabled`                         | `bool?`            | ✅     | ✅       |
+| `title`                                         | `String?`          | ✅     | ✅       |
+| `fontPath`                                      | `String?`          |       | ⚠️ (1)   |
+| `fontResource`                                  | `String?`          |       | ⚠️ (1)   |
+| `font`                                          | `String?`          | ⚠️ (1) |         |
+| `logoImage`                                     | `Image?`           | ✅     | ✅       |
+| `closeButtonImage`                              | `Image?`           | ✅     |         |
+| `closeButtonTintColor`                          | `Color?`           | ✅     |         |
+| `enableScreenshots`                             | `bool?`            |       | ✅       |
+| `orientation`                                   | `Orientation?`     |       | ✅       |
+| `activityCompatibilityRequestCode`              | `int?`             |       | ✅       |
+| **`Options.ui.genuinePresenceAssurance.`**      |                    |       |         |
+| `autoStartDisabled`                             | `bool?`            | ✅     | ✅       |
+| `notReadyTintColor`                             | `Color?`           | ✅     | ✅       |
+| `readyTintColor`                                | `Color?`           | ✅     | ✅       |
+| `progressBarColor`                              | `Color?`           | ✅     | ✅       |
+| **`Options.ui.livenessAssurance.`**             |                    |       |         |
+| `primaryTintColor`                              | `Color?`           | ✅     | ✅       |
+| `secondaryTintColor`                            | `Color?`           | ✅     | ✅       |
+| **`Options.network.`**                          |                    |       |         |
+| `certificates`                                  | `List<List<int>>?` | ✅     | ✅       |
+| `timeout`                                       | `Duration?`        | ✅     | ✅       |
+| `path`                                          | `String?`          | ✅     | ✅       |
+| **`Options.capture.`**                          |                    |       |         |
+| `camera`                                        | `Camera?`          |       | ✅       |
+| `faceDetector`                                  | `FaceDetector?`    |       | ✅       |
+| **`Options.capture.genuinePresenceAssurance.`** |                    |       |         |
+| `maxPitch`                                      | `double?`          | ✅ (2) | ✅ (2)   |
+| `maxYaw`                                        | `double?`          | ✅ (2) | ✅ (2)   |
+| `maxRoll`                                       | `double?`          | ✅ (2) | ✅ (2)   |
 (1) There are currently different ways of setting fonts on iOS & Android. Fonts should be added to the respective iOS app bundle or Android project (`android/app/src/main/res/font`) and can then be set by name via this API. This is due to be revised in a future release.
 
 (2) This is an advanced option and not recommended for general usage. If you wish to use this option, contact iProov for for further details.

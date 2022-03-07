@@ -1,4 +1,22 @@
-# iProov Biometrics SDK
+# iProov Biometrics Flutter SDK
+
+## 1.0.0
+
+The iProov Biometrics Flutter SDK is now approved for use in production.
+
+### Flutter
+
+* Added `floatingPromptEnabled` to `UiOptions`.
+* Renamed `footerTextColor` to `promptTextColor` in `UiOptions`.
+
+### iOS
+
+* Upgraded SDK to [v9.3.0](https://github.com/iProov/ios/releases/tag/9.3.0).
+* Updated installation instructions for Cocoapods.
+
+### Android
+
+* Upgraded SDK to [v7.2.0](https://github.com/iProov/android/releases/tag/v7.2.0).
 
 ## 0.2.0
 
