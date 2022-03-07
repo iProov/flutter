@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:iproov_flutter/iproov_flutter.dart';
 import 'package:iproov_sdk_example/api_client.dart';
-import 'package:iproov_sdk_example/api_keys.dart';
+import 'package:iproov_sdk_example/credentials.dart';
 import 'package:uuid/uuid.dart';
 
 void main() {
@@ -39,11 +39,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   // This code is for demo purposes only. Do not make API calls from the device
   // in production!
-  ApiClient apiClient = ApiClient(
-    "https://eu.rp.secure.iproov.me/api/v2/",
-    apiKey,
-    secret,
-  );
+  ApiClient apiClient = ApiClient(baseUrl, apiKey, secret);
 
   void getTokenAndLaunchIProov(
       AssuranceType assuranceType, ClaimType claimType, String userId) async {
