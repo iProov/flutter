@@ -85,16 +85,7 @@ private extension SwiftIProovSDKPlugin {
                 return launchError(IProovError.unexpectedError("Invalid options"))
             }
 
-            options = Options.from(json: dict)
-
-            // Handle custom fonts:
-            if let ui = dict["ui"] as? [String: Any],
-               let fontPath = ui["font_path"] as? String {
-
-                installFont(path: fontPath)
-                let fontName = String(fontPath.split(separator: "/").last!.split(separator: ".").first!)
-                options.ui.font = fontName
-            }
+            options = Options.from(flutterJSON: dict)
         } else {
             options = Options()
         }
@@ -139,6 +130,26 @@ private extension SwiftIProovSDKPlugin {
         }
     }
 
+}
+
+private extension Options {
+
+    // Handle any Flutter-specific requirements, e.g. custom fonts
+    static func from(flutterJSON dict: [String : Any]) -> Options {
+
+        let options = Options.from(json: dict)
+
+        // Handle custom fonts:
+        if let ui = dict["ui"] as? [String: Any],
+           let fontPath = ui["font_path"] as? String {
+
+            installFont(path: fontPath)
+            let fontName = String(fontPath.split(separator: "/").last!.split(separator: ".").first!)
+            options.ui.font = fontName
+        }
+
+        return options
+    }
 }
 
 // Load font from Bundle:
