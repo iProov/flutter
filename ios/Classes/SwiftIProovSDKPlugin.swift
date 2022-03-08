@@ -152,7 +152,7 @@ private extension Options {
     }
 }
 
-// Load font from Bundle:
+// Load font from Flutter assets:
 private func installFont(path: String) {
     let fontKey = FlutterDartProject.lookupKey(forAsset: path)
     guard let url = Bundle.main.url(forResource: fontKey, withExtension: nil),
