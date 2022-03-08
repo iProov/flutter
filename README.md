@@ -225,7 +225,7 @@ The Dart API Client provides a convenient wrapper to call iProov's REST API v2 f
 
 The Dart API client can be found in `api_client.dart` in the Example project.
 
-Your API key and secret for the example app can be set inside `api_keys.dart` in the Example project.
+Your API key and secret for the example app can be set inside `credentials.dart` in the Example project.
 
 > ⚠️ **SECURITY NOTICE:** Use of the Dart API Client requires providing it with your API secret. **You should never embed your API secret within a production app.**
 
@@ -257,6 +257,8 @@ You can then launch the iProov SDK with this token.
 ## Sample code
 
 For a simple iProov experience that is ready to run out-of-the-box, check out the Flutter example project which also makes use of the Dart API Client.
+
+In the example app folder, copy the `credentials.example.dart` file to `credentials.dart` and add your credentials obtained from the [iProov portal](https://portal.iproov.com/).
 
 > NOTE: iProov is not supported on the iOS or Android simulator, you must use a physical device in order to iProov.
 
