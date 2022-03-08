@@ -8,7 +8,7 @@ We're pleased to announce that the iProov Biometrics Flutter SDK is now producti
 
 * Added `floatingPromptEnabled` to `UiOptions`.
 * Renamed `footerTextColor` to `promptTextColor` in `UiOptions`.
-* Removed `font` and `fontResource` from `UiOptions`, use `fontPath` instead.
+* Removed `font` and `fontResource` from `UiOptions`. Use `fontPath` instead, which is now cross-platform.
 
 ### iOS
 
@@ -35,14 +35,14 @@ We're pleased to announce that the iProov Biometrics Flutter SDK is now producti
 
 ### iOS
 
-* Upgraded SDK to v9.2.0.
+* Upgraded SDK to [v9.2.0](https://github.com/iProov/ios/releases/tag/9.2.0).
 * Passing certificates directly as `List<int>` is now supported.
 * Error handling improvements.
 * `closeButtonImage` is now supported.
 
 ### Android
 
-* Upgraded SDK to v7.1.0.
+* Upgraded SDK to [v7.1.0](https://github.com/iProov/android/releases/tag/v7.1.0).
 * Passing certificates directly as `List<int>` is now supported.
 * Error handling improvements.
 
@@ -50,5 +50,6 @@ We're pleased to announce that the iProov Biometrics Flutter SDK is now producti
 
 Initial preview release
 
-* iOS SDK 9.0.1
-* Android SDK 7.0.3
+* iOS SDK [9.0.1](https://github.com/iProov/ios/releases/tag/9.0.1).
+* Android SDK [7.0.3](https://github.com/iProov/android/releases/tag/v7.0.3).
+* 
