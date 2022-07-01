@@ -192,6 +192,6 @@ class IProovSDKPlugin: FlutterPlugin {
 
     private fun getFontPath(assetPath: String): String {
         val loader = FlutterInjector.instance().flutterLoader()
-        return loader.getLookupKeyForAsset("fonts/Lobster-Regular.ttf")
+        return loader.getLookupKeyForAsset(assetPath)
     }
 }
