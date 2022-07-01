@@ -93,7 +93,7 @@ class NetworkOptions {
   String? path;
 
   Map<String, dynamic> toJson() => removeNulls({
-        'certificates': certificates?.map((e) => base64.encode(e)),
+        'certificates': certificates?.map((e) => base64.encode(e)).toList(),
         'timeout': timeout?.inSeconds,
         'path': path
       });
