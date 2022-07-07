@@ -5,25 +5,25 @@ abstract class IProovException implements Exception {
 
   factory IProovException.error(String error, String title, String? message) {
     switch (error) {
-      case "capture_already_active":
+      case 'capture_already_active':
         return CaptureAlreadyActiveException(title);
-      case "network":
+      case 'network':
         return NetworkException(title, message);
-      case "camera_permission":
+      case 'camera_permission':
         return CameraPermissionException(title);
-      case "server":
+      case 'server':
         return ServerException(title, message);
-      case "listener_not_registered":
+      case 'listener_not_registered':
         return ListenerNotRegisteredException(title);
-      case "multi_window_unsupported":
+      case 'multi_window_unsupported':
         return MultiWindowUnsupportedException(title);
-      case "camera":
+      case 'camera':
         return CameraException(title, message);
-      case "face_detector":
+      case 'face_detector':
         return FaceDetectorException(title, message);
-      case "unsupported_device":
+      case 'unsupported_device':
         return UnsupportedDeviceException(title);
-      case "invalid_options":
+      case 'invalid_options':
         return InvalidOptionsException(title);
     }
 
@@ -48,8 +48,7 @@ class ServerException extends IProovException {
 }
 
 class UnexpectedErrorException extends IProovException {
-  UnexpectedErrorException(String title, String? message)
-      : super(title, message);
+  UnexpectedErrorException(String title, String? message) : super(title, message);
 }
 
 // Android only

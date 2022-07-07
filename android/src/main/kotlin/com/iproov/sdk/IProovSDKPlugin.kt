@@ -81,6 +81,7 @@ class IProovSDKPlugin: FlutterPlugin {
                     "event" to "cancelled"
             ))
         }
+
         override fun onError(e: IProovException) {
 
             val exceptionName = when(e) {
@@ -99,7 +100,7 @@ class IProovSDKPlugin: FlutterPlugin {
             listenerEventSink?.success(hashMapOf(
                     "event" to "error",
                     "error" to exceptionName,
-                    "title" to e.getReason(),
+                    "title" to e.reason,
                     "message" to e.message
             ))
         }

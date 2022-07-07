@@ -10,8 +10,6 @@ dependencies:
   flutter:
     sdk: flutter
 
-  http: ^0.12.1
-
   iproov_flutter:
     # When depending on this package from a real application you should use:
     #   iproov_sdk: ^x.y.z
@@ -23,7 +21,11 @@ dependencies:
     #       url: git@github.com:iProov/flutter.git
     path: ../
 
+  iproov_api_client:
+    path: ../iproov_api_client
+
   cupertino_icons: ^1.0.0
+  http: ^0.13.4
   bmprogresshud: ^1.0.0
   uuid: ^3.0.4
 

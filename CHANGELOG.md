@@ -1,6 +1,47 @@
 # iProov Biometrics Flutter SDK
 
+## 2.0.0
+
+iProov SDK Biometrics Flutter SDK v2.0.0 is a major update which includes a number of improvements and breaking changes.
+
+Please consult the [Upgrade Guide](https://github.com/iProov/flutter/wiki/Upgrade-Guide#upgrading-to-v20) for detailed instructions on how to upgrade to this new version.
+
+### Flutter
+
+* `IProov.launch()` now returns a `Stream<IProovEvent>` rather than using callbacks.
+* `Options` are now built from `const` constructors rather than setting individual properties.
+* Added comprehensive documentation to `Options`.
+* Added the following new options, supported in the latest SDK versions:
+  * `UiOptions.floatingPromptRoundedCorners`
+  * `GenuinePresenceAssuranceUiOptions.readyFloatingPromptBackgroundColor`
+  * `GenuinePresenceAssuranceUiOptions.notReadyFloatingPromptBackgroundColor`
+  * `GenuinePresenceAssuranceUiOptions.readyOverlayStrokeColor`
+  * `GenuinePresenceAssuranceUiOptions.notReadyOverlayStrokeColor`
+  * `LivenessAssuranceUiOptions.floatingPromptBackgroundColor`
+  * `LivenessAssuranceUiOptions.overlayStrokeColor`
+* Fixed an issue where specifying custom certificates for pinning would result in a crash.
+
+### iOS
+
+* Upgraded SDK to [v9.5.0](https://github.com/iProov/ios/releases/tag/9.5.0).
+
+### Android
+
+* Upgraded SDK to [v7.5.0](https://github.com/iProov/android/releases/tag/v7.5.0).
+
+### API Client
+
+* The Dart API client is now provided as a separate module, `iproov_api_client`.
+* Upgraded [http](https://pub.dev/packages/http) to v0.13.4.
+* Added support for the `/validate` API call.
+
+### Example App
+
+* Fixed an issue where the Android example app wouldn't build due to an error relating to Android embedding.
+
 ## 1.1.1
+
+### iOS
 
 * Upgraded SDK to [v9.3.2](https://github.com/iProov/ios/releases/tag/9.3.2).
 
@@ -66,4 +107,3 @@ Initial preview release
 
 * iOS SDK [9.0.1](https://github.com/iProov/ios/releases/tag/9.0.1).
 * Android SDK [7.0.3](https://github.com/iProov/android/releases/tag/v7.0.3).
-* 

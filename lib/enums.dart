@@ -43,7 +43,5 @@ extension OrientationToString on Orientation {
 
 String _enumCaseToString(String text) {
   final exp = RegExp(r'(?<=[a-z])[A-Z]'); // camelCase to underscore_separated
-  return text
-      .replaceAllMapped(exp, (Match m) => ('_' + m.group(0)!))
-      .toLowerCase();
+  return text.replaceAllMapped(exp, (Match m) => ('_' + m.group(0)!)).toLowerCase();
 }
