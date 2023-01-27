@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:flutter/services.dart';
 import 'package:iproov_flutter/events.dart';
@@ -10,15 +11,10 @@ export 'package:iproov_flutter/events.dart';
 export 'package:iproov_flutter/exceptions.dart';
 export 'package:iproov_flutter/options.dart';
 
-const MethodChannel _iProovMethodChannel = MethodChannel('com.iproov.sdk');
-const EventChannel _iProovListenerEventChannel = EventChannel('com.iproov.sdk.listener');
+const _iProovMethodChannel = MethodChannel('com.iproov.sdk');
+const _iProovListenerEventChannel = EventChannel('com.iproov.sdk.listener');
 
 class IProov {
-  static Stream<IProovEvent> _stream() =>
-      _iProovListenerEventChannel.receiveBroadcastStream().map((result) => IProovEvent.fromMap(result));
-
-  static StreamSubscription<IProovEvent>? _subscription;
-
   /// Launches the iProov face scan.
   ///
   /// You must supply a [streamingUrl] and [token]. You may also provide [options].
@@ -32,21 +28,32 @@ class IProov {
     required String token,
     Options? options,
   }) {
-    final stream = _stream();
-
-    _subscription = stream.listen((event) {
-      if (event.isFinal) {
-        _subscription?.cancel();
-        _subscription = null;
-      }
-    });
-
     _iProovMethodChannel.invokeMethod('launch',
         {'streamingURL': streamingUrl, 'token': token, if (options != null) 'optionsJSON': json.encode(options)});
 
-    return stream;
+    return _iProovListenerEventChannel.receiveBroadcastStream().map((result) => IProovEvent.fromMap(result));
   }
+
+  static final keyPair = KeyPair();
 
   // Private constructor
   IProov._();
+}
+
+class KeyPair {
+  final publicKey = PublicKey();
+
+  Future<Uint8List> sign(Uint8List data) async {
+    return await _iProovMethodChannel.invokeMethod('keyPair.sign', data);
+  }
+}
+
+class PublicKey {
+  Future<String> getPem() async {
+    return await _iProovMethodChannel.invokeMethod('keyPair.publicKey.getPem');
+  }
+
+  Future<Uint8List> getDer() async {
+    return await _iProovMethodChannel.invokeMethod('keyPair.publicKey.getDer');
+  }
 }

@@ -20,16 +20,6 @@ extension FaceDetectorToString on FaceDetector {
   String get stringValue => _enumCaseToString(describeEnum(this));
 }
 
-enum Filter {
-  classic,
-  shaded,
-  vibrant,
-}
-
-extension FilterToString on Filter {
-  String get stringValue => _enumCaseToString(describeEnum(this));
-}
-
 enum Orientation {
   portrait,
   landscape,
@@ -45,3 +35,5 @@ String _enumCaseToString(String text) {
   final exp = RegExp(r'(?<=[a-z])[A-Z]'); // camelCase to underscore_separated
   return text.replaceAllMapped(exp, (Match m) => ('_' + m.group(0)!)).toLowerCase();
 }
+
+enum Canceller { user, app }

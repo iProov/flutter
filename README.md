@@ -1,19 +1,6 @@
 ![iProov: Flexible authentication for identity assurance](https://github.com/iProov/flutter/raw/main/images/banner.jpg)
 # iProov Biometrics Flutter SDK
 
-## Table of contents
-
-- [Introduction](#introduction)
-- [Repository contents](#repository-contents)
-- [Registration](#registration)
-- [Installation](#installation)
-- [Get started](#get-started)
-- [Options](#options)
-- [Handling errors](#handling-errors)
-- [API Client](#api-client)
-- [Sample code](#sample-code)
-- [Help & support](#help--support)
-
 ## Introduction
 
 The iProov Biometrics Flutter SDK wraps iProov's native [iOS](https://github.com/iProov/ios) (Swift) and [Android](https://github.com/iProov/android) (Java) SDKs behind a Dart interface for use from within your Flutter iOS or Android app.
@@ -24,7 +11,7 @@ We also provide an API Client written in Dart to call our [REST API v2](https://
 
 - Dart SDK 2.12 and above
 - Flutter SDK 1.20 and above
-- iOS 10 and above
+- iOS 11 and above
 - Android API Level 21 (Android 5 Lollipop) and above
 
 ## Repository contents
@@ -40,7 +27,7 @@ The iProov Flutter SDK is provided via this repository, which contains the follo
 
 ## Registration
 
-You can obtain API credentials by registering on the [iProov Partner Portal](https://portal.iproov.net).
+You can obtain API credentials by registering on [iPortal](https://portal.iproov.com).
 
 ## Installation
 
@@ -48,7 +35,7 @@ Add the following to your project's `pubspec.yml` file:
 
 ```yaml
 dependencies:
-  iproov_flutter: ^2.0.0
+  iproov_flutter: ^3.0.0
 ```
 
 You can then install it with:
@@ -80,7 +67,7 @@ There are a couple of extra steps required for iOS:
 	  installer.pods_project.targets.each do |target|
 	    flutter_additional_ios_build_settings(target)
 	    	    
-	    if ['iProov', 'Socket.IO-Client-Swift', 'Starscream'].include? target.name
+	    if ['iProov', 'SwiftProtobuf', 'Starscream'].include? target.name
 	      target.build_configurations.each do |config|
 	        config.build_settings['BUILD_LIBRARY_FOR_DISTRIBUTION'] = 'YES'
 	      end
@@ -97,7 +84,7 @@ Once you have a valid token (obtained via the Dart API client or your own backen
 import 'package:iproov_flutter/iproov_flutter.dart';
 
 // Streaming URL provided for example only (substitute as appropriate)
-final stream = IProov.launch(streamingUrl: 'https://eu.rp.secure.iproov.me', token: '< YOUR TOKEN >');
+final stream = IProov.launch(streamingUrl: 'wss://eu.rp.secure.iproov.me/ws', token: '< YOUR TOKEN >');
     
 stream.listen((event) {
 
@@ -111,19 +98,22 @@ stream.listen((event) {
   
   } else if (event is IProovEventProcessing) {
     // The SDK will update your app with the progress of streaming to the server and authenticating
-    // the user. This will be called multiple time as the progress updates.
+    // the user. This will be called multiple times as the progress updates.
     final progress = event.progress; // Progress between 0.0 and 1.0
     final message = event.message; // Message to be displayed to the user
   
   } else if (event is IProovEventSuccess) {
     // The user was successfully verified/enrolled and the token has been validated.
     // You can access the following properties:
-    final token = result.token; // The token passed back will be the same as the one passed in to the original call
     final frame = result.frame; // An optional image containing a single frame of the user, if enabled for your service provider
   
   } else if (event is IProovEventCancelled) {
-    // The user cancelled iProov, either by pressing the close button at the top right, or sending
-    // the app to the background.
+    // The user cancelled iProov, either by pressing the close button at the top of the screen, or sending
+    // the app to the background. (event.canceller == Canceller.user)
+    // Or, the app cancelled (event.canceller == Canceller.app) by cancelling the subscription to the 
+    // Stream returned from IProov.launch().
+    // You should use this to determine the next step in your flow.
+    final canceller = event.canceller;
   
   } else if (event is IProovEventFailure) {
     // The user was not successfully verified/enrolled, as their identity could not be verified,
@@ -131,22 +121,41 @@ stream.listen((event) {
     // is provided as to why the claim failed, along with a feedback code from the back-end.
     final feedbackCode = event.feedbackCode;
     final reason = event.reason;
+    final frame = result.frame; // An optional image containing a single frame of the user, if enabled for your service provider
   
   } else if (event is IProovEventError) {
     // The user was not successfully verified/enrolled due to an error (e.g. lost internet connection).
     // You will be provided with an Exception (see below).
     // It will be called once, or never.
+    final error = event.error // IProovException provided by the SDK
   }
   
 });
 ```
 
-👉 You should now familiarise yourself with the following resources:
+👉 You should now familiarize yourself with the following resources:
 
 -  [iProov Biometrics iOS SDK documentation](https://github.com/iProov/ios)
 -  [Android Biometrics Android SDK documentation](https://github.com/iProov/android)
 
 These repositories provide comprehensive documentation about the available customization options and other important details regarding the SDK usage.
+
+
+### Cancelling the SDK
+
+Under normal circumstances, the user will be in control of the completion of the iProov scan, i.e. they will either complete the scan, or use the close button to cancel. In some cases, you (the integrator) may wish to cancel the iProov scan programmatically, for example in response to a timeout or change of conditions in your app.
+
+Cancelling all subscriptions to the `Stream<IProovEvent>` returned from `IProov.launch()` will now cancel any ongoing claim.
+
+Example:
+
+```dart
+final stream = IProov.launch(streamingUrl: 'wss://eu.rp.secure.iproov.me/ws', token: '< YOUR TOKEN >');
+    
+final subscription = stream.listen((event) { ... });
+
+subscription.cancel();
+```
 
 ## Options
 
@@ -154,73 +163,96 @@ The `Options` class allows iProov to be customized in various ways. These can be
 
 Most of these options are common to both Android and iOS, however, some are Android-only.
 
-For full documentation, please read the respective [iOS](https://github.com/iProov/ios#options) and [Android](https://github.com/iProov/android#options) native SDK documentation.
+For full documentation, please read the respective [iOS](https://github.com/iProov/ios#options) and [Android](https://github.com/iProov/android#customize-the-user-experience) native SDK documentation.
 
 A summary of the support for the various SDK options in Flutter is provided below. All options are nullable and any options not set will default to their platform-defined default value.
 
 | Option | Type | iOS | Android |
 |---|---|---|---|
-| **`ui`** | `UiOptions?` |  |  |
-| ↳ `filter` | `Filter?` | ✅ | ✅ |
-| ↳ `lineColor` | `Color?` | ✅ | ✅ |
-| ↳ `backgroundColor` | `Color?` | ✅ | ✅ |
-| ↳ `headerBackgroundColor` | `Color?` | ✅ | ✅ |
-| ↳ `footerBackgroundColor` | `Color?` | ✅ | ✅ |
-| ↳ `headerTextColor` | `Color?` | ✅ | ✅ |
-| ↳ `promptTextColor` | `Color?` | ✅ | ✅ |
-| ↳ `floatingPromptEnabled` | `bool?` | ✅ | ✅ |
-| ↳ `title` | `String?` | ✅ | ✅ |
-| ↳ `fontPath` | `String?` | ✅ (1) | ✅ (1) |
-| ↳ `logoImage` | `Image?` | ✅ | ✅ |
-| ↳ `closeButtonImage` | `Image?` | ✅ | ✅ |
-| ↳ `closeButtonTintColor` | `Color?` | ✅ | ✅ |
-| ↳ `enableScreenshots` | `bool?` |  | ✅ |
-| ↳ `orientation` | `Orientation?` |  | ✅ |
-| ↳ `activityCompatibilityRequestCode` | `int?` |  | ✅ |
-| ↳ `floatingPromptRoundedCorners` | `bool?` | ✅ | ✅ |
-| ↳ **`genuinePresenceAssurance`** | `GenuinePresenceAssuranceUiOptions?` |  |  |
-|   ↳ `autoStartDisabled` | `bool?` | ✅ | ✅ |
-|   ↳ `notReadyTintColor` | `Color?` | ✅ | ✅ |
-|   ↳ `readyTintColor` | `Color?` | ✅ | ✅ |
-|   ↳ `progressBarColor` | `Color?` | ✅ | ✅ |
-|   ↳ `readyFloatingPromptBackgroundColor` | `Color?` | ✅ | ✅ |
-|   ↳ `notReadyFloatingPromptBackgroundColor` | `Color?` | ✅ | ✅ |
-|   ↳ `readyOverlayStrokeColor` | `Color?` | ✅ | ✅ |
-|   ↳ `notReadyOverlayStrokeColor` | `Color?` | ✅ | ✅ |
-| ↳ **`livenessAssurance`** | `LivenessAssuranceUiOptions?` |  |  |
-|   ↳ `primaryTintColor` | `Color?` | ✅ | ✅ |
-|   ↳ `secondaryTintColor` | `Color?` | ✅ | ✅ |
-|   ↳ `floatingPromptBackgroundColor` | `Color?` | ✅ | ✅ |
-|   ↳ `overlayStrokeColor` | `Color?` | ✅ | ✅ |
-| **`network`** | `NetworkOptions?` |  |  |
-| ↳ `certificates` | `List<Uint8List>?` | ✅ | ✅ |
-| ↳ `timeout` | `Duration?` | ✅ | ✅ |
-| ↳ `path` | `String?` | ✅ | ✅ |
-| **`capture`** | `CaptureOptions?` |  |  |
-| ↳ `camera` | `Camera?` |  | ✅ |
-| ↳ `faceDetector` | `FaceDetector?` |  | ✅ |
-| ↳ **`genuinePresenceAssurance`** | `GenuinePresenceAssuranceCaptureOptions?` |  |  |
-|   ↳ `maxPitch` | `double?` | ✅ (2) | ✅ (2) |
-|   ↳ `maxYaw` | `double?` | ✅ (2) | ✅ (2) |
-|   ↳ `maxRoll` | `double?` | ✅ (2) | ✅ (2) |
+| `filter` | `Filter?` [(See filter options)](#filter-options)| ✅ | ✅ |
+| `titleTextColor` | `Color?` | ✅ | ✅ |
+| `promptTextColor` | `Color?` | ✅ | ✅ |
+| `closeButtonTintColor` | `Color?` | ✅ | ✅ |
+| `closeButtonImage` | `Image?` | ✅ | ✅ |
+| `title` | `String?` | ✅ | ✅ |
+| `fontPath` (1)| `String?` | ✅  | ✅ |
+| `logoImage` | `Image?` | ✅ | ✅ |
+| `promptBackgroundColor` | `Color?` | ✅ | ✅ |
+| `promptRoundedCorners` | `bool?` | ✅ | ✅ |
+| `surroundColor` | `Color?` | ✅ | ✅ |
+| `certificates` | `List<Uint8List>?` | ✅ | ✅ |
+| `timeout` | `Duration?` | ✅ | ✅ |
+| `enableScreenshots` | `bool?` |  | ✅ |
+| `orientation` | `Orientation?` |  | ✅ |
+| `camera` | `Camera?` |  | ✅ |
+| `faceDetector` | `FaceDetector?` |  | ✅ |
+|**`genuinePresenceAssurance`** | `GenuinePresenceAssuranceOptions?` |  |  |
+| ↳ `readyOvalStrokeColor` | `Color?` | ✅ | ✅ |
+| ↳ `notReadyOvalStrokeColor` | `Color?` | ✅ | ✅ |
+| ↳ `maxPitch` (2) | `double?` | ✅  | ✅ |
+| ↳ `maxYaw` (2)| `double?` | ✅  | ✅|
+| ↳ `maxRoll` (2)| `double?` | ✅  | ✅|
+|**`livenessAssurance`** | `LivenessAssuranceOptions?` |  |  |
+| ↳ `ovalStrokeColor` | `Color?` | ✅ | ✅ |
+| ↳ `completedOvalStrokeColor` | `Color?` | ✅ | ✅ |
 
-(1) Fonts should be added to your Flutter app (TTF or OTF formats are supported). You can then set (for example) `options.ui.fontPath = 'fonts/Lobster-Regula.ttf'` - note that the font filename must match the font name.
+(1) Fonts should be added to your Flutter app (TTF or OTF formats are supported). Note that the font filename must match the font name.
 
-(2) This is an advanced option and not recommended for general usage. If you wish to use this option, contact iProov for for further details.
+Example:
+```dart
+const options = Options(fontPath: 'fonts/Lobster-Regula.ttf');
+```
+
+(2) These options are deprecated and will be removed in a future release.
 
 Example:
 
 ```dart
 const options = Options(
-    ui: UiOptions(
         title: 'Example',
-        floatingPromptEnabled: true,
-        genuinePresenceAssurance: GenuinePresenceAssuranceUiOptions(
-            autoStartDisabled: true,
-            notReadyTintColor: Colors.grey,
-            readyTintColor: Colors.green,
-            progressBarColor: Colors.blue)));
+        promptRoundedCorners: true,
+        genuinePresenceAssurance: GenuinePresenceAssuranceOptions(
+            readyOvalStrokeColor: Colors.green,
+            notReadyOvalStrokeColor: Colors.grey));
 ```
+
+### Filter Options
+
+The SDK supports two different camera filters:
+
+#### `LineDrawingFilter`
+
+`LineDrawingFilter` is iProov's traditional "canny" filter, which is available in 3 styles: `.shaded` (default), `.classic` and `.vibrant`.
+
+The `foregroundColor` and `backgroundColor` can also be customized.
+
+Example:
+
+```dart
+const options = Options(
+      filter: LineDrawingFilter(
+          style: LineDrawingFilterStyle.vibrant,
+          foregroundColor: Colors.black,
+          backgroundColor: Colors.white
+      ),
+    );
+```
+
+#### `NaturalFilter`
+
+`NaturalFilter` provides a more direct visualization of the user's face and is available in 2 styles: `.clear` (default) and `.blur`.
+
+Example:
+
+```dart
+const options = Options(
+      filter: NaturalFilter(
+          style: NaturalFilterStyle.clear
+      ),
+    );
+```
+
+> **Note**: `NaturalFilter` is available for Liveness Assurance claims only. Attempts to use `NaturalFilter` for Genuine Presence Assurance claims will result in an error.
 
 ## Handling errors
 
@@ -229,21 +261,29 @@ All errors from the native SDKs are re-mapped to Flutter exceptions:
 | Exception                         | iOS | Android | Description                                                                                                                      |
 | --------------------------------- | --- | ------- | -------------------------------------------------------------------------------------------------------------------------------- |
 | `CaptureAlreadyActiveException`   | ✅   | ✅       | An existing iProov capture is already in progress. Wait until the current capture completes before starting a new one.           |
-| `NetworkError`                    | ✅   | ✅       | An error occurred with the video streaming process. Consult the `message` value for more information.                            |
-| `CameraPermissionError`           | ✅   | ✅       | The user disallowed access to the camera when prompted. You should direct the user to re-enable camera access.                   |
+| `NetworkException`                    | ✅   | ✅       | An error occurred with the video streaming process. Consult the `message` value for more information.                            |
+| `CameraPermissionException`           | ✅   | ✅       | The user disallowed access to the camera when prompted. You should direct the user to re-enable camera access.                   |
 | `ServerException`                 | ✅   | ✅       | A server-side error/token invalidation occurred. The associated `message` will contain further information about the error.      |
 | `UnexpectedErrorException`        | ✅   | ✅       | An unexpected and unrecoverable error has occurred. These errors should be reported to iProov for further investigation.         |
 | `ListenerNotRegisteredException`  |     | ✅       | The SDK was launched before a listener was registered.                                                                           |
 | `MultiWindowUnsupportedException` |     | ✅       | The user attempted to iProov in split-screen/multi-screen mode, which is not supported.                                          |
 | `CameraException`                 |     | ✅       | An error occurred acquiring or using the camera. This could happen when a non-phone is used with/without an external/USB camera. |
 | `FaceDetectorException`           |     | ✅       | An error occurred with the face detector.                                                                                        |
-| `InvalidOptionsException`         |     | ✅       | An error occurred when trying to apply your options.                                                                             |
+| `InvalidOptionsException`         |     | ✅       | An error occurred when trying to apply your options.|
+| `UnsupportedDeviceException`         |   | ✅       | Device is not supported.|
 
 ## API Client
 
 The Dart API Client (`iproov_api_client`) provides a convenient wrapper to call iProov's REST API v2 from your Flutter app. It is a useful tool to assist with testing, debugging and demos, but should not be used in production mobile apps. You can also use this code as a reference for your back-end implementation to perform server-to-server calls.
 
-The Dart API client package can be found in the `iproov_api_client` folder.
+The Dart API client package can be found in the `iproov_api_client` folder. You can add it to your project as follows:
+
+```yaml
+  iproov_api_client:
+    git:
+      url: git@github.com:iProov/flutter-sdk.git
+      path: iproov_api_client
+```
 
 > **Warning**
 >

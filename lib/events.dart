@@ -1,5 +1,5 @@
 import 'package:image/image.dart';
-import 'package:iproov_flutter/exceptions.dart';
+import 'package:iproov_flutter/iproov_flutter.dart';
 
 abstract class IProovEvent {
   bool get isFinal;
@@ -18,15 +18,16 @@ abstract class IProovEvent {
       case 'success':
         final frameData = map['frame'];
         final frame = frameData != null ? decodePng(frameData) : null;
-        return IProovEventSuccess(map['token'], frame);
+        return IProovEventSuccess(frame);
 
       case 'failure':
         final frameData = map['frame'];
         final frame = frameData != null ? decodePng(frameData) : null;
-        return IProovEventFailure(map['token'], map['reason'], map['feedbackCode'], frame);
+        return IProovEventFailure(map['reason'], map['feedbackCode'], frame);
 
       case 'cancelled':
-        return const IProovEventCancelled();
+        final canceller = map['canceller'];
+        return IProovEventCancelled(Canceller.values.byName(canceller));
 
       case 'error':
         return IProovEventError.create(map['error'], map['title'], map['message']);
@@ -59,7 +60,9 @@ class IProovEventCancelled implements IProovEvent {
   @override
   get isFinal => true;
 
-  const IProovEventCancelled();
+  final Canceller canceller;
+
+  const IProovEventCancelled(this.canceller);
 }
 
 /// The SDK will update your app with the progress of streaming to the server and authenticating
@@ -82,13 +85,10 @@ class IProovEventSuccess implements IProovEvent {
   @override
   get isFinal => true;
 
-  /// The token passed back will be the same as the one passed in to the original call to `iProov.launch`.
-  final String token;
-
   /// An optional image containing a single frame of the user, if enabled for your service provider.
   final Image? frame;
 
-  const IProovEventSuccess(this.token, this.frame);
+  const IProovEventSuccess(this.frame);
 }
 
 /// The user was not successfully verified/enrolled, as their identity could not be verified,
@@ -96,9 +96,6 @@ class IProovEventSuccess implements IProovEvent {
 class IProovEventFailure implements IProovEvent {
   @override
   get isFinal => true;
-
-  /// The token passed back will be the same as the one passed in to the original call to `iProov.launch`.
-  final String token;
 
   /// The reason for the failure which can be displayed directly to the user.
   final String reason;
@@ -111,7 +108,7 @@ class IProovEventFailure implements IProovEvent {
   /// An optional image containing a single frame of the user, if enabled for your service provider.
   final Image? frame;
 
-  const IProovEventFailure(this.token, this.reason, this.feedbackCode, this.frame);
+  const IProovEventFailure(this.reason, this.feedbackCode, this.frame);
 }
 
 /// The user was not successfully verified/enrolled due to an error (e.g. lost internet connection).

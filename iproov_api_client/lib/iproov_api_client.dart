@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
@@ -12,7 +11,61 @@ import 'validation_result.dart';
 /// PRODUCTION! YOU SHOULD NEVER EMBED YOUR CREDENTIALS IN A PUBLIC APP RELEASE!
 ///   THESE API CALLS SHOULD ONLY EVER BE MADE FROM YOUR BACK-END SERVER
 
-class UserNotRegisteredException implements Exception {}
+class ApiException implements Exception {
+  final String? code;
+  final String? message;
+
+  const ApiException({this.code, this.message});
+
+  String toString() {
+    return message ?? 'Unknown error';
+  }
+
+  factory ApiException._fromJson(Map<String, dynamic> json) {
+    String errorCode = json['error'];
+    String errorMessage = json['error_description'];
+
+    if (errorCode == 'no_user') {
+      return UserNotRegisteredException(code: errorCode, message: errorMessage);
+    } else if (errorCode == 'invalid_user_id') {
+      return InvalidUserIdException(code: errorCode, message: errorMessage);
+    } else if (errorCode == 'invalid_assurance_type') {
+      return InvalidAssuranceTypeException(code: errorCode, message: errorMessage);
+    } else if (errorCode == 'already_enrolled') {
+      return AlreadyEnrolledException(code: errorCode, message: errorMessage);
+    } else if (errorCode == 'invalid_key') {
+      return InvalidCredentialsException(code: errorCode, message: errorMessage);
+    } else if (errorCode == 'invalid_token') {
+      return InvalidTokenException(code: errorCode, message: errorMessage);
+    } else {
+      return ApiException(code: errorCode, message: errorMessage);
+    }
+  }
+}
+
+class UserNotRegisteredException extends ApiException {
+  const UserNotRegisteredException({super.code, super.message});
+}
+
+class InvalidUserIdException extends ApiException {
+  const InvalidUserIdException({super.code, super.message});
+}
+
+class InvalidAssuranceTypeException extends ApiException {
+  const InvalidAssuranceTypeException({super.code, super.message});
+}
+
+class AlreadyEnrolledException extends ApiException {
+  const AlreadyEnrolledException({super.code, super.message});
+}
+
+class InvalidCredentialsException extends ApiException {
+  const InvalidCredentialsException({super.code, super.message});
+}
+
+class InvalidTokenException extends ApiException {
+  const InvalidTokenException({super.code, super.message});
+}
 
 class NotFoundException implements Exception {}
 
@@ -38,53 +91,45 @@ class ApiClient {
   }
 
   Future<String> getToken(AssuranceType assuranceType, ClaimType claimType, String userId) async {
-    try {
-      final response = await http.post(
-        Uri.parse('$_normalizedBaseUrl/claim/${claimType.stringValue}/token'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'api_key': apiKey,
-          'secret': secret,
-          'resource': 'com.iproov.dart_api_client',
-          'client': 'dart',
-          'user_id': userId,
-          'assurance_type': assuranceType.stringValue
-        }),
-      );
+    final response = await http.post(
+      Uri.parse('$_normalizedBaseUrl/claim/${claimType.stringValue}/token'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'api_key': apiKey,
+        'secret': secret,
+        'resource': 'com.iproov.dart_api_client',
+        'client': 'dart',
+        'user_id': userId,
+        'assurance_type': assuranceType.stringValue
+      }),
+    );
 
-      _ensureSuccess(response);
+    _ensureSuccess(response);
 
-      final json = jsonDecode(response.body);
-      return json['token'];
-    } on SocketException {
-      throw Exception('No internet connection');
-    }
+    final json = jsonDecode(response.body);
+    return json['token'];
   }
 
   Future<String> enrolPhoto(String token, Image image, PhotoSource source) async {
-    try {
-      final request = http.MultipartRequest('POST', Uri.parse('$_normalizedBaseUrl/claim/enrol/image'))
-        ..fields['api_key'] = apiKey
-        ..fields['secret'] = secret
-        ..fields['rotation'] = '0'
-        ..fields['token'] = token
-        ..fields['source'] = source.stringValue
-        ..files.add(http.MultipartFile.fromBytes('image', encodeJpg(image),
-            filename: 'image.jpg', contentType: MediaType.parse('image/jpeg')));
+    final request = http.MultipartRequest('POST', Uri.parse('$_normalizedBaseUrl/claim/enrol/image'))
+      ..fields['api_key'] = apiKey
+      ..fields['secret'] = secret
+      ..fields['rotation'] = '0'
+      ..fields['token'] = token
+      ..fields['source'] = source.stringValue
+      ..files.add(http.MultipartFile.fromBytes('image', encodeJpg(image),
+          filename: 'image.jpg', contentType: MediaType.parse('image/jpeg')));
 
-      final response = await request.send();
-      if (response.statusCode != 200) {
-        final body = await response.stream.bytesToString();
-        throw Exception('Error ${response.statusCode}: $body');
-      }
-
-      final bytes = await response.stream.toBytes();
-      final json = jsonDecode(utf8.decode(bytes));
-
-      return json['token'];
-    } on SocketException {
-      throw Exception('No internet connection');
+    final response = await request.send();
+    if (response.statusCode != 200) {
+      final body = await response.stream.bytesToString();
+      throw Exception('Error ${response.statusCode}: $body');
     }
+
+    final bytes = await response.stream.toBytes();
+    final json = jsonDecode(utf8.decode(bytes));
+
+    return json['token'];
   }
 
   Future<String> enrolPhotoAndGetVerifyToken(String userId, Image image, PhotoSource source) async {
@@ -94,52 +139,50 @@ class ApiClient {
   }
 
   Future<ValidationResult> validate(String token, String userId) async {
-    try {
-      final response = await http.post(
-        Uri.parse('$_normalizedBaseUrl/claim/verify/validate'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'api_key': apiKey, 'secret': secret, 'user_id': userId, 'token': token, 'client': 'dart'}),
-      );
+    final response = await http.post(
+      Uri.parse('$_normalizedBaseUrl/claim/verify/validate'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'api_key': apiKey, 'secret': secret, 'user_id': userId, 'token': token, 'client': 'dart'}),
+    );
 
-      _ensureSuccess(response);
+    _ensureSuccess(response);
 
-      final json = jsonDecode(response.body);
+    final json = jsonDecode(response.body);
 
-      return ValidationResult.fromJson(json);
-    } on SocketException {
-      throw Exception('No internet connection');
-    }
+    return ValidationResult.fromJson(json);
   }
 
   void _ensureSuccess(http.Response response) {
-    if (response.statusCode == 200) return;
+    if (response.statusCode >= 200 && response.statusCode < 300) return;
     if (response.statusCode == 404) throw NotFoundException();
 
     final json = jsonDecode(response.body);
-    if (json['error'] == 'no_user') {
-      throw UserNotRegisteredException();
-    } else if (json['error_description'] != null) {
-      throw Exception(json['error_description']);
-    } else {
-      throw Exception('Unknown error');
-    }
+
+    throw ApiException._fromJson(json);
   }
 }
 
-enum PhotoSource { electronicID, opticalID }
+enum PhotoSource {
+  electronicID('eid'),
+  opticalID('oid');
 
-extension on PhotoSource {
-  String get stringValue => (this == PhotoSource.electronicID) ? 'eid' : 'oid';
+  const PhotoSource(this.stringValue);
+
+  final String stringValue;
 }
 
-enum ClaimType { enrol, verify }
+enum ClaimType {
+  enrol,
+  verify;
 
-extension on ClaimType {
   String get stringValue => toString().split('.').last;
 }
 
-enum AssuranceType { genuinePresenceAssurance, livenessAssurance }
+enum AssuranceType {
+  genuinePresenceAssurance('genuine_presence'),
+  livenessAssurance('liveness');
 
-extension on AssuranceType {
-  String get stringValue => (this == AssuranceType.genuinePresenceAssurance) ? 'genuine_presence' : 'liveness';
+  const AssuranceType(this.stringValue);
+
+  final String stringValue;
 }

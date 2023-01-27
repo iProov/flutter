@@ -12,7 +12,7 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key key}) : super(key: key);
+  const MyApp({Key? key}) : super(key: key);
 
   // This widget is the root of your application.
   @override
@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key key}) : super(key: key);
+  const MyHomePage({Key? key}) : super(key: key);
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -40,7 +40,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   // This code is for demo purposes only. Do not make API calls from the device
   // in production!
-  final _apiClient = const ApiClient(baseUrl: baseUrl, apiKey: apiKey, secret: secret);
+  final _apiClient = const ApiClient(baseUrl: 'https://$hostname/api/v2', apiKey: apiKey, secret: secret);
 
   void _getTokenAndLaunchIProov(AssuranceType assuranceType, ClaimType claimType, String userId) async {
     setState(() => _scanInProgress = true);
@@ -50,7 +50,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     try {
       token = await _apiClient.getToken(assuranceType, claimType, userId);
-    } on Exception catch (e) {
+    } catch (e) {
       setState(() => _scanInProgress = false);
       ProgressHud.dismiss();
 
@@ -73,13 +73,14 @@ class _MyHomePageState extends State<MyHomePage> {
       return;
     }
 
-    const options = Options(ui: UiOptions(floatingPromptEnabled: true));
+    const options = Options();
+    // TODO: Customize your options here
 
     _launchIProov(token, options);
   }
 
   void _launchIProov(String token, Options options) {
-    final stream = IProov.launch(streamingUrl: _apiClient.baseUrl, token: token, options: options);
+    final stream = IProov.launch(streamingUrl: 'wss://$hostname/ws', token: token, options: options);
 
     stream.listen((event) {
       if (event.isFinal) {
@@ -94,7 +95,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ProgressHud.show(ProgressHudType.progress, event.message);
         ProgressHud.updateProgress(event.progress, event.message);
       } else if (event is IProovEventCancelled) {
-        ProgressHud.dismiss();
+        ProgressHud.showAndDismiss(ProgressHudType.success, 'Canceled by ${event.canceller.name}');
       } else if (event is IProovEventSuccess) {
         ProgressHud.showAndDismiss(ProgressHudType.success, 'Success!');
       } else if (event is IProovEventFailure) {

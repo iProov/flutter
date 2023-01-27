@@ -1,5 +1,36 @@
 # iProov Biometrics Flutter SDK
 
+## 3.0.0
+
+iProov SDK Biometrics Flutter SDK v3.0.0 is a major update which includes a number of improvements and breaking changes.
+
+Please consult the [Upgrade Guide](https://github.com/iProov/flutter/wiki/Upgrade-Guide#upgrading-to-v30) for detailed instructions on how to upgrade to this new version.
+
+### Flutter
+
+* Cancelling all subscriptions to the `Stream<IProovEvent>` returned from `IProov.launch()` will now cancel any ongoing claim.
+* `Options` has been overhauled to support the new SDK options in iOS v10 and Android v8 respectively.
+* Fixed an issue where internal plugin errors would not be properly surfaced to the app.
+
+### iOS
+
+* Upgraded SDK to [v10.1.1](https://github.com/iProov/ios/releases/tag/10.1.1).
+* Fixed an issue where custom fonts would crash on two consecutive launches.
+
+### Android
+
+* Upgraded SDK to [v8.1.0](https://github.com/iProov/android/releases/tag/v8.1.0).
+* Fixed an issue where custom fonts would not be applied correctly.
+
+### API Client
+
+* Improved exception handling.
+* The API Client now requires Dart 2.17+.
+
+### Example app
+
+* The example app now builds with sound null safety.
+
 ## 2.0.0
 
 iProov SDK Biometrics Flutter SDK v2.0.0 is a major update which includes a number of improvements and breaking changes.
