@@ -42,3 +42,10 @@ app.*.symbols
 app.*.map.json
 
 .idea/workspace.xml
+
+linux/flutter/generated_plugin_registrant.cc
+linux/flutter/generated_plugin_registrant.h
+linux/flutter/generated_plugins.cmake
+macos/Podfile
+macos/Flutter/GeneratedPluginRegistrant.swift
+macos/Flutter/ephemeral/Flutter-Generated.xcconfig

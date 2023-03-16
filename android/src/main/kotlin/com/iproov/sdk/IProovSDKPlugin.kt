@@ -1,25 +1,17 @@
 package com.iproov.sdk
 
 import android.content.Context
+import android.graphics.Bitmap
 import com.iproov.sdk.bridge.OptionsBridge
-import com.iproov.sdk.core.exception.CameraException
-import com.iproov.sdk.core.exception.CameraPermissionException
-import com.iproov.sdk.core.exception.CaptureAlreadyActiveException
-import com.iproov.sdk.core.exception.FaceDetectorException
-import com.iproov.sdk.core.exception.IProovException
-import com.iproov.sdk.core.exception.InvalidOptionsException
-import com.iproov.sdk.core.exception.MultiWindowUnsupportedException
-import com.iproov.sdk.core.exception.NetworkException
-import com.iproov.sdk.core.exception.ServerException
-import com.iproov.sdk.core.exception.UnexpectedErrorException
-import com.iproov.sdk.core.exception.UnsupportedDeviceException
+import com.iproov.sdk.core.exception.*
 import io.flutter.FlutterInjector
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import org.json.JSONObject
-import java.lang.Exception
+import java.io.ByteArrayOutputStream
+
 
 class IProovSDKPlugin: FlutterPlugin {
 
@@ -38,35 +30,56 @@ class IProovSDKPlugin: FlutterPlugin {
     private val iProovListener = object : IProovCallbackLauncher.Listener {
         override fun onConnecting() {
             eventSink?.success(hashMapOf(
-                    "event" to "connecting"
+                "event" to "connecting"
             ))
         }
 
         override fun onConnected() {
             eventSink?.success(hashMapOf(
-                    "event" to "connected"
+                "event" to "connected"
             ))
         }
 
         override fun onProcessing(progress: Double, message: String?) {
             eventSink?.success(hashMapOf(
-                    "event" to "processing",
-                    "progress" to progress,
-                    "message" to message
+                "event" to "processing",
+                "progress" to progress,
+                "message" to message
             ))
         }
 
         override fun onSuccess(result: IProov.SuccessResult) {
+            val frameArray = result.frame?.let { bmp ->
+                val stream = ByteArrayOutputStream()
+                bmp.compress(Bitmap.CompressFormat.PNG, 100, stream)
+                val byteArray: ByteArray = stream.toByteArray()
+                bmp.recycle()
+                byteArray
+            }
+
             eventSink?.success(hashMapOf(
-                    "event" to "success"
+                "event" to "success",
+                "frame" to frameArray
             ))
             eventSink?.endOfStream()
         }
 
         override fun onFailure(result: IProov.FailureResult) {
+            val context = flutterPluginBinding!!.applicationContext
+
+            val frameArray = result.frame?.let { bmp ->
+                val stream = ByteArrayOutputStream()
+                bmp.compress(Bitmap.CompressFormat.PNG, 100, stream)
+                val byteArray: ByteArray = stream.toByteArray()
+                bmp.recycle()
+                byteArray
+            }
+
             eventSink?.success(hashMapOf(
-                    "event" to "failure",
-                    "reason" to result.reason.feedbackCode
+                "event" to "failure",
+                "feedbackCode" to result.reason.feedbackCode,
+                "reason" to context.getString(result.reason.description),
+                "frame" to frameArray
             ))
             eventSink?.endOfStream()
         }

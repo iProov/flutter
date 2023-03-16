@@ -17,6 +17,9 @@
       <excludeFolder url="file://$MODULE_DIR$/example/ios/.symlinks/plugins/iproov_flutter/.dart_tool" />
       <excludeFolder url="file://$MODULE_DIR$/example/ios/.symlinks/plugins/iproov_flutter/.pub" />
       <excludeFolder url="file://$MODULE_DIR$/example/ios/.symlinks/plugins/iproov_flutter/build" />
+      <excludeFolder url="file://$MODULE_DIR$/iproov_api_client/build" />
+      <excludeFolder url="file://$MODULE_DIR$/iproov_api_client/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/iproov_api_client/.pub" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Dart SDK" level="project" />

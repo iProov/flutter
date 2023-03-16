@@ -2,7 +2,7 @@
     package="com.iproov.iproov_sdk_example">
     <application
         android:name="${applicationName}"
-        android:label="iproov_sdk_example"
+        android:label="Flutter Example"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

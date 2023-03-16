@@ -1,13 +1,11 @@
 PODS:
   - Flutter (1.0.0)
-  - iProov (10.1.1):
+  - iProov (10.1.2):
     - Starscream (~> 4.0)
-    - SwiftProtobuf (~> 1.0)
-  - iproov_flutter (3.0.0):
+  - iproov_flutter (3.1.0):
     - Flutter
-    - iProov (= 10.1.1)
+    - iProov (= 10.1.2)
   - Starscream (4.0.4)
-  - SwiftProtobuf (1.20.3)
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
@@ -17,7 +15,6 @@ SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
     - iProov
     - Starscream
-    - SwiftProtobuf
 
 EXTERNAL SOURCES:
   Flutter:
@@ -27,10 +24,9 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
-  iProov: 8f3a51f93b8fe8b12a061fe77ad5e2ce39180014
-  iproov_flutter: c00386784f29746c0d67ebe473e360f7545ceaf5
+  iProov: f18f35cf6162628196458f6568e1ae1bf3dcfdf0
+  iproov_flutter: 76b5c9da212d3c4e4dd60bd9c9b0d5a9b7829949
   Starscream: 5178aed56b316f13fa3bc55694e583d35dd414d9
-  SwiftProtobuf: b02b5075dcf60c9f5f403000b3b0c202a11b6ae1
 
 PODFILE CHECKSUM: 0e3d3e6da1983f2e8b05f2ed5e37df0638b36672
 

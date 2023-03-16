@@ -1,5 +1,24 @@
 # iProov Biometrics Flutter SDK
 
+## 3.1.0
+
+iProov SDK Biometrics Flutter SDK v3.1.0 includes bug fixes 
+
+Please consult the [Upgrade Guide](https://github.com/iProov/flutter/wiki/Upgrade-Guide#upgrading-to-v30) for detailed instructions on how to upgrade to this new version.
+
+### Flutter
+
+* Fix how `feedbackCode`, `reason` and `frame` values are returned by `IProovEventFailure`, and value `frame` by `IProovEventSucces` in the Android side.
+
+### iOS
+
+* Upgraded SDK to [v10.1.2](https://github.com/iProov/ios/releases/tag/10.1.2).
+
+### Android
+
+* Upgraded SDK to [v8.3.0](https://github.com/iProov/android/releases/tag/v8.3.0).
+
+
 ## 3.0.0
 
 iProov SDK Biometrics Flutter SDK v3.0.0 is a major update which includes a number of improvements and breaking changes.
