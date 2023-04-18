@@ -1,10 +1,10 @@
 PODS:
   - Flutter (1.0.0)
-  - iProov (10.1.2):
+  - iProov (10.1.3):
     - Starscream (~> 4.0)
   - iproov_flutter (3.1.0):
     - Flutter
-    - iProov (= 10.1.2)
+    - iProov (= 10.1.3)
   - Starscream (4.0.4)
 
 DEPENDENCIES:
@@ -24,8 +24,8 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
-  iProov: f18f35cf6162628196458f6568e1ae1bf3dcfdf0
-  iproov_flutter: 76b5c9da212d3c4e4dd60bd9c9b0d5a9b7829949
+  iProov: e0616d6f785f669b261c956bfa00450a74c1234d
+  iproov_flutter: d69a92eced10d8535744f443d844b985404e9cc0
   Starscream: 5178aed56b316f13fa3bc55694e583d35dd414d9
 
 PODFILE CHECKSUM: 0e3d3e6da1983f2e8b05f2ed5e37df0638b36672

@@ -35,7 +35,7 @@ Add the following to your project's `pubspec.yml` file:
 
 ```yaml
 dependencies:
-  iproov_flutter: ^3.1.0
+  iproov_flutter: ^3.1.1
 ```
 
 You can then install it with:
@@ -67,7 +67,7 @@ There are a couple of extra steps required for iOS:
 	  installer.pods_project.targets.each do |target|
 	    flutter_additional_ios_build_settings(target)
 	    	    
-	    if ['iProov', 'SwiftProtobuf', 'Starscream'].include? target.name
+	    if ['iProov', 'Starscream'].include? target.name
 	      target.build_configurations.each do |config|
 	        config.build_settings['BUILD_LIBRARY_FOR_DISTRIBUTION'] = 'YES'
 	      end

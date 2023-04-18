@@ -1,5 +1,17 @@
 # iProov Biometrics Flutter SDK
 
+## 3.1.1
+
+iProov Biometrics Flutter SDK v3.1.1 includes an additional certificate added to the default certificate pinning, to support beyond Dec 2023.
+
+### iOS
+
+* Upgraded SDK to [v10.1.3](https://github.com/iProov/ios/releases/tag/10.1.3).
+
+### Android
+
+* Upgraded SDK to [v8.3.1](https://github.com/iProov/android/releases/tag/v8.3.1).
+
 ## 3.1.0
 
 iProov SDK Biometrics Flutter SDK v3.1.0 includes bug fixes 
