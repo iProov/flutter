@@ -90,7 +90,11 @@ class ApiClient {
     return normalizedBaseUrl;
   }
 
-  Future<String> getToken(AssuranceType assuranceType, ClaimType claimType, String userId) async {
+  Future<String> getToken({
+    required AssuranceType assuranceType,
+    required ClaimType claimType,
+    required String userId,
+  }) async {
     final response = await http.post(
       Uri.parse('$_normalizedBaseUrl/claim/${claimType.stringValue}/token'),
       headers: {'Content-Type': 'application/json'},
@@ -100,7 +104,7 @@ class ApiClient {
         'resource': 'com.iproov.dart_api_client',
         'client': 'dart',
         'user_id': userId,
-        'assurance_type': assuranceType.stringValue
+        'assurance_type': assuranceType.stringValue,
       }),
     );
 
@@ -110,7 +114,11 @@ class ApiClient {
     return json['token'];
   }
 
-  Future<String> enrolPhoto(String token, Image image, PhotoSource source) async {
+  Future<String> enrolPhoto({
+    required String token,
+    required Image image,
+    required PhotoSource source,
+  }) async {
     final request = http.MultipartRequest('POST', Uri.parse('$_normalizedBaseUrl/claim/enrol/image'))
       ..fields['api_key'] = apiKey
       ..fields['secret'] = secret
@@ -132,17 +140,43 @@ class ApiClient {
     return json['token'];
   }
 
-  Future<String> enrolPhotoAndGetVerifyToken(String userId, Image image, PhotoSource source) async {
-    final enrolToken = await getToken(AssuranceType.genuinePresenceAssurance, ClaimType.enrol, userId);
-    await enrolPhoto(enrolToken, image, source);
-    return await getToken(AssuranceType.genuinePresenceAssurance, ClaimType.verify, userId);
+  Future<String> enrolPhotoAndGetVerifyToken({
+    AssuranceType assuranceType = AssuranceType.genuinePresenceAssurance,
+    required String userId,
+    required Image image,
+    required PhotoSource source,
+  }) async {
+    final enrolToken = await getToken(
+      assuranceType: AssuranceType.genuinePresenceAssurance,
+      claimType: ClaimType.enrol,
+      userId: userId,
+    );
+    await enrolPhoto(
+      token: enrolToken,
+      image: image,
+      source: source,
+    );
+    return await getToken(
+      assuranceType: assuranceType,
+      claimType: ClaimType.verify,
+      userId: userId,
+    );
   }
 
-  Future<ValidationResult> validate(String token, String userId) async {
+  Future<ValidationResult> validate({
+    required String token,
+    required String userId,
+  }) async {
     final response = await http.post(
       Uri.parse('$_normalizedBaseUrl/claim/verify/validate'),
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'api_key': apiKey, 'secret': secret, 'user_id': userId, 'token': token, 'client': 'dart'}),
+      body: jsonEncode({
+        'api_key': apiKey,
+        'secret': secret,
+        'user_id': userId,
+        'token': token,
+        'client': 'dart',
+      }),
     );
 
     _ensureSuccess(response);

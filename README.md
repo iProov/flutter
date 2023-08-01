@@ -9,7 +9,7 @@ We also provide an API Client written in Dart to call our [REST API v2](https://
 
 ### Requirements
 
-- Dart SDK 2.12 and above
+- Dart SDK 2.15 and above
 - Flutter SDK 1.20 and above
 - iOS 11 and above
 - Android API Level 21 (Android 5 Lollipop) and above
@@ -35,7 +35,7 @@ Add the following to your project's `pubspec.yml` file:
 
 ```yaml
 dependencies:
-  iproov_flutter: ^3.1.1
+  iproov_flutter: ^3.2.0
 ```
 
 You can then install it with:
@@ -186,6 +186,8 @@ A summary of the support for the various SDK options in Flutter is provided belo
 | `orientation` | `Orientation?` |  | ✅ |
 | `camera` | `Camera?` |  | ✅ |
 | `faceDetector` | `FaceDetector?` |  | ✅ |
+| `headerBackgroundColor` | `Color?` | ✅ | ✅ |
+| `disableExteriorEffects` | `bool?` | ✅ | ✅ |
 |**`genuinePresenceAssurance`** | `GenuinePresenceAssuranceOptions?` |  |  |
 | ↳ `readyOvalStrokeColor` | `Color?` | ✅ | ✅ |
 | ↳ `notReadyOvalStrokeColor` | `Color?` | ✅ | ✅ |
@@ -310,10 +312,14 @@ import 'package:iproov_api_client/iproov_api_client.dart';
 final apiClient = const ApiClient(
   baseUrl: 'https://eu.rp.secure.iproov.me/api/v2', // Substitute URL as appropriate
   apiKey: '< YOUR API KEY >',
-  secret: '< YOUR SECRET >'
+  secret: '< YOUR SECRET >',
 );
 
-final token = await apiClient.getToken(AssuranceType.genuinePresenceAssurance, ClaimType.enrol, "name@example.com");
+final token = await apiClient.getToken(
+  assuranceType: AssuranceType.genuinePresenceAssurance,
+  claimType: ClaimType.enrol,
+  userId: "name@example.com",
+);
 ```
 
 You can then launch the iProov SDK with this token.

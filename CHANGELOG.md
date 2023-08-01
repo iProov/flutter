@@ -1,5 +1,29 @@
 # iProov Biometrics Flutter SDK
 
+## 3.2.0
+
+iProov Biometrics Flutter SDK v3.2.0 includes the following changes
+
+### Flutter
+
+- Declared support for Dart 3.
+- Dependency on [image](https://pub.dev/packages/image) package upgraded to 4.0.0
+- Added `copyWith()` implementation to `Options`.
+- `Options` classes are now marked `@immutable`.
+
+### iOS
+
+* Upgraded SDK to [v10.3.0](https://github.com/iProov/ios/releases/tag/10.3.0).
+
+### Android
+
+* Upgraded SDK to [v8.5.0](https://github.com/iProov/android/releases/tag/v8.5.0).
+
+### API Client
+
+- All methods now have named parameters.
+- `enrolPhotoAndGetVerifyToken()` now supports passing assurance type.
+
 ## 3.1.1
 
 iProov Biometrics Flutter SDK v3.1.1 includes an additional certificate added to the default certificate pinning, to support beyond Dec 2023.
@@ -11,6 +35,25 @@ iProov Biometrics Flutter SDK v3.1.1 includes an additional certificate added to
 ### Android
 
 * Upgraded SDK to [v8.3.1](https://github.com/iProov/android/releases/tag/v8.3.1).
+
+## 3.1.0
+
+iProov SDK Biometrics Flutter SDK v3.1.0 includes bug fixes 
+
+Please consult the [Upgrade Guide](https://github.com/iProov/flutter/wiki/Upgrade-Guide#upgrading-to-v30) for detailed instructions on how to upgrade to this new version.
+
+### Flutter
+
+* Fix how `feedbackCode`, `reason` and `frame` values are returned by `IProovEventFailure`, and value `frame` by `IProovEventSucces` in the Android side.
+
+### iOS
+
+* Upgraded SDK to [v10.1.2](https://github.com/iProov/ios/releases/tag/10.1.2).
+
+### Android
+
+* Upgraded SDK to [v8.3.0](https://github.com/iProov/android/releases/tag/v8.3.0).
+
 
 ## 3.1.0
 

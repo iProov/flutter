@@ -49,7 +49,11 @@ class _MyHomePageState extends State<MyHomePage> {
     String token;
 
     try {
-      token = await _apiClient.getToken(assuranceType, claimType, userId);
+      token = await _apiClient.getToken(
+        assuranceType: assuranceType,
+        claimType: claimType,
+        userId: userId,
+      );
     } catch (e) {
       setState(() => _scanInProgress = false);
       ProgressHud.dismiss();
@@ -73,8 +77,8 @@ class _MyHomePageState extends State<MyHomePage> {
       return;
     }
 
-    const options = Options();
     // TODO: Customize your options here
+    const options = Options();
 
     _launchIProov(token, options);
   }
@@ -101,7 +105,7 @@ class _MyHomePageState extends State<MyHomePage> {
       } else if (event is IProovEventFailure) {
         ProgressHud.showAndDismiss(ProgressHudType.error, event.reason);
       } else if (event is IProovEventError) {
-        ProgressHud.showAndDismiss(ProgressHudType.error, event.error.title ?? 'Error');
+        ProgressHud.showAndDismiss(ProgressHudType.error, event.error.title);
       }
     });
   }

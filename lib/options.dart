@@ -1,7 +1,7 @@
 import 'dart:convert';
-import 'dart:typed_data';
 import 'dart:ui';
 
+import 'package:flutter/foundation.dart';
 import 'package:image/image.dart' hide Color;
 import 'package:iproov_flutter/enums.dart';
 
@@ -10,6 +10,7 @@ import 'package:iproov_flutter/enums.dart';
 /// Most of these options are common to both Android and iOS, however, some are platform-specific.
 ///
 /// All options are nullable and any options not set will default to their platform-defined default value.
+@immutable
 class Options {
   /// The [Filter] applied to the camera preview as either [LineDrawingFilter] or [NaturalFilter].
   final Filter? filter;
@@ -78,6 +79,12 @@ class Options {
   /// This option only applies to Android.
   final FaceDetector? faceDetector;
 
+  /// The [Color] of the header bar.
+  final Color? headerBackgroundColor;
+
+  /// Whether the blur and vignette effect outside the oval should be disabled.
+  final bool? disableExteriorEffects;
+
   /// Options relating specifically to Genuine Presence Assurance (GPA).
   final GenuinePresenceAssuranceOptions? genuinePresenceAssurance;
 
@@ -102,6 +109,8 @@ class Options {
     this.orientation,
     this.camera,
     this.faceDetector,
+    this.headerBackgroundColor,
+    this.disableExteriorEffects,
     this.genuinePresenceAssurance,
     this.livenessAssurance,
   });
@@ -124,12 +133,62 @@ class Options {
         'orientation': orientation?.stringValue,
         'camera': camera?.stringValue,
         'face_detector': faceDetector?.stringValue,
+        'header_background_color': headerBackgroundColor?.hex,
+        'disable_exterior_effects': disableExteriorEffects,
         'genuine_presence_assurance': genuinePresenceAssurance?.toJson(),
         'liveness_assurance': livenessAssurance?.toJson(),
       }._withoutNullValues();
+
+  Options copyWith({
+    Filter? filter,
+    Color? titleTextColor,
+    Color? promptTextColor,
+    Color? closeButtonTintColor,
+    Image? closeButtonImage,
+    String? title,
+    String? fontPath,
+    Image? logoImage,
+    Color? promptBackgroundColor,
+    bool? promptRoundedCorners,
+    Color? surroundColor,
+    List<Uint8List>? certificates,
+    Duration? timeout,
+    bool? enableScreenshots,
+    Orientation? orientation,
+    Camera? camera,
+    FaceDetector? faceDetector,
+    Color? headerBackgroundColor,
+    bool? disableExteriorEffects,
+    GenuinePresenceAssuranceOptions? genuinePresenceAssurance,
+    LivenessAssuranceOptions? livenessAssurance,
+  }) =>
+      Options(
+        filter: filter ?? this.filter,
+        titleTextColor: titleTextColor ?? this.titleTextColor,
+        promptTextColor: promptTextColor ?? this.promptTextColor,
+        closeButtonTintColor: closeButtonTintColor ?? this.closeButtonTintColor,
+        closeButtonImage: closeButtonImage ?? this.closeButtonImage,
+        title: title ?? this.title,
+        fontPath: fontPath ?? this.fontPath,
+        logoImage: logoImage ?? this.logoImage,
+        promptBackgroundColor: promptBackgroundColor ?? this.promptBackgroundColor,
+        promptRoundedCorners: promptRoundedCorners ?? this.promptRoundedCorners,
+        surroundColor: surroundColor ?? this.surroundColor,
+        certificates: certificates ?? this.certificates,
+        timeout: timeout ?? this.timeout,
+        enableScreenshots: enableScreenshots ?? this.enableScreenshots,
+        orientation: orientation ?? this.orientation,
+        camera: camera ?? this.camera,
+        faceDetector: faceDetector ?? this.faceDetector,
+        headerBackgroundColor: headerBackgroundColor ?? this.headerBackgroundColor,
+        disableExteriorEffects: disableExteriorEffects ?? this.disableExteriorEffects,
+        genuinePresenceAssurance: genuinePresenceAssurance ?? this.genuinePresenceAssurance,
+        livenessAssurance: livenessAssurance ?? this.livenessAssurance,
+      );
 }
 
 /// Options relating to the appearance of the iProov user interface for GPA claims.
+@immutable
 class GenuinePresenceAssuranceOptions {
   /// The [Color] to use for the oval stroke line when the scan is ready to start.
   final Color? readyOvalStrokeColor;
@@ -176,6 +235,7 @@ class GenuinePresenceAssuranceOptions {
 }
 
 /// Options relating to the appearance of the iProov user interface for LA claims.
+@immutable
 class LivenessAssuranceOptions {
   /// The [Color] to use for the oval stroke.
   final Color? ovalStrokeColor;
@@ -194,6 +254,7 @@ class LivenessAssuranceOptions {
       }._withoutNullValues();
 }
 
+@immutable
 abstract class Filter {
   Map<String, dynamic> toJson();
 }
@@ -201,6 +262,7 @@ abstract class Filter {
 enum LineDrawingFilterStyle { classic, shaded, vibrant }
 
 /// Options relating to the camera preview based on iProov's traditional "canny" filter
+@immutable
 class LineDrawingFilter implements Filter {
   /// The style to use for the filter. defaults to `.shaded`.
   final LineDrawingFilterStyle? style;
@@ -231,6 +293,7 @@ enum NaturalFilterStyle { clear, blur }
 /// Options relating to the camera preview providing direct visualization of the user's face.
 /// Note that [NaturalFilter] is available for Liveness Assurance claims only.
 /// Attempts to use [NaturalFilter] for Genuine Presence Assurance claims will result in an error.
+@immutable
 class NaturalFilter implements Filter {
   /// The style to use for the filter. defaults to `.clear`.
   final NaturalFilterStyle? style;
