@@ -37,6 +37,10 @@ class IProov {
 
   // Private constructor
   IProov._();
+
+   static Future<bool> cancel() async {
+    return await _iProovMethodChannel.invokeMethod('cancel');
+  }
 }
 
 class KeyPair {

@@ -25,6 +25,8 @@ abstract class IProovException implements Exception {
         return UnsupportedDeviceException(title);
       case 'invalid_options':
         return InvalidOptionsException(title);
+      case 'user_timeout':
+        return UserTimeoutException(title);
     }
 
     return UnexpectedErrorException(title, message);
@@ -51,6 +53,11 @@ class UnexpectedErrorException extends IProovException {
   UnexpectedErrorException(String title, String? message) : super(title, message);
 }
 
+// iOS only
+class UserTimeoutException extends IProovException {
+  UserTimeoutException(String title) : super(title);
+}
+
 // Android only
 class ListenerNotRegisteredException extends IProovException {
   ListenerNotRegisteredException(String title) : super(title);
@@ -71,7 +78,6 @@ class FaceDetectorException extends IProovException {
   FaceDetectorException(String title, String? message) : super(title, message);
 }
 
-// Android only
 class UnsupportedDeviceException extends IProovException {
   UnsupportedDeviceException(String title) : super(title);
 }

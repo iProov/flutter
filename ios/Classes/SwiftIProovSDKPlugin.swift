@@ -11,11 +11,11 @@ private enum EventKey: String {
     case reason
     case frame
     case title
-    case canceller
+    case canceler
 }
 
 private enum EventName: String {
-    case cancelled
+    case canceled
     case connecting
     case connected
     case error
@@ -55,7 +55,8 @@ public final class SwiftIProovSDKPlugin: NSObject {
             throw PluginError.invalidArguments
         }
 
-        guard let streamingURL = arguments["streamingURL"] else {
+        guard let streamingURLString = arguments["streamingURL"],
+              let streamingURL = URL(string: streamingURLString) else {
             throw PluginError.invalidStreamingURL
         }
 
@@ -118,6 +119,9 @@ extension SwiftIProovSDKPlugin: FlutterPlugin {
             result(IProov.keyPair.publicKey.pem)
         case "keyPair.publicKey.getDer":
             result(IProov.keyPair.publicKey.der)
+        case "cancel":
+            let cancelResult = session?.cancel()
+            result(cancelResult)
         default:
             result(FlutterMethodNotImplemented)
         }
@@ -165,10 +169,10 @@ private extension Status {
                 EventKey.event.rawValue: EventName.success.rawValue,
                 EventKey.frame.rawValue: result.frame?.pngData()?.flutterData as Any
             ]
-        case let .cancelled(canceller):
+        case let .canceled(canceler):
             return [
-                EventKey.event.rawValue: EventName.cancelled.rawValue,
-                EventKey.canceller.rawValue: canceller.stringValue
+                EventKey.event.rawValue: EventName.canceled.rawValue,
+                EventKey.canceler.rawValue: canceler.stringValue
             ]
         case let .failure(result):
             return [
@@ -246,6 +250,10 @@ private extension IProovError {
             return "camera_permission"
         case .serverError:
             return "server_error"
+        case .userTimeout:
+            return "user_timeout"
+        case .notSupported:
+            return "unsupported_device"
         case .unexpectedError:
             fallthrough
         @unknown default:
@@ -255,10 +263,10 @@ private extension IProovError {
 
 }
 
-private extension Canceller {
+private extension Canceler {
     var stringValue: String {
         switch self {
-        case .app: return "app"
+        case .integration: return "app"
         case .user: return "user"
         @unknown default:
             fatalError()

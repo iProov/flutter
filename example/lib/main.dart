@@ -98,8 +98,8 @@ class _MyHomePageState extends State<MyHomePage> {
       } else if (event is IProovEventProcessing) {
         ProgressHud.show(ProgressHudType.progress, event.message);
         ProgressHud.updateProgress(event.progress, event.message);
-      } else if (event is IProovEventCancelled) {
-        ProgressHud.showAndDismiss(ProgressHudType.success, 'Canceled by ${event.canceller.name}');
+      } else if (event is IProovEventCanceled) {
+        ProgressHud.showAndDismiss(ProgressHudType.success, 'Canceled by ${event.canceler.name}');
       } else if (event is IProovEventSuccess) {
         ProgressHud.showAndDismiss(ProgressHudType.success, 'Success!');
       } else if (event is IProovEventFailure) {
@@ -109,6 +109,7 @@ class _MyHomePageState extends State<MyHomePage> {
       }
     });
   }
+  
 
   @override
   Widget build(BuildContext context) {

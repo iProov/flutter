@@ -84,10 +84,10 @@ class IProovSDKPlugin: FlutterPlugin {
             eventSink?.endOfStream()
         }
 
-        override fun onCancelled(canceller: IProov.Canceller) {
+        override fun onCanceled(canceler: IProov.Canceler) {
             eventSink?.success(hashMapOf(
-                "event" to "cancelled",
-                "canceller" to canceller.name.lowercase()
+                "event" to "canceled",
+                "canceler" to canceler.name.lowercase()
             ))
             eventSink?.endOfStream()
         }
@@ -121,8 +121,13 @@ class IProovSDKPlugin: FlutterPlugin {
                 }
                 "keyPair.publicKey.getPem" -> result.success(launcher.getKeyPair(context!!).publicKey.pem)
                 "keyPair.publicKey.getDer" -> result.success(launcher.getKeyPair(context!!).publicKey.der)
+                "cancel" -> cancelSession()
                 else -> result.notImplemented()
             }
+        }
+
+        private fun cancelSession() {
+            launcher.currentSession()?.cancel()
         }
 
         private fun handleLaunch(call: MethodCall) {

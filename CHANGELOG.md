@@ -1,5 +1,35 @@
 # iProov Biometrics Flutter SDK
 
+## 4.0.0
+
+iProov SDK Biometrics Flutter SDK v4.0.0 is a major update which includes a number of improvements and breaking changes.
+
+Please consult the [Upgrade Guide](https://github.com/iProov/flutter/wiki/Upgrade-Guide#upgrading-to-v40) for detailed instructions on how to upgrade to this new version.
+
+
+### Flutter
+
+* To support the changes in SDK version iOS v11 and Android v9, the following have been updated:
+	* The following `Options` have been removed:
+		* `faceDetector`, `maxPitch`, `maxYaw` and `maxRaw`
+	* `UserTimeout` exception has been added to `IProovException`
+	* `IProov.Canceller` becomes `IProov.Canceler`
+
+### iOS
+
+* Upgraded SDK to [v11.0.0](https://github.com/iProov/ios/releases/tag/11.0.0).
+* Requires iOS 12.0 and above
+
+### Android
+
+* Upgraded SDK to [v9.0.1](https://github.com/iProov/android/releases/tag/v9.0.1).
+* Updated Gradle to version 7.5 and Gradle build tools to 7.4.1
+
+
+### Example app
+
+* Updated the Gradle to version 7.5 and Gradle build tools to 7.4.1
+
 ## 3.2.0
 
 iProov Biometrics Flutter SDK v3.2.0 includes the following changes

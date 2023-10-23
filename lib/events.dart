@@ -25,9 +25,9 @@ abstract class IProovEvent {
         final frame = frameData != null ? decodePng(frameData) : null;
         return IProovEventFailure(map['reason'], map['feedbackCode'], frame);
 
-      case 'cancelled':
-        final canceller = map['canceller'];
-        return IProovEventCancelled(Canceller.values.byName(canceller));
+      case 'canceled':
+        final canceler = map['canceler'];
+        return IProovEventCanceled(Canceler.values.byName(canceler));
 
       case 'error':
         return IProovEventError.create(map['error'], map['title'], map['message']);
@@ -54,15 +54,15 @@ class IProovEventConnected implements IProovEvent {
   const IProovEventConnected();
 }
 
-/// The user cancelled iProov, either by pressing the close button at the top right, or sending
+/// The user canceled iProov, either by pressing the close button at the top right, or sending
 /// the app to the background.
-class IProovEventCancelled implements IProovEvent {
+class IProovEventCanceled implements IProovEvent {
   @override
   get isFinal => true;
 
-  final Canceller canceller;
+  final Canceler canceler;
 
-  const IProovEventCancelled(this.canceller);
+  const IProovEventCanceled(this.canceler);
 }
 
 /// The SDK will update your app with the progress of streaming to the server and authenticating

@@ -74,11 +74,6 @@ class Options {
   /// This option only applies to Android.
   final Camera? camera;
 
-  /// The [FaceDetector] to be used locally for face detection.
-  ///
-  /// This option only applies to Android.
-  final FaceDetector? faceDetector;
-
   /// The [Color] of the header bar.
   final Color? headerBackgroundColor;
 
@@ -108,7 +103,6 @@ class Options {
     this.enableScreenshots,
     this.orientation,
     this.camera,
-    this.faceDetector,
     this.headerBackgroundColor,
     this.disableExteriorEffects,
     this.genuinePresenceAssurance,
@@ -132,7 +126,6 @@ class Options {
         'enable_screenshots': enableScreenshots,
         'orientation': orientation?.stringValue,
         'camera': camera?.stringValue,
-        'face_detector': faceDetector?.stringValue,
         'header_background_color': headerBackgroundColor?.hex,
         'disable_exterior_effects': disableExteriorEffects,
         'genuine_presence_assurance': genuinePresenceAssurance?.toJson(),
@@ -156,7 +149,6 @@ class Options {
     bool? enableScreenshots,
     Orientation? orientation,
     Camera? camera,
-    FaceDetector? faceDetector,
     Color? headerBackgroundColor,
     bool? disableExteriorEffects,
     GenuinePresenceAssuranceOptions? genuinePresenceAssurance,
@@ -179,7 +171,6 @@ class Options {
         enableScreenshots: enableScreenshots ?? this.enableScreenshots,
         orientation: orientation ?? this.orientation,
         camera: camera ?? this.camera,
-        faceDetector: faceDetector ?? this.faceDetector,
         headerBackgroundColor: headerBackgroundColor ?? this.headerBackgroundColor,
         disableExteriorEffects: disableExteriorEffects ?? this.disableExteriorEffects,
         genuinePresenceAssurance: genuinePresenceAssurance ?? this.genuinePresenceAssurance,
@@ -196,39 +187,12 @@ class GenuinePresenceAssuranceOptions {
   /// The [Color] to use for the oval stroke line when the scan is not ready to start.
   final Color? notReadyOvalStrokeColor;
 
-  /// The maximum deviation in pitch (in normalized units) to be applied for pose control.
-  /// Requires a compatible [FaceDetector] to be specified.
-  ///
-  /// This option is not intended for general use. Contact iProov if you wish to use this feature.
-  @Deprecated("This option will be removed in a future SDK version.")
-  final double? maxPitch;
-
-  /// The maximum deviation in yaw (in normalized units) to be applied for pose control.
-  /// Requires a compatible [FaceDetector] to be specified.
-  ///
-  /// This option is not intended for general use. Contact iProov if you wish to use this feature.
-  @Deprecated("This option will be removed in a future SDK version.")
-  final double? maxYaw;
-
-  /// The maximum deviation in roll (in normalized units) to be applies for pose control.
-  /// Requires a compatible [FaceDetector] to be specified.
-  ///
-  /// This option is not intended for general use. Contact iProov if you wish to use this feature.
-  @Deprecated("This option will be removed in a future SDK version.")
-  final double? maxRoll;
-
   const GenuinePresenceAssuranceOptions({
     this.readyOvalStrokeColor,
     this.notReadyOvalStrokeColor,
-    this.maxPitch,
-    this.maxYaw,
-    this.maxRoll,
   });
 
   Map<String, dynamic> toJson() => {
-        'max_pitch': maxPitch,
-        'max_yaw': maxYaw,
-        'max_roll': maxRoll,
         'ready_oval_stroke_color': readyOvalStrokeColor?.hex,
         'not_ready_oval_stroke_color': notReadyOvalStrokeColor?.hex,
       }._withoutNullValues();

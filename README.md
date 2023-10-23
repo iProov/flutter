@@ -11,7 +11,7 @@ We also provide an API Client written in Dart to call our [REST API v2](https://
 
 - Dart SDK 2.15 and above
 - Flutter SDK 1.20 and above
-- iOS 11 and above
+- iOS 12 and above
 - Android API Level 21 (Android 5 Lollipop) and above
 
 ## Repository contents
@@ -35,7 +35,7 @@ Add the following to your project's `pubspec.yml` file:
 
 ```yaml
 dependencies:
-  iproov_flutter: ^3.2.0
+  iproov_flutter: ^4.0.0
 ```
 
 You can then install it with:
@@ -46,35 +46,7 @@ flutter pub get
 
 ### iOS installation
 
-There are a couple of extra steps required for iOS:
-
-1. You must also add a `NSCameraUsageDescription` to your iOS app's Info.plist, with the reason why your app requires camera access (e.g. “To iProov you in order to verify your identity.”)
-
-2. Open the Podfile relating to the iOS project (this can be found at the path _ios/Podfile_). Scroll to the bottom of the file and locate the following:
-
-	```ruby
-	post_install do |installer|
-	  installer.pods_project.targets.each do |target|
-	    flutter_additional_ios_build_settings(target)
-	  end
-	end
-	```
-	
-	This should be changed to:
-	
-	```ruby
-	post_install do |installer|
-	  installer.pods_project.targets.each do |target|
-	    flutter_additional_ios_build_settings(target)
-	    	    
-	    if ['iProov', 'Starscream'].include? target.name
-	      target.build_configurations.each do |config|
-	        config.build_settings['BUILD_LIBRARY_FOR_DISTRIBUTION'] = 'YES'
-	      end
-	    end
-	  end
-	end
-	```
+You must also add a `NSCameraUsageDescription` to your iOS app's Info.plist, with the reason why your app requires camera access (e.g. “To iProov you in order to verify your identity.”).
 
 ## Get started
 
@@ -107,13 +79,13 @@ stream.listen((event) {
     // You can access the following properties:
     final frame = result.frame; // An optional image containing a single frame of the user, if enabled for your service provider
   
-  } else if (event is IProovEventCancelled) {
-    // The user cancelled iProov, either by pressing the close button at the top of the screen, or sending
-    // the app to the background. (event.canceller == Canceller.user)
-    // Or, the app cancelled (event.canceller == Canceller.app) by cancelling the subscription to the 
+  } else if (event is IProovEventCanceled) {
+    // The user canceled iProov, either by pressing the close button at the top of the screen, or sending
+    // the app to the background. (event.canceler == Canceler.user)
+    // Or, the app canceled (event.canceler == Canceler.app) by canceling the subscription to the 
     // Stream returned from IProov.launch().
     // You should use this to determine the next step in your flow.
-    final canceller = event.canceller;
+    final canceler = event.canceler;
   
   } else if (event is IProovEventFailure) {
     // The user was not successfully verified/enrolled, as their identity could not be verified,
@@ -141,11 +113,11 @@ stream.listen((event) {
 These repositories provide comprehensive documentation about the available customization options and other important details regarding the SDK usage.
 
 
-### Cancelling the SDK
+### Canceling the SDK
 
 Under normal circumstances, the user will be in control of the completion of the iProov scan, i.e. they will either complete the scan, or use the close button to cancel. In some cases, you (the integrator) may wish to cancel the iProov scan programmatically, for example in response to a timeout or change of conditions in your app.
 
-Cancelling all subscriptions to the `Stream<IProovEvent>` returned from `IProov.launch()` will now cancel any ongoing claim.
+The scan can now be closed doing `IProov.cancel()`. Also canceling all subscriptions to the `Stream<IProovEvent>` returned from `IProov.launch()` will cancel any ongoing claim.
 
 Example:
 
@@ -175,7 +147,7 @@ A summary of the support for the various SDK options in Flutter is provided belo
 | `closeButtonTintColor` | `Color?` | ✅ | ✅ |
 | `closeButtonImage` | `Image?` | ✅ | ✅ |
 | `title` | `String?` | ✅ | ✅ |
-| `fontPath` (1)| `String?` | ✅  | ✅ |
+| `fontPath` (*)| `String?` | ✅  | ✅ |
 | `logoImage` | `Image?` | ✅ | ✅ |
 | `promptBackgroundColor` | `Color?` | ✅ | ✅ |
 | `promptRoundedCorners` | `bool?` | ✅ | ✅ |
@@ -185,37 +157,20 @@ A summary of the support for the various SDK options in Flutter is provided belo
 | `enableScreenshots` | `bool?` |  | ✅ |
 | `orientation` | `Orientation?` |  | ✅ |
 | `camera` | `Camera?` |  | ✅ |
-| `faceDetector` | `FaceDetector?` |  | ✅ |
 | `headerBackgroundColor` | `Color?` | ✅ | ✅ |
 | `disableExteriorEffects` | `bool?` | ✅ | ✅ |
 |**`genuinePresenceAssurance`** | `GenuinePresenceAssuranceOptions?` |  |  |
 | ↳ `readyOvalStrokeColor` | `Color?` | ✅ | ✅ |
 | ↳ `notReadyOvalStrokeColor` | `Color?` | ✅ | ✅ |
-| ↳ `maxPitch` (2) | `double?` | ✅  | ✅ |
-| ↳ `maxYaw` (2)| `double?` | ✅  | ✅|
-| ↳ `maxRoll` (2)| `double?` | ✅  | ✅|
 |**`livenessAssurance`** | `LivenessAssuranceOptions?` |  |  |
 | ↳ `ovalStrokeColor` | `Color?` | ✅ | ✅ |
 | ↳ `completedOvalStrokeColor` | `Color?` | ✅ | ✅ |
 
-(1) Fonts should be added to your Flutter app (TTF or OTF formats are supported). Note that the font filename must match the font name.
+(*) Fonts should be added to your Flutter app (TTF or OTF formats are supported). Note that the font filename must match the font name.
 
 Example:
 ```dart
 const options = Options(fontPath: 'fonts/Lobster-Regula.ttf');
-```
-
-(2) These options are deprecated and will be removed in a future release.
-
-Example:
-
-```dart
-const options = Options(
-        title: 'Example',
-        promptRoundedCorners: true,
-        genuinePresenceAssurance: GenuinePresenceAssuranceOptions(
-            readyOvalStrokeColor: Colors.green,
-            notReadyOvalStrokeColor: Colors.grey));
 ```
 
 ### Filter Options
@@ -267,12 +222,13 @@ All errors from the native SDKs are re-mapped to Flutter exceptions:
 | `CameraPermissionException`           | ✅   | ✅       | The user disallowed access to the camera when prompted. You should direct the user to re-enable camera access.                   |
 | `ServerException`                 | ✅   | ✅       | A server-side error/token invalidation occurred. The associated `message` will contain further information about the error.      |
 | `UnexpectedErrorException`        | ✅   | ✅       | An unexpected and unrecoverable error has occurred. These errors should be reported to iProov for further investigation.         |
+| `UnsupportedDeviceException`         |✅   | ✅         | Device is not supported.|
 | `ListenerNotRegisteredException`  |     | ✅       | The SDK was launched before a listener was registered.                                                                           |
 | `MultiWindowUnsupportedException` |     | ✅       | The user attempted to iProov in split-screen/multi-screen mode, which is not supported.                                          |
 | `CameraException`                 |     | ✅       | An error occurred acquiring or using the camera. This could happen when a non-phone is used with/without an external/USB camera. |
 | `FaceDetectorException`           |     | ✅       | An error occurred with the face detector.                                                                                        |
 | `InvalidOptionsException`         |     | ✅       | An error occurred when trying to apply your options.|
-| `UnsupportedDeviceException`         |   | ✅       | Device is not supported.|
+| `UserTimeoutException`         |✅   |          | The user has taken too long to complete the claim.|
 
 ## API Client
 
