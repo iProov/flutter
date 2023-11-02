@@ -51,10 +51,10 @@ class Options {
   /// Color applied to the area outside the oval.
   final Color? surroundColor;
 
-  /// A [List] of certificates to use for certificate pinning, as DER-encoded X.509 certificates as [Uint8List]s.
+  /// A [List] of [String]s containing the base64-encoded SHA-256 hash of each certificate's Subject Public Key Info.
   ///
   /// Certificate pinning can be disabled by passing an empty array (never do this in production apps!)
-  final List<Uint8List>? certificates;
+  final List<String>? certificates;
 
   /// The network timeout for establishing a network connection.
   final Duration? timeout;
@@ -121,7 +121,7 @@ class Options {
         'prompt_background_color': promptBackgroundColor?.hex,
         'prompt_rounded_corners': promptRoundedCorners,
         'surround_color': surroundColor?.hex,
-        'certificates': certificates?.map((e) => base64.encode(e)).toList(),
+        'certificates': certificates,
         'timeout': timeout?.inSeconds,
         'enable_screenshots': enableScreenshots,
         'orientation': orientation?.stringValue,
@@ -144,7 +144,7 @@ class Options {
     Color? promptBackgroundColor,
     bool? promptRoundedCorners,
     Color? surroundColor,
-    List<Uint8List>? certificates,
+    List<String>? certificates,
     Duration? timeout,
     bool? enableScreenshots,
     Orientation? orientation,

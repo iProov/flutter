@@ -1,5 +1,15 @@
 # iProov Biometrics Flutter SDK
 
+## 4.0.1
+
+iProov Biometrics Flutter SDK v4.0.1 includes the following changes
+
+### Flutter
+
+- The `certificates` option is now `List<String>?`. The base64-encoded SHA-256 hash of a certificate's Subject Public Key Info is used to add a certificate.
+- Removed unnecessary `meta` library
+
+
 ## 4.0.0
 
 iProov SDK Biometrics Flutter SDK v4.0.0 is a major update which includes a number of improvements and breaking changes.

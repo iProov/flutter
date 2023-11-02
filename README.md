@@ -35,7 +35,7 @@ Add the following to your project's `pubspec.yml` file:
 
 ```yaml
 dependencies:
-  iproov_flutter: ^4.0.0
+  iproov_flutter: ^4.0.1
 ```
 
 You can then install it with:
@@ -152,7 +152,7 @@ A summary of the support for the various SDK options in Flutter is provided belo
 | `promptBackgroundColor` | `Color?` | ✅ | ✅ |
 | `promptRoundedCorners` | `bool?` | ✅ | ✅ |
 | `surroundColor` | `Color?` | ✅ | ✅ |
-| `certificates` | `List<Uint8List>?` | ✅ | ✅ |
+| `certificates` | `List<String>?` | ✅ | ✅ |
 | `timeout` | `Duration?` | ✅ | ✅ |
 | `enableScreenshots` | `bool?` |  | ✅ |
 | `orientation` | `Orientation?` |  | ✅ |
