@@ -31,7 +31,7 @@ You can obtain API credentials by registering on [iPortal](https://portal.iproov
 
 ## Installation
 
-Add the following to your project's `pubspec.yml` file:
+Add the following to your project's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
