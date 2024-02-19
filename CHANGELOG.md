@@ -1,5 +1,18 @@
 # iProov Biometrics Flutter SDK
 
+## 4.0.2
+
+iProov Biometrics Flutter SDK v4.0.2 includes the following changes
+
+### iOS
+
+* Upgraded SDK to [v11.0.3](https://github.com/iProov/ios/releases/tag/11.0.3).
+
+### Android
+
+* Upgraded SDK to [v9.0.3](https://github.com/iProov/android/releases/tag/v9.0.3).
+
+
 ## 4.0.1
 
 iProov Biometrics Flutter SDK v4.0.1 includes the following changes
