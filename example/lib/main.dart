@@ -1,6 +1,7 @@
 import 'package:bmprogresshud/bmprogresshud.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:iproov_api_client/iproov_api_client.dart';
 import 'package:iproov_flutter/iproov_flutter.dart';
 import 'package:uuid/uuid.dart';
@@ -124,6 +125,14 @@ class _MyHomePageState extends State<MyHomePage> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
+              SizedBox(
+                width: 400,
+                height: 400,
+                child: InAppWebView(
+                  initialUrlRequest: URLRequest(url: WebUri("https://www.google.com")),
+                  initialSettings: InAppWebViewSettings(useHybridComposition: false),
+                ),
+              ),
               TextButton(
                 child: const Text(
                   '🚀 Launch',
