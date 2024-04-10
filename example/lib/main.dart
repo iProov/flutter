@@ -125,9 +125,7 @@ class _MyHomePageState extends State<MyHomePage> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              SizedBox(
-                width: 400,
-                height: 400,
+              Expanded(
                 child: InAppWebView(
                   initialUrlRequest: URLRequest(url: WebUri("https://www.google.com")),
                   initialSettings: InAppWebViewSettings(useHybridComposition: false),
