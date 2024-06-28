@@ -14,6 +14,12 @@ private enum EventKey: String {
     case canceler
 }
 
+private enum UIEventName: String {
+    case not_started
+    case started
+    case ended
+}
+
 private enum EventName: String {
     case canceled
     case connecting
@@ -25,13 +31,13 @@ private enum EventName: String {
 }
 
 public final class SwiftIProovSDKPlugin: NSObject {
-
+    
     private enum PluginError: LocalizedError {
         case invalidArguments
         case invalidStreamingURL
         case invalidToken
         case invalidOptions
-
+        
         var errorDescription: String? {
             switch self {
             case .invalidArguments:
@@ -45,45 +51,93 @@ public final class SwiftIProovSDKPlugin: NSObject {
             }
         }
     }
-
-    private var sink: FlutterEventSink?
+    
+    private var eventListener: EventListener?
+    private var uiEventListener: EventListener?
     private var session: Session?
     private var pendingError: Error? // Ideally this would be IProovError? but it crashes the compiler =/
-
+    
+    
+    func registerEventChannel(with registrar: FlutterPluginRegistrar) {
+        let eventChannel = FlutterEventChannel(name: "com.iproov.sdk.listener", binaryMessenger: registrar.messenger())
+        eventListener = EventListener(
+            onListen: {  eventSink in
+                //Flush any pending error when the stream handler connects:
+                if let pendingError = self.pendingError as? IProovError {
+                    eventSink(Status.error(pendingError).serialized)
+                    eventSink(FlutterEndOfEventStream)
+                    self.pendingError = nil
+                }
+                
+                return nil
+            },
+            onCancel: {
+                self.session?.cancel()
+                self.session = nil
+                return nil
+            }
+        )
+        eventChannel.setStreamHandler(eventListener)
+    }
+    
+    func registerUIEventChannel(with registrar: FlutterPluginRegistrar) {
+        let eventChannel = FlutterEventChannel(name: "com.iproov.sdk.uiListener", binaryMessenger: registrar.messenger())
+        uiEventListener = EventListener(
+            onListen: { eventSink in return nil},
+            onCancel: { return nil }
+        )
+        eventChannel.setStreamHandler(uiEventListener)
+    }
+    
     func handleLaunch(arguments: Any?) throws -> Session {
         guard let arguments = arguments as? [String: String] else {
             throw PluginError.invalidArguments
         }
-
+        
         guard let streamingURLString = arguments["streamingURL"],
               let streamingURL = URL(string: streamingURLString) else {
             throw PluginError.invalidStreamingURL
         }
-
+        
         guard let token = arguments["token"] else {
             throw PluginError.invalidToken
         }
-
+        
         let options: Options
-
+        
         if let optionsJSONString = arguments["optionsJSON"] {
             guard let dict = try? JSONSerialization.jsonObject(with: optionsJSONString.data(using: .utf8)!, options: []) as? [String: Any] else {
                 throw PluginError.invalidOptions
             }
-
+            
             options = Options.from(flutterJSON: dict)
         } else {
             options = Options()
         }
-
+        
+        options.viewDelegate = self
+        
         return IProov.launch(streamingURL: streamingURL, token: token, options: options) { [weak self] status in
-            self?.sink?(status.serialized)
+            self?.eventListener?.sendEvent(event: status.serialized)
             if status.isFinished {
-                self?.sink?(FlutterEndOfEventStream)
+                self?.eventListener?.endOfEventStream()
             }
         }
     }
+}
 
+extension SwiftIProovSDKPlugin: IProovViewDelegate {
+    public func willPresentIProovView() {
+        self.uiEventListener?.sendEvent(event: ["uiEvent" : UIEventName.not_started.rawValue])
+    }
+    
+    public func didPresentIProovView() {
+        self.uiEventListener?.sendEvent(event: ["uiEvent" : UIEventName.started.rawValue])
+    }
+    
+    public func didDismissIProovView() {
+        self.uiEventListener?.sendEvent(event: ["uiEvent" : UIEventName.ended.rawValue])
+    }
 }
 
 extension SwiftIProovSDKPlugin: FlutterPlugin {
@@ -91,9 +145,9 @@ extension SwiftIProovSDKPlugin: FlutterPlugin {
         let channel = FlutterMethodChannel(name: "com.iproov.sdk", binaryMessenger: registrar.messenger())
         let instance = SwiftIProovSDKPlugin()
         registrar.addMethodCallDelegate(instance, channel: channel)
-
-        FlutterEventChannel(name: "com.iproov.sdk.listener", binaryMessenger: registrar.messenger())
-            .setStreamHandler(instance)
+        
+        instance.registerEventChannel(with: registrar)
+        instance.registerUIEventChannel(with: registrar)
     }
     
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
@@ -128,30 +182,38 @@ extension SwiftIProovSDKPlugin: FlutterPlugin {
     }
 }
 
-extension SwiftIProovSDKPlugin: FlutterStreamHandler {
-    public func onListen(withArguments _: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
-        sink = events
-
-        // Flush any pending error when the stream handler connects:
-        if let pendingError = pendingError as? IProovError {
-            events(Status.error(pendingError).serialized)
-            events(FlutterEndOfEventStream)
-            self.pendingError = nil
-        }
-
-        return nil
+class EventListener: NSObject, FlutterStreamHandler {
+    private var eventSink: FlutterEventSink?
+    
+    // Closures to capture external behavior
+    private let onListenHandler: (@escaping FlutterEventSink) -> FlutterError?
+    private let onCancelHandler: () -> FlutterError?
+    
+    init(onListen: @escaping (FlutterEventSink) -> FlutterError?, onCancel: @escaping () -> FlutterError?) {
+        self.onListenHandler = onListen
+        self.onCancelHandler = onCancel
     }
-
-    public func onCancel(withArguments _: Any?) -> FlutterError? {
-        sink = nil
-        session?.cancel()
-        session = nil
-        return nil
+    
+    func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
+        self.eventSink = events
+        return onListenHandler(events)
+    }
+    
+    func onCancel(withArguments arguments: Any?) -> FlutterError? {
+        self.eventSink = nil
+        return onCancelHandler()
+    }
+    
+    func sendEvent(event: [String : Any]?) {
+        eventSink?(event)
+    }
+    
+    func endOfEventStream() {
+        eventSink?(FlutterEndOfEventStream)
     }
 }
 
 private extension Status {
-
     var serialized: [String: Any]? {
         switch self {
         case .connecting:
@@ -191,46 +253,46 @@ private extension Status {
 }
 
 private extension Options {
-
+    
     // Handle any Flutter-specific requirements, e.g. custom fonts
     static func from(flutterJSON dict: [String : Any]) -> Options {
-
+        
         let options = Options.from(dictionary: dict)
-
+        
         // Handle custom fonts:
         if let fontPath = dict["font"] as? String {
             installFont(path: fontPath)
             let fontName = String(fontPath.split(separator: "/").last!.split(separator: ".").first!)
             options.font = fontName
         }
-
+        
         return options
     }
-
+    
     // Load font from Flutter assets:
     private static func installFont(path: String) {
         let fontKey = FlutterDartProject.lookupKey(forAsset: path)
         guard let url = Bundle.main.url(forResource: fontKey, withExtension: nil),
               let fontData = try? Data(contentsOf: url),
               let dataProvider = CGDataProvider(data: fontData as CFData) else {
-                  fatalError("Failed to load font at path: \(path)")
+            fatalError("Failed to load font at path: \(path)")
         }
-
+        
         let fontRef = CGFont(dataProvider)
         CTFontManagerRegisterGraphicsFont(fontRef!, nil)
     }
 }
 
 private extension Data {
-
+    
     var flutterData: FlutterStandardTypedData? {
         FlutterStandardTypedData(bytes: self)
     }
-
+    
 }
 
 private extension IProovError {
-
+    
     var serialized: [String: String?] {
         var result = [String: String?]()
         result[EventKey.event.rawValue] = "error"
@@ -239,7 +301,7 @@ private extension IProovError {
         result[EventKey.message.rawValue] = localizedMessage
         return result
     }
-
+    
     private var errorName: String {
         switch self {
         case .captureAlreadyActive:
@@ -260,7 +322,7 @@ private extension IProovError {
             return "unexpected_error"
         }
     }
-
+    
 }
 
 private extension Canceler {

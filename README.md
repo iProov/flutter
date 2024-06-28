@@ -35,7 +35,7 @@ Add the following to your project's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  iproov_flutter: ^4.0.2
+  iproov_flutter: ^4.0.3
 ```
 
 You can then install it with:
@@ -102,6 +102,25 @@ stream.listen((event) {
     final error = event.error // IProovException provided by the SDK
   }
   
+});
+```
+
+### UI Event (Optional)
+
+This feature was implemented in response to a specific request, but its applicability to other users may not be useful.
+
+To monitor iProov UI lifecycle of a claim and receive the result, you collect from the `IProov.uiEvent()`.
+
+```dart
+
+IProov.uiEvent().listen((uiEvent) {
+    if (uiEvent is IProovUIEventNotStarted) {
+      // Called before the iProov user interface is displayed.
+    } else if (uiEvent is IProovUIEventStarted) {
+      // Called when the iProov user interface is displayed.
+    } else if (uiEvent is IProovUIEventEnded) {
+      // Called when the iProov user interface is dismissed.
+    }
 });
 ```
 

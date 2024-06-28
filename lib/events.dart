@@ -123,3 +123,34 @@ class IProovEventError implements IProovEvent {
   factory IProovEventError.create(String error, String title, String? message) =>
       IProovEventError(IProovException.error(error, title, message));
 }
+
+abstract class IProovUIEvent {
+  factory IProovUIEvent.fromMap(Map map) {
+    switch (map['uiEvent']) {
+      case 'not_started':
+        return const IProovUIEventNotStarted();
+
+      case 'started':
+        return const IProovUIEventStarted();
+
+      case 'ended':
+        return const IProovUIEventEnded();
+    }
+    throw Exception('Invalid event');
+  }
+}
+
+/// Called before the iProov user interface is displayed.
+class IProovUIEventNotStarted implements IProovUIEvent {
+  const IProovUIEventNotStarted();
+}
+
+/// Called when the iProov user interface is displayed.
+class IProovUIEventStarted implements IProovUIEvent {
+  const IProovUIEventStarted();
+}
+
+/// Called when the iProov user interface is dismissed.
+class IProovUIEventEnded implements IProovUIEvent {
+  const IProovUIEventEnded();
+}

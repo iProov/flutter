@@ -11,90 +11,147 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import org.json.JSONObject
 import java.io.ByteArrayOutputStream
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.withContext
 
 
-class IProovSDKPlugin: FlutterPlugin {
+class IProovSDKPlugin : FlutterPlugin {
 
     companion object {
         val TAG = IProovSDKPlugin::class.simpleName
     }
 
+    private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+
     private lateinit var eventChannel: EventChannel
+    private lateinit var uiEventChannel: EventChannel
     private lateinit var methodChannel: MethodChannel
 
     private var eventSink: EventChannel.EventSink? = null
+    private var uiEventSink: EventChannel.EventSink? = null
     private var flutterPluginBinding: FlutterPlugin.FlutterPluginBinding? = null
-    private val launcher = IProovCallbackLauncher()
+    private val launcher = IProovFlowLauncher()
     private var pendingException: IProovException? = null
 
-    private val iProovListener = object : IProovCallbackLauncher.Listener {
-        override fun onConnecting() {
-            eventSink?.success(hashMapOf(
-                "event" to "connecting"
-            ))
-        }
+    init {
+        sessionStateListener()
+        sessionUIStateListener()
+    }
 
-        override fun onConnected() {
-            eventSink?.success(hashMapOf(
-                "event" to "connected"
-            ))
-        }
+    private fun sessionStateListener() {
+        coroutineScope.launch {
+            launcher.sessionsStates.collect { sessionState ->
+                sessionState?.let {
+                    sessionState.state.let { state ->
+                        withContext(Dispatchers.Main) {
+                            when (state) {
+                                is IProov.IProovState.Connecting -> {
+                                    eventSink?.success(hashMapOf("event" to "connecting"))
+                                }
 
-        override fun onProcessing(progress: Double, message: String?) {
-            eventSink?.success(hashMapOf(
-                "event" to "processing",
-                "progress" to progress,
-                "message" to message
-            ))
-        }
+                                is IProov.IProovState.Connected -> {
+                                    eventSink?.success(hashMapOf("event" to "connected"))
+                                }
 
-        override fun onSuccess(result: IProov.SuccessResult) {
-            val frameArray = result.frame?.let { bmp ->
-                val stream = ByteArrayOutputStream()
-                bmp.compress(Bitmap.CompressFormat.PNG, 100, stream)
-                val byteArray: ByteArray = stream.toByteArray()
-                bmp.recycle()
-                byteArray
+                                is IProov.IProovState.Processing -> {
+                                    eventSink?.success(
+                                        hashMapOf(
+                                            "event" to "processing",
+                                            "progress" to state.progress,
+                                            "message" to state.message
+                                        )
+                                    )
+                                }
+
+                                is IProov.IProovState.Success -> {
+                                    val frameArray = state.successResult.frame?.let { bmp ->
+                                        val stream = ByteArrayOutputStream()
+                                        bmp.compress(Bitmap.CompressFormat.PNG, 100, stream)
+                                        val byteArray: ByteArray = stream.toByteArray()
+                                        bmp.recycle()
+                                        byteArray
+                                    }
+
+                                    eventSink?.success(
+                                        hashMapOf(
+                                            "event" to "success",
+                                            "frame" to frameArray
+                                        )
+                                    )
+                                    eventSink?.endOfStream()
+                                }
+
+                                is IProov.IProovState.Failure -> {
+                                    val context = flutterPluginBinding!!.applicationContext
+
+                                    val frameArray = state.failureResult.frame?.let { bmp ->
+                                        val stream = ByteArrayOutputStream()
+                                        bmp.compress(Bitmap.CompressFormat.PNG, 100, stream)
+                                        val byteArray: ByteArray = stream.toByteArray()
+                                        bmp.recycle()
+                                        byteArray
+                                    }
+
+                                    eventSink?.success(
+                                        hashMapOf(
+                                            "event" to "failure",
+                                            "feedbackCode" to state.failureResult.reason.feedbackCode,
+                                            "reason" to context.getString(state.failureResult.reason.description),
+                                            "frame" to frameArray
+                                        )
+                                    )
+                                    eventSink?.endOfStream()
+                                }
+
+                                is IProov.IProovState.Error -> {
+                                    eventSink?.success(state.exception.serialize())
+                                    eventSink?.endOfStream()
+                                }
+
+                                is IProov.IProovState.Canceled -> {
+                                    eventSink?.success(
+                                        hashMapOf(
+                                            "event" to "canceled",
+                                            "canceler" to state.canceler.name.lowercase()
+                                        )
+                                    )
+                                    eventSink?.endOfStream()
+                                }
+                            }
+                        }
+                    }
+                }
             }
-
-            eventSink?.success(hashMapOf(
-                "event" to "success",
-                "frame" to frameArray
-            ))
-            eventSink?.endOfStream()
         }
+    }
 
-        override fun onFailure(result: IProov.FailureResult) {
-            val context = flutterPluginBinding!!.applicationContext
+    private fun sessionUIStateListener() {
+        coroutineScope.launch {
+            launcher.sessionsUIStates.collect { sessionUIState ->
+                sessionUIState?.let {
+                    withContext(Dispatchers.Main) {
+                        when (sessionUIState.state) {
+                            IProov.IProovUIState.NotStarted -> {
+                                uiEventSink?.success(hashMapOf("uiEvent" to "not_started"))
+                            }
 
-            val frameArray = result.frame?.let { bmp ->
-                val stream = ByteArrayOutputStream()
-                bmp.compress(Bitmap.CompressFormat.PNG, 100, stream)
-                val byteArray: ByteArray = stream.toByteArray()
-                bmp.recycle()
-                byteArray
+                            IProov.IProovUIState.Started -> {
+                                uiEventSink?.success(hashMapOf("uiEvent" to "started"))
+                            }
+
+                            IProov.IProovUIState.Ended -> {
+                                uiEventSink?.success(hashMapOf("uiEvent" to "ended"))
+                                uiEventSink?.endOfStream()
+                            }
+                        }
+                    }
+                }
             }
-
-            eventSink?.success(hashMapOf(
-                "event" to "failure",
-                "feedbackCode" to result.reason.feedbackCode,
-                "reason" to context.getString(result.reason.description),
-                "frame" to frameArray
-            ))
-            eventSink?.endOfStream()
-        }
-
-        override fun onCanceled(canceler: IProov.Canceler) {
-            eventSink?.success(hashMapOf(
-                "event" to "canceled",
-                "canceler" to canceler.name.lowercase()
-            ))
-            eventSink?.endOfStream()
-        }
-
-        override fun onError(exception: IProovException) {
-            eventSink?.success(exception.serialize())
-            eventSink?.endOfStream()
         }
     }
 
@@ -110,6 +167,7 @@ class IProovSDKPlugin: FlutterPlugin {
                         pendingException = e
                     }
                 }
+
                 "keyPair.sign" -> {
                     val data = call.arguments
                     if (data is ByteArray) {
@@ -119,6 +177,7 @@ class IProovSDKPlugin: FlutterPlugin {
                         result.error("INVALID", "Invalid argument passed", null)
                     }
                 }
+
                 "keyPair.publicKey.getPem" -> result.success(launcher.getKeyPair(context!!).publicKey.pem)
                 "keyPair.publicKey.getDer" -> result.success(launcher.getKeyPair(context!!).publicKey.der)
                 "cancel" -> cancelSession()
@@ -127,7 +186,9 @@ class IProovSDKPlugin: FlutterPlugin {
         }
 
         private fun cancelSession() {
-            launcher.currentSession()?.cancel()
+            coroutineScope.launch {
+                launcher.currentSession()?.cancel()
+            }
         }
 
         private fun handleLaunch(call: MethodCall) {
@@ -140,9 +201,11 @@ class IProovSDKPlugin: FlutterPlugin {
                 streamingUrl == null -> {
                     throw UnexpectedErrorException(context, "Flutter Error: No streaming URL was provided.")
                 }
+
                 token == null -> {
                     throw UnexpectedErrorException(context, "Flutter Error: No token was provided.")
                 }
+
                 else -> {
                     var options = IProov.Options()
 
@@ -156,14 +219,16 @@ class IProovSDKPlugin: FlutterPlugin {
                     }
 
                     if (options.font != null) { // Remap custom font paths to assets path
-                        if (options.font is IProov.Options.Font.PathFont){
+                        if (options.font is IProov.Options.Font.PathFont) {
                             options.font = IProov.Options.Font.PathFont(
                                 getFontPath((options.font as IProov.Options.Font.PathFont).path)
                             )
                         }
                     }
 
-                    launcher.launch(context, streamingUrl, token, options)
+                    coroutineScope.launch {
+                        launcher.launch(context, streamingUrl, token, options)
+                    }
                 }
             }
         }
@@ -189,18 +254,31 @@ class IProovSDKPlugin: FlutterPlugin {
             }
 
             override fun onCancel(arguments: Any?) {
-                launcher.currentSession()?.cancel()
+                coroutineScope.launch {
+                    launcher.currentSession()?.cancel()
+                }
                 eventSink = null
             }
         })
 
-        launcher.listener = iProovListener
+        uiEventChannel = EventChannel(flutterPluginBinding.binaryMessenger, "com.iproov.sdk.uiListener")
+        uiEventChannel.setStreamHandler(object : EventChannel.StreamHandler {
+
+            override fun onListen(arguments: Any?, sink: EventChannel.EventSink?) {
+                uiEventSink = sink
+            }
+
+            override fun onCancel(arguments: Any?) {
+                uiEventSink = null
+            }
+        })
     }
 
     override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
-        launcher.listener = null
         methodChannel.setMethodCallHandler(null)
         eventChannel.setStreamHandler(null)
+        uiEventChannel.setStreamHandler(null)
+        coroutineScope.cancel()
         this.flutterPluginBinding = null
     }
 
@@ -211,7 +289,7 @@ class IProovSDKPlugin: FlutterPlugin {
 }
 
 fun IProovException.serialize(): HashMap<String, String?> {
-    val exceptionName = when(this) {
+    val exceptionName = when (this) {
         is CaptureAlreadyActiveException -> "capture_already_active"
         is NetworkException -> "network"
         is CameraPermissionException -> "camera_permission"

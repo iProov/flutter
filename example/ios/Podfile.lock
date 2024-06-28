@@ -1,9 +1,9 @@
 PODS:
   - Flutter (1.0.0)
-  - iProov (11.0.3)
+  - iProov (11.1.1)
   - iproov_flutter (4.0.2):
     - Flutter
-    - iProov (= 11.0.3)
+    - iProov (= 11.1.1)
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
@@ -20,10 +20,10 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/iproov_flutter/ios"
 
 SPEC CHECKSUMS:
-  Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
-  iProov: c596936165f56fab2e08d76e9dc94b86db2f4e8f
-  iproov_flutter: c22f31e4b723699e0457dc19f8cfa2d8dbd1bbc7
+  Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
+  iProov: 14fa45ff813bccd32274ecce2694445aba4956e4
+  iproov_flutter: 9f113c31c9e89c32b8b6ad3d135249ea30fb2965
 
 PODFILE CHECKSUM: 3b63cf14198dad73e5eaccaa94ed2fb1260f5b72
 
-COCOAPODS: 1.13.0
+COCOAPODS: 1.15.2

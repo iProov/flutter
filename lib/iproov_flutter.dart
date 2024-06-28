@@ -12,6 +12,7 @@ export 'package:iproov_flutter/options.dart';
 
 const _iProovMethodChannel = MethodChannel('com.iproov.sdk');
 const _iProovListenerEventChannel = EventChannel('com.iproov.sdk.listener');
+const _iProovUIListenerEventChannel = EventChannel('com.iproov.sdk.uiListener');
 
 class IProov {
   /// Launches the iProov face scan.
@@ -27,10 +28,21 @@ class IProov {
     required String token,
     Options? options,
   }) {
-    _iProovMethodChannel.invokeMethod('launch',
-        {'streamingURL': streamingUrl, 'token': token, if (options != null) 'optionsJSON': json.encode(options)});
+    _iProovMethodChannel.invokeMethod('launch', {
+      'streamingURL': streamingUrl,
+      'token': token,
+      if (options != null) 'optionsJSON': json.encode(options)
+    });
 
-    return _iProovListenerEventChannel.receiveBroadcastStream().map((result) => IProovEvent.fromMap(result));
+    return _iProovListenerEventChannel
+        .receiveBroadcastStream()
+        .map((result) => IProovEvent.fromMap(result));
+  }
+
+  static Stream<IProovUIEvent> uiEvent() {
+    return _iProovUIListenerEventChannel
+        .receiveBroadcastStream()
+        .map((uiResult) => IProovUIEvent.fromMap(uiResult));
   }
 
   static final keyPair = KeyPair();
@@ -38,7 +50,7 @@ class IProov {
   // Private constructor
   IProov._();
 
-   static Future<bool> cancel() async {
+  static Future<bool> cancel() async {
     return await _iProovMethodChannel.invokeMethod('cancel');
   }
 }
