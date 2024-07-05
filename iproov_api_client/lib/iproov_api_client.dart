@@ -94,6 +94,7 @@ class ApiClient {
     required AssuranceType assuranceType,
     required ClaimType claimType,
     required String userId,
+    Map<String, dynamic> addtionalOptions = const {},
   }) async {
     final response = await http.post(
       Uri.parse('$_normalizedBaseUrl/claim/${claimType.stringValue}/token'),
@@ -105,6 +106,7 @@ class ApiClient {
         'client': 'dart',
         'user_id': userId,
         'assurance_type': assuranceType.stringValue,
+        ...addtionalOptions,
       }),
     );
 

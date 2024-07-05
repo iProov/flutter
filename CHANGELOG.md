@@ -1,5 +1,9 @@
 # iProov Biometrics Flutter SDK
 
+## 4.0.4
+
+* Added `additionalOptions` parameter to `getToken()` in the Dart API client.
+
 ## 4.0.3
 
 iProov Biometrics Flutter SDK v4.0.3 includes the following changes
