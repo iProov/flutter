@@ -1,5 +1,20 @@
 # iProov Biometrics Flutter SDK
 
+## 5.0.0
+
+iProov Biometrics Flutter SDK v5.0.0 includes the following changes
+
+### iOS
+
+* Upgraded SDK to [v12.0.0](https://github.com/iProov/ios/releases/tag/12.0.0).
+* Requires iOS 13 and above
+
+### Android
+
+* Upgraded SDK to [v10.0.0](https://github.com/iProov/android/releases/tag/v10.0.0).
+* Requires Android API Level 26 (Android 8 Oreo) and above
+
+
 ## 4.0.4
 
 * Added `additionalOptions` parameter to `getToken()` in the Dart API client.

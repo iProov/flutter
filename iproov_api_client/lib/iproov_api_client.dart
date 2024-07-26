@@ -94,7 +94,7 @@ class ApiClient {
     required AssuranceType assuranceType,
     required ClaimType claimType,
     required String userId,
-    Map<String, dynamic> addtionalOptions = const {},
+    Map<String, dynamic> additionalOptions = const {},
   }) async {
     final response = await http.post(
       Uri.parse('$_normalizedBaseUrl/claim/${claimType.stringValue}/token'),
@@ -106,7 +106,7 @@ class ApiClient {
         'client': 'dart',
         'user_id': userId,
         'assurance_type': assuranceType.stringValue,
-        ...addtionalOptions,
+        ...additionalOptions,
       }),
     );
 
@@ -120,6 +120,7 @@ class ApiClient {
     required String token,
     required Image image,
     required PhotoSource source,
+    Map<String, String> additionalOptions = const {},
   }) async {
     final request = http.MultipartRequest('POST', Uri.parse('$_normalizedBaseUrl/claim/enrol/image'))
       ..fields['api_key'] = apiKey
@@ -127,6 +128,7 @@ class ApiClient {
       ..fields['rotation'] = '0'
       ..fields['token'] = token
       ..fields['source'] = source.stringValue
+      ..fields.addAll(additionalOptions)
       ..files.add(http.MultipartFile.fromBytes('image', encodeJpg(image),
           filename: 'image.jpg', contentType: MediaType.parse('image/jpeg')));
 
@@ -147,11 +149,13 @@ class ApiClient {
     required String userId,
     required Image image,
     required PhotoSource source,
+    Map<String, dynamic> additionalOptions = const {},
   }) async {
     final enrolToken = await getToken(
       assuranceType: AssuranceType.genuinePresenceAssurance,
       claimType: ClaimType.enrol,
       userId: userId,
+      additionalOptions: additionalOptions,
     );
     await enrolPhoto(
       token: enrolToken,
@@ -168,6 +172,7 @@ class ApiClient {
   Future<ValidationResult> validate({
     required String token,
     required String userId,
+    Map<String, dynamic> additionalOptions = const {},
   }) async {
     final response = await http.post(
       Uri.parse('$_normalizedBaseUrl/claim/verify/validate'),
@@ -178,6 +183,7 @@ class ApiClient {
         'user_id': userId,
         'token': token,
         'client': 'dart',
+        ...additionalOptions,
       }),
     );
 

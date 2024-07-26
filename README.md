@@ -11,8 +11,8 @@ We also provide an API Client written in Dart to call our [REST API v2](https://
 
 - Dart SDK 2.15 and above
 - Flutter SDK 1.20 and above
-- iOS 12 and above
-- Android API Level 21 (Android 5 Lollipop) and above
+- iOS 13 and above
+- Android API Level 26 (Android 8 Oreo) and above
 
 ## Repository contents
 
@@ -35,7 +35,7 @@ Add the following to your project's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  iproov_flutter: ^4.0.3
+  iproov_flutter: ^5.0.0
 ```
 
 You can then install it with:
