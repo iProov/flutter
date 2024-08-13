@@ -1,5 +1,14 @@
 # iProov Biometrics Flutter SDK
 
+## 5.0.1
+
+iProov Biometrics Flutter SDK v5.0.1 includes the following changes
+
+### Flutter
+
+- An `else` branch has been added to the `when` expression to ensure it handles all possible cases, preventing potential crashes.
+
+
 ## 5.0.0
 
 iProov Biometrics Flutter SDK v5.0.0 includes the following changes

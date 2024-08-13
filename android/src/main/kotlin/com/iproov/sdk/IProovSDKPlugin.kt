@@ -124,6 +124,10 @@ class IProovSDKPlugin : FlutterPlugin {
                                     )
                                     eventSink?.endOfStream()
                                 }
+
+                                else -> {
+
+                                }
                             }
                         }
                     }

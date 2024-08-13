@@ -1,5 +1,5 @@
 group 'com.iproov.flutter_sdk_plugin'
-version '5.0.0'
+version '5.0.1'
 
 buildscript {
     ext.kotlin_version = '1.5.30'
