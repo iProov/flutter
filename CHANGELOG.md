@@ -1,5 +1,18 @@
 # iProov Biometrics Flutter SDK
 
+## 5.0.2
+
+iProov Biometrics Flutter SDK v5.0.2 includes the following changes
+
+### Flutter
+
+- Upgrading Android Example App to Gradle 8 for improved performance and maintainability.
+
+### Android
+  
+* Added namespace field to Gradle build configuration.
+
+
 ## 5.0.1
 
 iProov Biometrics Flutter SDK v5.0.1 includes the following changes
@@ -27,6 +40,7 @@ iProov Biometrics Flutter SDK v5.0.0 includes the following changes
 ## 4.0.4
 
 * Added `additionalOptions` parameter to `getToken()` in the Dart API client.
+
 
 ## 4.0.3
 

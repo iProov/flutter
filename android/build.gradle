@@ -1,5 +1,5 @@
 group 'com.iproov.flutter_sdk_plugin'
-version '5.0.1'
+version '5.0.2'
 
 buildscript {
     ext.kotlin_version = '1.5.30'
@@ -27,6 +27,7 @@ apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion 33
+    namespace "com.iproov.flutter_sdk_plugin"
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
@@ -36,6 +37,13 @@ android {
     }
     lintOptions {
         disable 'InvalidPackage'
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
     }
 }
 

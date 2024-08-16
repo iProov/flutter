@@ -1,7 +1,7 @@
 PODS:
   - Flutter (1.0.0)
   - iProov (12.0.0)
-  - iproov_flutter (5.0.1):
+  - iproov_flutter (5.0.2):
     - Flutter
     - iProov (= 12.0.0)
 
@@ -22,7 +22,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   iProov: 1921d2fdbd8f8fa24d4694c2150c2c0bac0371a6
-  iproov_flutter: 7d466041c3eab0fa824700e14eb47ec4a4b390a8
+  iproov_flutter: da67e96cc5b2992f6aba5136819be7cf672091f8
 
 PODFILE CHECKSUM: 61e432a29a6cfb9fc7ca7cacd9dce49cb7fb3466
 
