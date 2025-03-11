@@ -168,6 +168,7 @@ class IProovSDKPlugin : FlutterPlugin {
             when (call.method) {
                 "launch" -> {
                     try {
+                        setEnvironment()
                         handleLaunch(call)
                     } catch (e: UnexpectedErrorException) {
                         // Re-route any synchronous launch exceptions to be handled async by the error event handler
@@ -302,6 +303,15 @@ class IProovSDKPlugin : FlutterPlugin {
     private fun getFontPath(assetPath: String): String {
         val loader = FlutterInjector.instance().flutterLoader()
         return loader.getLookupKeyForAsset(assetPath)
+    }
+
+    private fun setEnvironment() {
+        val context = flutterPluginBinding!!.applicationContext
+        val sharedPref = context.getSharedPreferences("iproov_environment_prefs", Context.MODE_PRIVATE)
+        with(sharedPref.edit()) {
+            putString("environment", "flutter")
+            apply()
+        }
     }
 }
 

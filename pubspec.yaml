@@ -1,6 +1,6 @@
 name: iproov_flutter
 description: The iProov Biometrics SDK for Flutter, providing flexible authentication for identity assurance
-version: 5.0.2
+version: 5.1.0
 homepage: https://github.com/iProov/flutter
 
 environment:
