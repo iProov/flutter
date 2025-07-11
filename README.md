@@ -35,7 +35,7 @@ Add the following to your project's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  iproov_flutter: ^5.1.0
+  iproov_flutter: ^5.2.0
 ```
 
 You can then install it with:
