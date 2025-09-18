@@ -14,7 +14,7 @@ Pod::Spec.new do |s|
   s.source_files = 'Classes/**/*'
   
   s.dependency 'Flutter'
-  s.dependency 'iProov', '12.4.1'
+  s.dependency 'iProov', '12.5.0'
   
   s.swift_version = '5.5'
   s.platform = :ios, '13.0'
