@@ -19,8 +19,6 @@ abstract class IProovException implements Exception {
         return MultiWindowUnsupportedException(title);
       case 'camera':
         return CameraException(title, message);
-      case 'face_detector':
-        return FaceDetectorException(title, message);
       case 'unsupported_device':
         return UnsupportedDeviceException(title);
       case 'invalid_options':
@@ -71,11 +69,6 @@ class MultiWindowUnsupportedException extends IProovException {
 // Android only
 class CameraException extends IProovException {
   CameraException(String title, String? message) : super(title, message);
-}
-
-// Android only
-class FaceDetectorException extends IProovException {
-  FaceDetectorException(String title, String? message) : super(title, message);
 }
 
 class UnsupportedDeviceException extends IProovException {

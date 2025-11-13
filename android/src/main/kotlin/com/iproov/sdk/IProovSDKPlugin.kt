@@ -2,25 +2,33 @@ package com.iproov.sdk
 
 import android.content.Context
 import android.graphics.Bitmap
-import com.iproov.sdk.api.OptionsBridge
 import com.iproov.sdk.api.IProov
+import com.iproov.sdk.api.OptionsBridge
 import com.iproov.sdk.api.exception.*
 import io.flutter.FlutterInjector
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
-import org.json.JSONObject
-import java.io.ByteArrayOutputStream
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onSubscription
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.withContext
+import org.json.JSONObject
+import java.io.ByteArrayOutputStream
+import kotlin.Any
+import kotlin.ByteArray
+import kotlin.Exception
+import kotlin.String
+import kotlin.Unit
+import kotlin.let
+import kotlin.to
+import kotlin.with
 
 
 class IProovSDKPlugin : FlutterPlugin {
@@ -99,11 +107,17 @@ class IProovSDKPlugin : FlutterPlugin {
                                         byteArray
                                     }
 
+                                    val reasonsListForFlutter: List<Map<String, String>> = state.failureResult.reasons.map { reason ->
+                                        mapOf(
+                                            "feedbackCode" to reason.feedbackCode,
+                                            "description" to context.getString(reason.description) // Now sending the actual string
+                                        )
+                                    }
+
                                     eventSink?.success(
                                         hashMapOf(
                                             "event" to "failure",
-                                            "feedbackCode" to state.failureResult.reason.feedbackCode,
-                                            "reason" to context.getString(state.failureResult.reason.description),
+                                            "reasons" to reasonsListForFlutter,
                                             "frame" to frameArray
                                         )
                                     )
@@ -323,7 +337,6 @@ fun IProovException.serialize(): HashMap<String, String?> {
         is ServerException -> "server"
         is MultiWindowUnsupportedException -> "multi_window_unsupported"
         is CameraException -> "camera"
-        is FaceDetectorException -> "face_detector"
         is UnsupportedDeviceException -> "unsupported_device"
         is InvalidOptionsException -> "invalid_options"
         else -> "unexpected_error" // includes UnexpectedErrorException

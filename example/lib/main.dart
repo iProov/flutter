@@ -103,7 +103,8 @@ class _MyHomePageState extends State<MyHomePage> {
       } else if (event is IProovEventSuccess) {
         ProgressHud.showAndDismiss(ProgressHudType.success, 'Success!');
       } else if (event is IProovEventFailure) {
-        ProgressHud.showAndDismiss(ProgressHudType.error, event.reason);
+        final reasons = event.reasons.map((e) => e.feedbackCode).join('\n');
+        ProgressHud.showAndDismiss(ProgressHudType.error, reasons);
       } else if (event is IProovEventError) {
         ProgressHud.showAndDismiss(ProgressHudType.error, event.error.title);
       }

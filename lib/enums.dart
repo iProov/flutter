@@ -1,14 +1,5 @@
 import 'package:flutter/foundation.dart';
 
-enum Camera {
-  front,
-  external,
-}
-
-extension CameraToString on Camera {
-  String get stringValue => _enumCaseToString(describeEnum(this));
-}
-
 enum Orientation {
   portrait,
   landscape,

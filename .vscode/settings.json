@@ -5,5 +5,9 @@
             120
         ],
     },
-    "lldb.library": "/Applications/Xcode.app/Contents/SharedFrameworks/LLDB.framework/Versions/A/LLDB"
+    "lldb.library": "/Applications/Xcode.app/Contents/SharedFrameworks/LLDB.framework/Versions/A/LLDB",
+    "cSpell.words": [
+        "iproov",
+        "unmanaged"
+    ]
 }

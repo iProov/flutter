@@ -5,10 +5,9 @@ import UIKit
 private enum EventKey: String {
     case event
     case error
-    case feedbackCode
     case message
     case progress
-    case reason
+    case reasons
     case frame
     case title
     case canceler
@@ -245,8 +244,7 @@ private extension Status {
         case let .failure(result):
             return [
                 EventKey.event.rawValue: EventName.failure.rawValue,
-                EventKey.reason.rawValue: result.localizedDescription,
-                EventKey.feedbackCode.rawValue: result.reason.feedbackCode,
+                EventKey.reasons.rawValue: result.reasons.map { $0.toDictionary() },
                 EventKey.frame.rawValue: result.frame?.pngData()?.flutterData as Any
             ]
         case let .error(error):
@@ -256,6 +254,15 @@ private extension Status {
         }
     }
 
+}
+
+extension iProov.FailureReason {
+    func toDictionary() -> [String: Any] {
+        return [
+            "feedbackCode": self.feedbackCode,
+            "description": self.localizedDescription
+        ]
+    }
 }
 
 private extension Options {
@@ -317,7 +324,7 @@ private extension IProovError {
         case .cameraPermissionDenied:
             return "camera_permission"
         case .serverError:
-            return "server_error"
+            return "server"
         case .userTimeout:
             return "user_timeout"
         case .notSupported:

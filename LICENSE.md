@@ -1,8 +1,8 @@
 iproov_flutter
 
-- Please refer to the iOS Biometrics SDK license here: https://github.com/iProov/ios/blob/master/LICENSE.md.
+- Please refer to the iOS Face SDK license here: https://github.com/iProov/ios/blob/master/LICENSE.md.
 
-- Please refer to the Android Biometrics SDK license here: https://github.com/iProov/android/blob/master/LICENSE.md.
+- Please refer to the Android Face SDK license here: https://github.com/iProov/android/blob/master/LICENSE.md.
 
 --------------------------------------------------------------------------------
 API Client and Sample Code

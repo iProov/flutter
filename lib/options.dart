@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ffi';
 import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
@@ -69,11 +70,6 @@ class Options {
   /// This option only applies to Android.
   final Orientation? orientation;
 
-  /// The [Camera] to be used for the iProov scan.
-  ///
-  /// This option only applies to Android.
-  final Camera? camera;
-
   /// The [Color] of the header bar.
   final Color? headerBackgroundColor;
 
@@ -102,7 +98,6 @@ class Options {
     this.timeout,
     this.enableScreenshots,
     this.orientation,
-    this.camera,
     this.headerBackgroundColor,
     this.disableExteriorEffects,
     this.genuinePresenceAssurance,
@@ -125,7 +120,6 @@ class Options {
         'timeout': timeout?.inSeconds,
         'enable_screenshots': enableScreenshots,
         'orientation': orientation?.stringValue,
-        'camera': camera?.stringValue,
         'header_background_color': headerBackgroundColor?.hex,
         'disable_exterior_effects': disableExteriorEffects,
         'genuine_presence_assurance': genuinePresenceAssurance?.toJson(),
@@ -148,7 +142,6 @@ class Options {
     Duration? timeout,
     bool? enableScreenshots,
     Orientation? orientation,
-    Camera? camera,
     Color? headerBackgroundColor,
     bool? disableExteriorEffects,
     GenuinePresenceAssuranceOptions? genuinePresenceAssurance,
@@ -170,7 +163,6 @@ class Options {
         timeout: timeout ?? this.timeout,
         enableScreenshots: enableScreenshots ?? this.enableScreenshots,
         orientation: orientation ?? this.orientation,
-        camera: camera ?? this.camera,
         headerBackgroundColor: headerBackgroundColor ?? this.headerBackgroundColor,
         disableExteriorEffects: disableExteriorEffects ?? this.disableExteriorEffects,
         genuinePresenceAssurance: genuinePresenceAssurance ?? this.genuinePresenceAssurance,
@@ -187,14 +179,29 @@ class GenuinePresenceAssuranceOptions {
   /// The [Color] to use for the oval stroke line when the scan is not ready to start.
   final Color? notReadyOvalStrokeColor;
 
+  /// Whether to control y position of the face showing prompts.
+  final bool? controlYPosition ;
+
+  /// Whether to control x position of the face showing prompts.
+  final bool? controlXPosition;
+
+  /// Show a prompt 'Scanning' during GPA scan and show a prompt 'Scan Completed' after GPA scan completes.
+  final bool? scanningPrompts;
+
   const GenuinePresenceAssuranceOptions({
     this.readyOvalStrokeColor,
     this.notReadyOvalStrokeColor,
+    this.controlYPosition,
+    this.controlXPosition,
+    this.scanningPrompts,
   });
 
   Map<String, dynamic> toJson() => {
         'ready_oval_stroke_color': readyOvalStrokeColor?.hex,
         'not_ready_oval_stroke_color': notReadyOvalStrokeColor?.hex,
+        'control_y_position': controlYPosition,
+        'control_x_position': controlXPosition,
+        'scanning_prompts': scanningPrompts,
       }._withoutNullValues();
 }
 

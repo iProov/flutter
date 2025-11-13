@@ -1,18 +1,19 @@
 ![iProov: Flexible authentication for identity assurance](https://github.com/iProov/flutter/raw/main/images/banner.jpg)
-# iProov Biometrics Flutter SDK
+# iProov Face Flutter SDK
 
 ## Introduction
 
-The iProov Biometrics Flutter SDK wraps iProov's native [iOS](https://github.com/iProov/ios) (Swift) and [Android](https://github.com/iProov/android) (Java) SDKs behind a Dart interface for use from within your Flutter iOS or Android app.
+The iProov Face Flutter SDK wraps iProov's native [iOS](https://github.com/iProov/ios) (Swift) and [Android](https://github.com/iProov/android) (Java) SDKs behind a Dart interface for use from within your Flutter iOS or Android app.
 
 We also provide an API Client written in Dart to call our [REST API v2](https://eu.rp.secure.iproov.me/docs.html) from a Flutter app, which can be used from your Flutter app to request tokens directly from the iProov API (note that this is not a secure way of getting tokens, and should only be used for demo/debugging purposes).
 
 ### Requirements
 
-- Dart SDK 2.15 and above
-- Flutter SDK 1.20 and above
-- iOS 13 and above
+- Dart SDK 3.0.0 and above
+- Flutter SDK 3.27.0 and above
+- iOS 15 and above
 - Android API Level 26 (Android 8 Oreo) and above
+- Kotlin 1.8.10 and above
 
 ## Repository contents
 
@@ -35,7 +36,7 @@ Add the following to your project's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  iproov_flutter: ^5.3.0
+  iproov_flutter: ^6.0.0
 ```
 
 You can then install it with:
@@ -89,11 +90,12 @@ stream.listen((event) {
   
   } else if (event is IProovEventFailure) {
     // The user was not successfully verified/enrolled, as their identity could not be verified,
-    // or there was another issue with their verification/enrollment. A reason (as a string)
-    // is provided as to why the claim failed, along with a feedback code from the back-end.
-    final feedbackCode = event.feedbackCode;
-    final reason = event.reason;
-    final frame = result.frame; // An optional image containing a single frame of the user, if enabled for your service provider
+    // or there was another issue with their verification/enrollment. A list of reasons is provided to understand why the claim failed, where each reason contains two properties:
+    // - feedbackCode: A string representation of the feedback code.
+    // - description: An informative hint for the user to increase their chances of iProoving successfully next time.
+
+    final reasons = event.reasons
+    final frame = event.frame // An optional image containing a single frame of the user, if enabled for your service provider
   
   } else if (event is IProovEventError) {
     // The user was not successfully verified/enrolled due to an error (e.g. lost internet connection).
@@ -126,8 +128,8 @@ IProov.uiEvent().listen((uiEvent) {
 
 👉 You should now familiarize yourself with the following resources:
 
--  [iProov Biometrics iOS SDK documentation](https://github.com/iProov/ios)
--  [Android Biometrics Android SDK documentation](https://github.com/iProov/android)
+-  [iProov Face iOS SDK documentation](https://github.com/iProov/ios)
+-  [Android Face Android SDK documentation](https://github.com/iProov/android)
 
 These repositories provide comprehensive documentation about the available customization options and other important details regarding the SDK usage.
 
@@ -158,32 +160,34 @@ For full documentation, please read the respective [iOS](https://github.com/iPro
 
 A summary of the support for the various SDK options in Flutter is provided below. All options are nullable and any options not set will default to their platform-defined default value.
 
-| Option | Type | iOS | Android |
-|---|---|---|---|
-| `filter` | `Filter?` [(See filter options)](#filter-options)| ✅ | ✅ |
-| `titleTextColor` | `Color?` | ✅ | ✅ |
-| `promptTextColor` | `Color?` | ✅ | ✅ |
-| `closeButtonTintColor` | `Color?` | ✅ | ✅ |
-| `closeButtonImage` | `Image?` | ✅ | ✅ |
-| `title` | `String?` | ✅ | ✅ |
-| `fontPath` (*)| `String?` | ✅  | ✅ |
-| `logoImage` | `Image?` | ✅ | ✅ |
-| `promptBackgroundColor` | `Color?` | ✅ | ✅ |
-| `promptRoundedCorners` | `bool?` | ✅ | ✅ |
-| `surroundColor` | `Color?` | ✅ | ✅ |
-| `certificates` | `List<String>?` | ✅ | ✅ |
-| `timeout` | `Duration?` | ✅ | ✅ |
-| `enableScreenshots` | `bool?` |  | ✅ |
-| `orientation` | `Orientation?` |  | ✅ |
-| `camera` | `Camera?` |  | ✅ |
-| `headerBackgroundColor` | `Color?` | ✅ | ✅ |
-| `disableExteriorEffects` | `bool?` | ✅ | ✅ |
-|**`genuinePresenceAssurance`** | `GenuinePresenceAssuranceOptions?` |  |  |
-| ↳ `readyOvalStrokeColor` | `Color?` | ✅ | ✅ |
-| ↳ `notReadyOvalStrokeColor` | `Color?` | ✅ | ✅ |
-|**`livenessAssurance`** | `LivenessAssuranceOptions?` |  |  |
-| ↳ `ovalStrokeColor` | `Color?` | ✅ | ✅ |
-| ↳ `completedOvalStrokeColor` | `Color?` | ✅ | ✅ |
+| Option                         | Type                                              | iOS | Android |
+|--------------------------------|---------------------------------------------------|---|---|
+| `filter`                       | `Filter?` [(See filter options)](#filter-options) | ✅ | ✅ |
+| `titleTextColor`               | `Color?`                                          | ✅ | ✅ |
+| `promptTextColor`              | `Color?`                                          | ✅ | ✅ |
+| `closeButtonTintColor`         | `Color?`                                          | ✅ | ✅ |
+| `closeButtonImage`             | `Image?`                                          | ✅ | ✅ |
+| `title`                        | `String?`                                         | ✅ | ✅ |
+| `fontPath` (*)                 | `String?`                                         | ✅  | ✅ |
+| `logoImage`                    | `Image?`                                          | ✅ | ✅ |
+| `promptBackgroundColor`        | `Color?`                                          | ✅ | ✅ |
+| `promptRoundedCorners`         | `bool?`                                           | ✅ | ✅ |
+| `surroundColor`                | `Color?`                                          | ✅ | ✅ |
+| `certificates`                 | `List<String>?`                                   | ✅ | ✅ |
+| `timeout`                      | `Duration?`                                       | ✅ | ✅ |
+| `enableScreenshots`            | `bool?`                                           |  | ✅ |
+| `orientation`                  | `Orientation?`                                    |  | ✅ |
+| `headerBackgroundColor`        | `Color?`                                          | ✅ | ✅ |
+| `disableExteriorEffects`       | `bool?`                                           | ✅ | ✅ |
+| **`genuinePresenceAssurance`** | `GenuinePresenceAssuranceOptions?`                |  |  |
+| ↳ `readyOvalStrokeColor`       | `Color?`                                          | ✅ | ✅ |
+| ↳ `notReadyOvalStrokeColor`    | `Color?`                                          | ✅ | ✅ |
+| ↳ `controlYPosition`           | `bool?`                                           | ✅ | ✅ |
+| ↳ `controlXposition`           | `bool?`                                          | ✅ | ✅ |
+| ↳ `scanningPrompts`            | `bool?`                                          | ✅ | ✅ |
+| **`livenessAssurance`**        | `LivenessAssuranceOptions?`                       |  |  |
+| ↳ `ovalStrokeColor`            | `Color?`                                          | ✅ | ✅ |
+| ↳ `completedOvalStrokeColor`   | `Color?`                                          | ✅ | ✅ |
 
 (*) Fonts should be added to your Flutter app (TTF or OTF formats are supported). Note that the font filename must match the font name.
 
@@ -245,7 +249,6 @@ All errors from the native SDKs are re-mapped to Flutter exceptions:
 | `ListenerNotRegisteredException`  |     | ✅       | The SDK was launched before a listener was registered.                                                                           |
 | `MultiWindowUnsupportedException` |     | ✅       | The user attempted to iProov in split-screen/multi-screen mode, which is not supported.                                          |
 | `CameraException`                 |     | ✅       | An error occurred acquiring or using the camera. This could happen when a non-phone is used with/without an external/USB camera. |
-| `FaceDetectorException`           |     | ✅       | An error occurred with the face detector.                                                                                        |
 | `InvalidOptionsException`         |     | ✅       | An error occurred when trying to apply your options.|
 | `UserTimeoutException`         |✅   |          | The user has taken too long to complete the claim.|
 

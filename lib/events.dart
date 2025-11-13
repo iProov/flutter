@@ -21,9 +21,14 @@ abstract class IProovEvent {
         return IProovEventSuccess(frame);
 
       case 'failure':
+        final reasonsRaw = map['reasons'] as List<dynamic>;
+        final List<FailureReason> failureReasons = reasonsRaw.map((map) {
+          final typedMap = Map<String, String>.from(map);
+          return FailureReason.fromMap(typedMap);
+        }).toList();
         final frameData = map['frame'];
         final frame = frameData != null ? decodePng(frameData) : null;
-        return IProovEventFailure(map['reason'], map['feedbackCode'], frame);
+        return IProovEventFailure(failureReasons, frame);
 
       case 'canceled':
         final canceler = map['canceler'];
@@ -91,24 +96,42 @@ class IProovEventSuccess implements IProovEvent {
   const IProovEventSuccess(this.frame);
 }
 
+class FailureReason {
+  /// The feedback code relating to this error. For a list of possible failure codes, see:
+  /// * https://github.com/iProov/ios#handling-failures--errors
+  /// * https://github.com/iProov/android#handling-failures--errors
+  final String feedbackCode;
+  final String description;
+
+  const FailureReason({
+    required this.feedbackCode,
+    required this.description,
+  });
+
+  factory FailureReason.fromMap(Map<String, String> map) {
+    return FailureReason(
+      feedbackCode: map['feedbackCode'] as String,
+      description: map['description'] as String,
+    );
+  }
+
+  @override
+  String toString() => '[$feedbackCode] $description';
+}
+
 /// The user was not successfully verified/enrolled, as their identity could not be verified,
 /// or there was another issue with their verification/enrollment.
 class IProovEventFailure implements IProovEvent {
   @override
   get isFinal => true;
 
-  /// The reason for the failure which can be displayed directly to the user.
-  final String reason;
-
-  /// The feedback code relating to this error. For a list of possible failure codes, see:
-  /// * https://github.com/iProov/ios#handling-failures--errors
-  /// * https://github.com/iProov/android#handling-failures--errors
-  final String feedbackCode;
+  /// The reasons for the failure which can be displayed directly to the user.
+  final List<FailureReason> reasons;
 
   /// An optional image containing a single frame of the user, if enabled for your service provider.
   final Image? frame;
 
-  const IProovEventFailure(this.reason, this.feedbackCode, this.frame);
+  const IProovEventFailure(this.reasons, this.frame);
 }
 
 /// The user was not successfully verified/enrolled due to an error (e.g. lost internet connection).

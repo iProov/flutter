@@ -1,8 +1,28 @@
-# iProov Biometrics Flutter SDK
+# iProov Face Flutter SDK
+
+## 6.0.0
+
+iProov Face Flutter SDK v6.0.0 includes the following changes
+
+### Flutter
+
+- Adding the new Options in genuinePresenceAssurance(controlYPosition, controlXPosition, and scanningPrompts)
+- Increase min Flutter version to 3.27.0
+- Increase min Dart version to 3.0.0
+
+### iOS
+
+* Upgraded SDK to [v13.0.0](https://github.com/iProov/ios/releases/tag/13.0.0).
+
+### Android
+
+- Upgrading Android target sdk to 36
+- Kotlin 1.8.10
+* Upgraded SDK to [v11.0.0](https://github.com/iProov/android/releases/tag/v11.0.0).
 
 ## 5.3.0
 
-iProov Biometrics Flutter SDK v5.3.0 includes the following changes
+iProov Face Flutter SDK v5.3.0 includes the following changes
 
 ### iOS
 
@@ -15,7 +35,7 @@ iProov Biometrics Flutter SDK v5.3.0 includes the following changes
 
 ## 5.2.0
 
-iProov Biometrics Flutter SDK v5.2.0 includes the following changes
+iProov Face Flutter SDK v5.2.0 includes the following changes
 
 ### iOS
 
@@ -28,7 +48,7 @@ iProov Biometrics Flutter SDK v5.2.0 includes the following changes
 
 ## 5.1.0
 
-iProov Biometrics Flutter SDK v5.1.0 includes the following changes
+iProov Face Flutter SDK v5.1.0 includes the following changes
 
 ### iOS
 
@@ -41,7 +61,7 @@ iProov Biometrics Flutter SDK v5.1.0 includes the following changes
 
 ## 5.0.2
 
-iProov Biometrics Flutter SDK v5.0.2 includes the following changes
+iProov Face Flutter SDK v5.0.2 includes the following changes
 
 ### Flutter
 
@@ -54,7 +74,7 @@ iProov Biometrics Flutter SDK v5.0.2 includes the following changes
 
 ## 5.0.1
 
-iProov Biometrics Flutter SDK v5.0.1 includes the following changes
+iProov Face Flutter SDK v5.0.1 includes the following changes
 
 ### Flutter
 
@@ -63,7 +83,7 @@ iProov Biometrics Flutter SDK v5.0.1 includes the following changes
 
 ## 5.0.0
 
-iProov Biometrics Flutter SDK v5.0.0 includes the following changes
+iProov Face Flutter SDK v5.0.0 includes the following changes
 
 ### iOS
 
@@ -83,7 +103,7 @@ iProov Biometrics Flutter SDK v5.0.0 includes the following changes
 
 ## 4.0.3
 
-iProov Biometrics Flutter SDK v4.0.3 includes the following changes
+iProov Face Flutter SDK v4.0.3 includes the following changes
 
 ### Flutter
 
@@ -100,7 +120,7 @@ iProov Biometrics Flutter SDK v4.0.3 includes the following changes
 
 ## 4.0.2
 
-iProov Biometrics Flutter SDK v4.0.2 includes the following changes
+iProov Face Flutter SDK v4.0.2 includes the following changes
 
 ### iOS
 
@@ -113,7 +133,7 @@ iProov Biometrics Flutter SDK v4.0.2 includes the following changes
 
 ## 4.0.1
 
-iProov Biometrics Flutter SDK v4.0.1 includes the following changes
+iProov Face Flutter SDK v4.0.1 includes the following changes
 
 ### Flutter
 
@@ -123,7 +143,7 @@ iProov Biometrics Flutter SDK v4.0.1 includes the following changes
 
 ## 4.0.0
 
-iProov SDK Biometrics Flutter SDK v4.0.0 is a major update which includes a number of improvements and breaking changes.
+iProov SDK Face Flutter SDK v4.0.0 is a major update which includes a number of improvements and breaking changes.
 
 Please consult the [Upgrade Guide](https://github.com/iProov/flutter/wiki/Upgrade-Guide#upgrading-to-v40) for detailed instructions on how to upgrade to this new version.
 
@@ -153,7 +173,7 @@ Please consult the [Upgrade Guide](https://github.com/iProov/flutter/wiki/Upgrad
 
 ## 3.2.0
 
-iProov Biometrics Flutter SDK v3.2.0 includes the following changes
+iProov Face Flutter SDK v3.2.0 includes the following changes
 
 ### Flutter
 
@@ -177,7 +197,7 @@ iProov Biometrics Flutter SDK v3.2.0 includes the following changes
 
 ## 3.1.1
 
-iProov Biometrics Flutter SDK v3.1.1 includes an additional certificate added to the default certificate pinning, to support beyond Dec 2023.
+iProov Face Flutter SDK v3.1.1 includes an additional certificate added to the default certificate pinning, to support beyond Dec 2023.
 
 ### iOS
 
@@ -189,7 +209,7 @@ iProov Biometrics Flutter SDK v3.1.1 includes an additional certificate added to
 
 ## 3.1.0
 
-iProov SDK Biometrics Flutter SDK v3.1.0 includes bug fixes 
+iProov SDK Face Flutter SDK v3.1.0 includes bug fixes 
 
 Please consult the [Upgrade Guide](https://github.com/iProov/flutter/wiki/Upgrade-Guide#upgrading-to-v30) for detailed instructions on how to upgrade to this new version.
 
@@ -208,7 +228,7 @@ Please consult the [Upgrade Guide](https://github.com/iProov/flutter/wiki/Upgrad
 
 ## 3.1.0
 
-iProov SDK Biometrics Flutter SDK v3.1.0 includes bug fixes 
+iProov SDK Face Flutter SDK v3.1.0 includes bug fixes 
 
 Please consult the [Upgrade Guide](https://github.com/iProov/flutter/wiki/Upgrade-Guide#upgrading-to-v30) for detailed instructions on how to upgrade to this new version.
 
@@ -227,7 +247,7 @@ Please consult the [Upgrade Guide](https://github.com/iProov/flutter/wiki/Upgrad
 
 ## 3.0.0
 
-iProov SDK Biometrics Flutter SDK v3.0.0 is a major update which includes a number of improvements and breaking changes.
+iProov SDK Face Flutter SDK v3.0.0 is a major update which includes a number of improvements and breaking changes.
 
 Please consult the [Upgrade Guide](https://github.com/iProov/flutter/wiki/Upgrade-Guide#upgrading-to-v30) for detailed instructions on how to upgrade to this new version.
 
@@ -258,7 +278,7 @@ Please consult the [Upgrade Guide](https://github.com/iProov/flutter/wiki/Upgrad
 
 ## 2.0.0
 
-iProov SDK Biometrics Flutter SDK v2.0.0 is a major update which includes a number of improvements and breaking changes.
+iProov SDK Face Flutter SDK v2.0.0 is a major update which includes a number of improvements and breaking changes.
 
 Please consult the [Upgrade Guide](https://github.com/iProov/flutter/wiki/Upgrade-Guide#upgrading-to-v20) for detailed instructions on how to upgrade to this new version.
 
@@ -313,7 +333,7 @@ Please consult the [Upgrade Guide](https://github.com/iProov/flutter/wiki/Upgrad
 
 ## 1.0.0
 
-We're pleased to announce that the iProov Biometrics Flutter SDK is now production-ready!
+We're pleased to announce that the iProov Face Flutter SDK is now production-ready!
 
 ### Flutter
 
