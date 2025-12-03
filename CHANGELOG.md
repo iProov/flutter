@@ -1,5 +1,18 @@
 # iProov Face Flutter SDK
 
+## 6.1.0
+
+iProov Face Flutter SDK v6.1.0 includes the following changes
+
+### iOS
+
+* Upgraded SDK to [v13.1.0](https://github.com/iProov/ios/releases/tag/13.1.0).
+
+### Android
+
+* Upgraded SDK to [v11.1.0](https://github.com/iProov/android/releases/tag/v11.1.0).
+
+
 ## 6.0.0
 
 iProov Face Flutter SDK v6.0.0 includes the following changes
@@ -19,6 +32,7 @@ iProov Face Flutter SDK v6.0.0 includes the following changes
 - Upgrading Android target sdk to 36
 - Kotlin 1.8.10
 * Upgraded SDK to [v11.0.0](https://github.com/iProov/android/releases/tag/v11.0.0).
+
 
 ## 5.3.0
 
