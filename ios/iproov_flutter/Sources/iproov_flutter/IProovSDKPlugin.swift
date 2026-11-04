@@ -8,7 +8,6 @@ private enum EventKey: String {
     case message
     case progress
     case reasons
-    case frame
     case title
     case canceler
 }
@@ -29,7 +28,7 @@ private enum EventName: String {
     case success
 }
 
-public final class SwiftIProovSDKPlugin: NSObject {
+public final class IProovSDKPlugin: NSObject {
 
     private enum PluginError: LocalizedError {
         case invalidArguments
@@ -55,6 +54,7 @@ public final class SwiftIProovSDKPlugin: NSObject {
     private var uiEventListener: EventListener?
     private var session: Session?
     private var pendingError: Error? // Ideally this would be IProovError? but it crashes the compiler =/
+    private var sessionActive = false
 
 
     func registerEventChannel(with registrar: FlutterPluginRegistrar) {
@@ -119,13 +119,14 @@ public final class SwiftIProovSDKPlugin: NSObject {
         return IProov.launch(streamingURL: streamingURL, token: token, options: options) { [weak self] status in
             self?.eventListener?.sendEvent(event: status.serialized)
             if status.isFinished {
+                self?.sessionActive = false
                 self?.eventListener?.endOfEventStream()
             }
         }
     }
 }
 
-extension SwiftIProovSDKPlugin: IProovViewDelegate {
+extension IProovSDKPlugin: IProovViewDelegate {
     public func willPresentIProovView() {
         self.uiEventListener?.sendEvent(event: ["uiEvent" : UIEventName.not_started.rawValue])
     }
@@ -139,10 +140,10 @@ extension SwiftIProovSDKPlugin: IProovViewDelegate {
     }
 }
 
-extension SwiftIProovSDKPlugin: FlutterPlugin {
+extension IProovSDKPlugin: FlutterPlugin {
     public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(name: "com.iproov.sdk", binaryMessenger: registrar.messenger())
-        let instance = SwiftIProovSDKPlugin()
+        let instance = IProovSDKPlugin()
         registrar.addMethodCallDelegate(instance, channel: channel)
 
         instance.registerEventChannel(with: registrar)
@@ -152,9 +153,16 @@ extension SwiftIProovSDKPlugin: FlutterPlugin {
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         switch call.method {
         case "launch":
+            guard !sessionActive else {
+                pendingError = IProovError.captureAlreadyActive
+                result(nil)
+                return
+            }
+
             do {
                 setEnvironment()
                 session = try handleLaunch(arguments: call.arguments)
+                sessionActive = true
             } catch { // Re-route all launch errors via the event sink, to avoid needing to handle them async on launch
                 pendingError = IProovError.unexpectedError("Flutter Error: " + error.localizedDescription)
             }
@@ -174,8 +182,12 @@ extension SwiftIProovSDKPlugin: FlutterPlugin {
         case "keyPair.publicKey.getDer":
             result(IProov.keyPair.publicKey.der)
         case "cancel":
-            let cancelResult = session?.cancel()
-            result(cancelResult)
+            session?.cancel()
+            result(nil)
+        case "isSessionActive":
+            result(sessionActive)
+        case "nativeSdkVersion":
+            result(IProov.version)
         default:
             result(FlutterMethodNotImplemented)
         }
@@ -231,21 +243,17 @@ private extension Status {
                 EventKey.progress.rawValue: progress,
                 EventKey.message.rawValue: message,
             ]
-        case let .success(result):
-            return [
-                EventKey.event.rawValue: EventName.success.rawValue,
-                EventKey.frame.rawValue: result.frame?.pngData()?.flutterData as Any
-            ]
+        case .success:
+            return [EventKey.event.rawValue: EventName.success.rawValue]
         case let .canceled(canceler):
             return [
                 EventKey.event.rawValue: EventName.canceled.rawValue,
                 EventKey.canceler.rawValue: canceler.stringValue
             ]
-        case let .failure(result):
+        case let .failure(reasons):
             return [
                 EventKey.event.rawValue: EventName.failure.rawValue,
-                EventKey.reasons.rawValue: result.reasons.map { $0.toDictionary() },
-                EventKey.frame.rawValue: result.frame?.pngData()?.flutterData as Any
+                EventKey.reasons.rawValue: reasons.map { $0.toDictionary() }
             ]
         case let .error(error):
             return error.serialized as [String : Any]
@@ -327,8 +335,14 @@ private extension IProovError {
             return "server"
         case .userTimeout:
             return "user_timeout"
-        case .notSupported:
+        case .consentRequired:
+            return "consent_required"
+        case .notSupported, .unsupportedDevice:
             return "unsupported_device"
+        case .unsupportedOSVersion:
+            return "unsupported_os_version"
+        case .unsupportedSDKVersion:
+            return "unsupported_sdk_version"
         case .unexpectedError:
             fallthrough
         @unknown default:
@@ -341,7 +355,7 @@ private extension IProovError {
 private extension Canceler {
     var stringValue: String {
         switch self {
-        case .integration: return "app"
+        case .integration: return "integration"
         case .user: return "user"
         @unknown default:
             fatalError()

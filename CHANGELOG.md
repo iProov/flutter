@@ -1,5 +1,64 @@
 # iProov Face Flutter SDK
 
+## 7.0.0
+
+iProov Face Flutter SDK v7.0.0 includes the following changes
+
+### Flutter
+
+* Added `IProov.isSessionActive()`, which returns whether a session is currently active. Use it to detect and clean up a stale session before calling `launch()` again, avoiding `CaptureAlreadyActiveException`.
+* Fixed `IProov.cancel()` hanging forever on Android: the native handler now always replies, so the returned `Future` completes.
+* **Breaking:** `IProov.cancel()` now returns `Future<void>` instead of `Future<bool>`. It is safe to call unconditionally, and `isSessionActive()` is the way to check whether a session has finished.
+* **Breaking:** `Canceler.app` has been renamed to `Canceler.integration`, matching the native SDKs.
+
+
+### Android
+
+* Upgraded SDK to [v12.0.0](https://github.com/iProov/android/releases/tag/v12.0.0).
+* `CaptureAlreadyActiveException` is now routed to Dart as an `IProovEventError` instead of being swallowed inside a coroutine.
+* Session cancellation from `subscription.cancel()` is now performed synchronously rather than in a fire-and-forget coroutine.
+
+### iOS
+
+* Upgraded SDK to [v14.0.0](https://github.com/iProov/ios/releases/tag/14.0.0).
+* Added Swift Package Manager support. The plugin works with both Swift Package Manager and CocoaPods, and Flutter picks one when it builds your app: Flutter 3.44 and above uses Swift Package Manager by default, and earlier versions use CocoaPods. No changes are needed in your app.
+* Added an "Avoiding `CaptureAlreadyActiveException`" section describing both the normal terminal-event flow and stale-session recovery via `isSessionActive()` / `cancel()`.
+
+### Breaking changes
+
+* Removed `Options.orientation` and the `Orientation` enum.
+* `IProovEventSuccess` no longer carries a `frame`. 
+* `IProovEventFailure` no longer carries a `frame`.
+* Removed `ListenerNotRegisteredException`. The corresponding error no longer exists in either
+  native SDK, so it could never be thrown.
+* Raised the Android requirements to compileSdk 36, Kotlin 2.0.21, Android Gradle Plugin 8.9.1 and
+  JDK 17.
+* Raised the iOS requirements to iOS 16 and Xcode 26.
+
+### Behavioural changes
+
+* The default `filter` is now `NaturalFilter` (previously `LineDrawingFilter`). If you rely on the
+  previous appearance, set `filter` explicitly.
+
+### Added
+
+* Added `IProov.nativeSdkVersion()`, which returns the version of the native iProov SDK.
+* New `accessibility` options under `genuinePresenceAssurance` (`isVibrationEnabled`,
+  `isSoundEnabled`, `isColorEnabled`).
+* New exceptions `UnsupportedOSVersionException` and `UnsupportedSDKVersionException`.
+* Support for the new iOS `unsupportedDevice` error, mapped to `UnsupportedDeviceException`
+  alongside the legacy `notSupported` spelling of the same error.
+* New exceptions `ConsentRequiredException` and `SessionCannotBeStartedTwiceException` (Android
+  only). These native errors already existed but were previously surfaced as
+  `UnexpectedErrorException`.
+
+### Fixed
+
+* Errors from the key pair API (`keyPair.sign()`, `publicKey.getPem()`, `publicKey.getDer()`) now
+  throw the matching `IProovException`. Previously the native exception escaped the Android plugin
+  and was reported to Dart as a `MissingPluginException`. Android only.
+
+
 ## 6.1.0
 
 iProov Face Flutter SDK v6.1.0 includes the following changes
@@ -11,7 +70,6 @@ iProov Face Flutter SDK v6.1.0 includes the following changes
 ### Android
 
 * Upgraded SDK to [v11.1.0](https://github.com/iProov/android/releases/tag/v11.1.0).
-
 
 ## 6.0.0
 

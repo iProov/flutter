@@ -1,7 +1,6 @@
 package com.iproov.sdk
 
 import android.content.Context
-import android.graphics.Bitmap
 import com.iproov.sdk.api.IProov
 import com.iproov.sdk.api.OptionsBridge
 import com.iproov.sdk.api.exception.*
@@ -15,14 +14,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onSubscription
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
-import java.io.ByteArrayOutputStream
 import kotlin.Any
-import kotlin.ByteArray
 import kotlin.Exception
 import kotlin.String
 import kotlin.Unit
@@ -49,6 +45,11 @@ class IProovSDKPlugin : FlutterPlugin {
 
     private var sessionStateJob: Job? = null
     private var sessionUIStateJob: Job? = null
+    private var launchJob: Job? = null
+    @Volatile
+    private var currentSession: IProov.Session? = null
+    @Volatile
+    private var cancelRequested = false
     private var pendingException: IProovException? = null
 
     private fun observeSessionState(session: IProov.Session, whenReady: (() -> Unit)? = null) {
@@ -79,18 +80,9 @@ class IProovSDKPlugin : FlutterPlugin {
                                 }
 
                                 is IProov.State.Success -> {
-                                    val frameArray = state.successResult.frame?.let { bmp ->
-                                        val stream = ByteArrayOutputStream()
-                                        bmp.compress(Bitmap.CompressFormat.PNG, 100, stream)
-                                        val byteArray: ByteArray = stream.toByteArray()
-                                        bmp.recycle()
-                                        byteArray
-                                    }
-
                                     eventSink?.success(
                                         hashMapOf(
-                                            "event" to "success",
-                                            "frame" to frameArray
+                                            "event" to "success"
                                         )
                                     )
                                     eventSink?.endOfStream()
@@ -99,26 +91,17 @@ class IProovSDKPlugin : FlutterPlugin {
                                 is IProov.State.Failure -> {
                                     val context = flutterPluginBinding!!.applicationContext
 
-                                    val frameArray = state.failureResult.frame?.let { bmp ->
-                                        val stream = ByteArrayOutputStream()
-                                        bmp.compress(Bitmap.CompressFormat.PNG, 100, stream)
-                                        val byteArray: ByteArray = stream.toByteArray()
-                                        bmp.recycle()
-                                        byteArray
-                                    }
-
-                                    val reasonsListForFlutter: List<Map<String, String>> = state.failureResult.reasons.map { reason ->
+                                    val reasonsListForFlutter: List<Map<String, String>> = state.reasons.map { reason ->
                                         mapOf(
                                             "feedbackCode" to reason.feedbackCode,
-                                            "description" to context.getString(reason.description) // Now sending the actual string
+                                            "description" to context.getString(reason.description)
                                         )
                                     }
 
                                     eventSink?.success(
                                         hashMapOf(
                                             "event" to "failure",
-                                            "reasons" to reasonsListForFlutter,
-                                            "frame" to frameArray
+                                            "reasons" to reasonsListForFlutter
                                         )
                                     )
                                     eventSink?.endOfStream()
@@ -179,38 +162,50 @@ class IProovSDKPlugin : FlutterPlugin {
     private val methodCallHandler = object : MethodChannel.MethodCallHandler {
         override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
             val context: Context? = flutterPluginBinding?.applicationContext
-            when (call.method) {
-                "launch" -> {
-                    try {
-                        setEnvironment()
-                        handleLaunch(call)
-                    } catch (e: UnexpectedErrorException) {
-                        // Re-route any synchronous launch exceptions to be handled async by the error event handler
-                        pendingException = e
+            try {
+                when (call.method) {
+                    "launch" -> {
+                        try {
+                            setEnvironment()
+                            handleLaunch(call)
+                        } catch (e: IProovException) {
+                            // Re-route any synchronous launch exceptions to be handled async by the error event handler
+                            pendingException = e
+                        }
                     }
-                }
 
-                "keyPair.sign" -> {
-                    val data = call.arguments
-                    if (data is ByteArray) {
-                        val signature = IProov.getKeyPair(context!!).sign(data)
-                        result.success(signature)
-                    } else {
-                        result.error("INVALID", "Invalid argument passed", null)
+                    "keyPair.sign" -> {
+                        val data = call.arguments
+                        if (data is ByteArray) {
+                            val signature = IProov.getKeyPair(context!!).sign(data)
+                            result.success(signature)
+                        } else {
+                            result.error("INVALID", "Invalid argument passed", null)
+                        }
                     }
-                }
 
-                "keyPair.publicKey.getPem" -> result.success(IProov.getKeyPair(context!!).publicKey.pem)
-                "keyPair.publicKey.getDer" -> result.success(IProov.getKeyPair(context!!).publicKey.der)
-                "cancel" -> cancelSession()
-                else -> result.notImplemented()
+                    "keyPair.publicKey.getPem" -> result.success(IProov.getKeyPair(context!!).publicKey.pem)
+                    "keyPair.publicKey.getDer" -> result.success(IProov.getKeyPair(context!!).publicKey.der)
+                    "cancel" -> cancelSession(result)
+                    "isSessionActive" -> result.success(isSessionActive())
+                    "nativeSdkVersion" -> result.success(IProov.sdkVersion)
+                    else -> result.notImplemented()
+                }
+            } catch (e: IProovException) {
+                result.error(e.serialize()["error"] ?: "unexpected_error", e.reason, e.message)
             }
         }
 
-        private fun cancelSession() {
-            coroutineScope.launch {
-                IProov.session?.cancel()
-            }
+        private fun cancelSession(result: MethodChannel.Result) {
+            cancelRequested = true
+            currentSession?.cancel()
+            result.success(null)
+        }
+
+        private fun isSessionActive(): Boolean {
+            if (launchJob?.isActive == true) return true
+            val session = currentSession ?: return false
+            return !session.state.value.isTerminal()
         }
 
         private fun handleLaunch(call: MethodCall) {
@@ -248,11 +243,40 @@ class IProovSDKPlugin : FlutterPlugin {
                         }
                     }
 
-                    coroutineScope.launch {
-                        IProov.createSession(context, streamingUrl, token, options).let { session ->
-                            // Observe first, then start
-                            observeSession(session) {
-                                session.start()
+                    cancelRequested = false
+                    currentSession = null
+
+                    launchJob = coroutineScope.launch {
+                        try {
+                            IProov.createSession(context, streamingUrl, token, options).let { session ->
+                                currentSession = session
+
+                                // Observe first, then start
+                                observeSession(session) {
+                                    try {
+                                        session.start()
+                                    } catch (e: SessionCannotBeStartedTwiceException) {
+                                        coroutineScope.launch(Dispatchers.Main) {
+                                            eventSink?.success(
+                                                hashMapOf(
+                                                    "event" to "canceled",
+                                                    "canceler" to IProov.Canceler.INTEGRATION.name.lowercase()
+                                                )
+                                            )
+                                            eventSink?.endOfStream()
+                                        }
+                                    }
+                                }
+
+                                // A cancel() that arrived before the session existed had nothing
+                                // to cancel, so it will do after
+                                if (cancelRequested) {
+                                    session.cancel()
+                                }
+                            }
+                        } catch (e: IProovException) {
+                            withContext(Dispatchers.Main) {
+                                sendErrorEvent(e)
                             }
                         }
                     }
@@ -264,6 +288,19 @@ class IProovSDKPlugin : FlutterPlugin {
     private fun observeSession(session: IProov.Session, whenReady: (() -> Unit)? = null) {
         observeSessionState(session, whenReady)
         observeSessionUIState(session)
+    }
+
+    /**
+     * Sends an [IProovException] to Dart as an error event.
+     */
+    private fun sendErrorEvent(exception: IProovException) {
+        val sink = eventSink
+        if (sink != null) {
+            sink.success(exception.serialize())
+            sink.endOfStream()
+        } else {
+            pendingException = exception
+        }
     }
 
     override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
@@ -286,9 +323,7 @@ class IProovSDKPlugin : FlutterPlugin {
             }
 
             override fun onCancel(arguments: Any?) {
-                coroutineScope.launch {
-                    IProov.session?.cancel()
-                }
+                currentSession?.cancel()
                 eventSink = null
             }
         })
@@ -329,9 +364,21 @@ class IProovSDKPlugin : FlutterPlugin {
     }
 }
 
+// Terminal states are those after which the session is finished and a new one may be launched.
+private fun IProov.State.isTerminal(): Boolean = when (this) {
+    is IProov.State.Success,
+    is IProov.State.Failure,
+    is IProov.State.Error,
+    is IProov.State.Canceled -> true
+
+    else -> false
+}
+
 fun IProovException.serialize(): HashMap<String, String?> {
     val exceptionName = when (this) {
         is CaptureAlreadyActiveException -> "capture_already_active"
+        is SessionCannotBeStartedTwiceException -> "session_cannot_be_started_twice"
+        is ConsentRequiredException -> "consent_required"
         is NetworkException -> "network"
         is CameraPermissionException -> "camera_permission"
         is ServerException -> "server"
@@ -339,6 +386,8 @@ fun IProovException.serialize(): HashMap<String, String?> {
         is CameraException -> "camera"
         is UnsupportedDeviceException -> "unsupported_device"
         is InvalidOptionsException -> "invalid_options"
+        is UnsupportedOSVersionException -> "unsupported_os_version"
+        is UnsupportedSDKVersionException -> "unsupported_sdk_version"
         else -> "unexpected_error" // includes UnexpectedErrorException
     }
 

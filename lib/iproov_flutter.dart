@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/services.dart';
 import 'package:iproov_flutter/events.dart';
+import 'package:iproov_flutter/exceptions.dart';
 import 'package:iproov_flutter/options.dart';
 
 export 'package:iproov_flutter/enums.dart';
@@ -34,15 +35,11 @@ class IProov {
       if (options != null) 'optionsJSON': json.encode(options)
     });
 
-    return _iProovListenerEventChannel
-        .receiveBroadcastStream()
-        .map((result) => IProovEvent.fromMap(result));
+    return _iProovListenerEventChannel.receiveBroadcastStream().map((result) => IProovEvent.fromMap(result));
   }
 
   static Stream<IProovUIEvent> uiEvent() {
-    return _iProovUIListenerEventChannel
-        .receiveBroadcastStream()
-        .map((uiResult) => IProovUIEvent.fromMap(uiResult));
+    return _iProovUIListenerEventChannel.receiveBroadcastStream().map((uiResult) => IProovUIEvent.fromMap(uiResult));
   }
 
   static final keyPair = KeyPair();
@@ -50,8 +47,26 @@ class IProov {
   // Private constructor
   IProov._();
 
-  static Future<bool> cancel() async {
-    return await _iProovMethodChannel.invokeMethod('cancel');
+  /// Cancels the currently active iProov session, if any.
+  static Future<void> cancel() async {
+    await _iProovMethodChannel.invokeMethod<void>('cancel');
+  }
+
+  static Future<bool> isSessionActive() async {
+    return await _iProovMethodChannel.invokeMethod<bool>('isSessionActive') ?? false;
+  }
+
+  /// Returns the version string of the underlying native iProov SDK.
+  static Future<String> nativeSdkVersion() async {
+    return await _invokeMethod('nativeSdkVersion');
+  }
+}
+
+Future<T> _invokeMethod<T>(String method, [dynamic arguments]) async {
+  try {
+    return await _iProovMethodChannel.invokeMethod(method, arguments);
+  } on PlatformException catch (e) {
+    throw IProovException.error(e.code, e.message ?? '', e.details as String?);
   }
 }
 
@@ -59,16 +74,16 @@ class KeyPair {
   final publicKey = PublicKey();
 
   Future<Uint8List> sign(Uint8List data) async {
-    return await _iProovMethodChannel.invokeMethod('keyPair.sign', data);
+    return await _invokeMethod('keyPair.sign', data);
   }
 }
 
 class PublicKey {
   Future<String> getPem() async {
-    return await _iProovMethodChannel.invokeMethod('keyPair.publicKey.getPem');
+    return await _invokeMethod('keyPair.publicKey.getPem');
   }
 
   Future<Uint8List> getDer() async {
-    return await _iProovMethodChannel.invokeMethod('keyPair.publicKey.getDer');
+    return await _invokeMethod('keyPair.publicKey.getDer');
   }
 }

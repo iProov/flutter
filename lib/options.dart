@@ -1,10 +1,8 @@
 import 'dart:convert';
-import 'dart:ffi';
 import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
 import 'package:image/image.dart' hide Color;
-import 'package:iproov_flutter/enums.dart';
 
 /// Set options for the iProov SDK.
 ///
@@ -65,11 +63,6 @@ class Options {
   /// This option only applies to Android.
   final bool? enableScreenshots;
 
-  /// Sets the orientation of the iProov UI.
-  ///
-  /// This option only applies to Android.
-  final Orientation? orientation;
-
   /// The [Color] of the header bar.
   final Color? headerBackgroundColor;
 
@@ -97,7 +90,6 @@ class Options {
     this.certificates,
     this.timeout,
     this.enableScreenshots,
-    this.orientation,
     this.headerBackgroundColor,
     this.disableExteriorEffects,
     this.genuinePresenceAssurance,
@@ -119,7 +111,6 @@ class Options {
         'certificates': certificates,
         'timeout': timeout?.inSeconds,
         'enable_screenshots': enableScreenshots,
-        'orientation': orientation?.stringValue,
         'header_background_color': headerBackgroundColor?.hex,
         'disable_exterior_effects': disableExteriorEffects,
         'genuine_presence_assurance': genuinePresenceAssurance?.toJson(),
@@ -141,7 +132,6 @@ class Options {
     List<String>? certificates,
     Duration? timeout,
     bool? enableScreenshots,
-    Orientation? orientation,
     Color? headerBackgroundColor,
     bool? disableExteriorEffects,
     GenuinePresenceAssuranceOptions? genuinePresenceAssurance,
@@ -162,7 +152,6 @@ class Options {
         certificates: certificates ?? this.certificates,
         timeout: timeout ?? this.timeout,
         enableScreenshots: enableScreenshots ?? this.enableScreenshots,
-        orientation: orientation ?? this.orientation,
         headerBackgroundColor: headerBackgroundColor ?? this.headerBackgroundColor,
         disableExteriorEffects: disableExteriorEffects ?? this.disableExteriorEffects,
         genuinePresenceAssurance: genuinePresenceAssurance ?? this.genuinePresenceAssurance,
@@ -188,12 +177,16 @@ class GenuinePresenceAssuranceOptions {
   /// Show a prompt 'Scanning' during GPA scan and show a prompt 'Scan Completed' after GPA scan completes.
   final bool? scanningPrompts;
 
+  /// Accessibility options for the GPA scan.
+  final AccessibilityOptions? accessibility;
+
   const GenuinePresenceAssuranceOptions({
     this.readyOvalStrokeColor,
     this.notReadyOvalStrokeColor,
     this.controlYPosition,
     this.controlXPosition,
     this.scanningPrompts,
+    this.accessibility,
   });
 
   Map<String, dynamic> toJson() => {
@@ -202,6 +195,32 @@ class GenuinePresenceAssuranceOptions {
         'control_y_position': controlYPosition,
         'control_x_position': controlXPosition,
         'scanning_prompts': scanningPrompts,
+        'accessibility': accessibility?.toJson(),
+      }._withoutNullValues();
+}
+
+/// Accessibility options for GPA claims.
+@immutable
+class AccessibilityOptions {
+  /// Enable vibration feedback during the scan.
+  final bool? isVibrationEnabled;
+
+  /// Enable sound feedback during the scan.
+  final bool? isSoundEnabled;
+
+  /// Enable colour feedback during the scan.
+  final bool? isColorEnabled;
+
+  const AccessibilityOptions({
+    this.isVibrationEnabled,
+    this.isSoundEnabled,
+    this.isColorEnabled,
+  });
+
+  Map<String, dynamic> toJson() => {
+        'is_vibration_enabled': isVibrationEnabled,
+        'is_sound_enabled': isSoundEnabled,
+        'is_color_enabled': isColorEnabled,
       }._withoutNullValues();
 }
 

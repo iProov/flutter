@@ -7,8 +7,15 @@
 
 build/
 
-.idea/workspace.xml
-.idea/libraries/*
+**/.idea/*
+!**/.idea/vcs.xml
+*.iml
+out/
+example/android/app/release/
+
+# Personal Claude Code files
+CLAUDE.local.md
+.claude/settings.local.json
 
 .flutter-plugins-dependencies
 .flutter-plugins
@@ -24,3 +31,10 @@ misc.xml
 runConfigurations.xml
 
 .bitrise.secrets.yml
+
+# Native SDK binaries (downloaded by scripts/fetch-native-sdks.sh)
+ios/iproov_flutter/Frameworks/
+android/repo/
+
+# Written by Xcode when it opens the plugin's Package.swift
+ios/iproov_flutter/.swiftpm/

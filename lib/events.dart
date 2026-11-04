@@ -1,4 +1,3 @@
-import 'package:image/image.dart';
 import 'package:iproov_flutter/iproov_flutter.dart';
 
 abstract class IProovEvent {
@@ -16,9 +15,7 @@ abstract class IProovEvent {
         return IProovEventProcessing(map['progress'], map['message']);
 
       case 'success':
-        final frameData = map['frame'];
-        final frame = frameData != null ? decodePng(frameData) : null;
-        return IProovEventSuccess(frame);
+        return const IProovEventSuccess();
 
       case 'failure':
         final reasonsRaw = map['reasons'] as List<dynamic>;
@@ -26,9 +23,7 @@ abstract class IProovEvent {
           final typedMap = Map<String, String>.from(map);
           return FailureReason.fromMap(typedMap);
         }).toList();
-        final frameData = map['frame'];
-        final frame = frameData != null ? decodePng(frameData) : null;
-        return IProovEventFailure(failureReasons, frame);
+        return IProovEventFailure(failureReasons);
 
       case 'canceled':
         final canceler = map['canceler'];
@@ -90,10 +85,7 @@ class IProovEventSuccess implements IProovEvent {
   @override
   get isFinal => true;
 
-  /// An optional image containing a single frame of the user, if enabled for your service provider.
-  final Image? frame;
-
-  const IProovEventSuccess(this.frame);
+  const IProovEventSuccess();
 }
 
 class FailureReason {
@@ -128,10 +120,7 @@ class IProovEventFailure implements IProovEvent {
   /// The reasons for the failure which can be displayed directly to the user.
   final List<FailureReason> reasons;
 
-  /// An optional image containing a single frame of the user, if enabled for your service provider.
-  final Image? frame;
-
-  const IProovEventFailure(this.reasons, this.frame);
+  const IProovEventFailure(this.reasons);
 }
 
 /// The user was not successfully verified/enrolled due to an error (e.g. lost internet connection).
@@ -143,8 +132,7 @@ class IProovEventError implements IProovEvent {
 
   const IProovEventError(this.error);
 
-  factory IProovEventError.create(String error, String title, String? message) =>
-      IProovEventError(IProovException.error(error, title, message));
+  factory IProovEventError.create(String error, String title, String? message) => IProovEventError(IProovException.error(error, title, message));
 }
 
 abstract class IProovUIEvent {

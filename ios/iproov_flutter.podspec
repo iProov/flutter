@@ -9,14 +9,14 @@ Pod::Spec.new do |s|
   s.homepage         = pubspec["homepage"]
   s.license          = { :type => 'commercial', :file => '../LICENSE.md' }
   s.author           = { 'iProov' => 'support@iproov.com' }
-  s.source           = { :git => 'https://github.com/iProov/ios.git', :tag => s.version.to_s }
+  s.source           = { :path => '.' }
   
-  s.source_files = 'Classes/**/*'
+  s.source_files = 'iproov_flutter/Sources/iproov_flutter/**/*.swift'
   
   s.dependency 'Flutter'
-  s.dependency 'iProov', '13.1.0'
+  s.vendored_frameworks = 'iproov_flutter/Frameworks/iProov.xcframework'
   
-  s.swift_version = '5.5'
-  s.platform = :ios, '15.0'
+  s.swift_version = '5.0'
+  s.platform = :ios, '16.0'
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386' }
 end

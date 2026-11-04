@@ -1,24 +1,30 @@
 group 'com.iproov.flutter_sdk_plugin'
-version '6.1.0'
+version '7.0.0'
 
 buildscript {
-    ext.kotlin_version = '1.8.10'
+    ext.kotlin_version = '2.0.21'
     repositories {
         google()
         mavenCentral()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.4.1'
+        classpath 'com.android.tools.build:gradle:8.13.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
+
+def pluginProjectDir = projectDir
+
+// Versions are centralized in sdk-versions.properties at the project root.
+def sdkVersions = new Properties()
+new File(projectDir.parentFile, "sdk-versions.properties").withInputStream { sdkVersions.load(it) }
 
 rootProject.allprojects {
     repositories {
         google()
         mavenCentral()
-        maven { url "https://raw.githubusercontent.com/iProov/android/master/maven/" }
+        maven { url "${pluginProjectDir}/repo" }
     }
 }
 
@@ -39,15 +45,15 @@ android {
         disable 'InvalidPackage'
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '17'
     }
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation "com.iproov.sdk:iproov:11.1.0"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation "com.iproov.sdk:iproov:${sdkVersions['ANDROID_VERSION']}"
 }

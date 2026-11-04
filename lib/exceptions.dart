@@ -7,14 +7,16 @@ abstract class IProovException implements Exception {
     switch (error) {
       case 'capture_already_active':
         return CaptureAlreadyActiveException(title);
+      case 'session_cannot_be_started_twice':
+        return SessionCannotBeStartedTwiceException(title);
+      case 'consent_required':
+        return ConsentRequiredException(title);
       case 'network':
         return NetworkException(title, message);
       case 'camera_permission':
         return CameraPermissionException(title);
       case 'server':
         return ServerException(title, message);
-      case 'listener_not_registered':
-        return ListenerNotRegisteredException(title);
       case 'multi_window_unsupported':
         return MultiWindowUnsupportedException(title);
       case 'camera':
@@ -25,6 +27,10 @@ abstract class IProovException implements Exception {
         return InvalidOptionsException(title);
       case 'user_timeout':
         return UserTimeoutException(title);
+      case 'unsupported_os_version':
+        return UnsupportedOSVersionException(title, message);
+      case 'unsupported_sdk_version':
+        return UnsupportedSDKVersionException(title, message);
     }
 
     return UnexpectedErrorException(title, message);
@@ -33,6 +39,15 @@ abstract class IProovException implements Exception {
 
 class CaptureAlreadyActiveException extends IProovException {
   CaptureAlreadyActiveException(String title) : super(title);
+}
+
+// Android only
+class SessionCannotBeStartedTwiceException extends IProovException {
+  SessionCannotBeStartedTwiceException(String title) : super(title);
+}
+
+class ConsentRequiredException extends IProovException {
+  ConsentRequiredException(String title) : super(title);
 }
 
 class NetworkException extends IProovException {
@@ -57,11 +72,6 @@ class UserTimeoutException extends IProovException {
 }
 
 // Android only
-class ListenerNotRegisteredException extends IProovException {
-  ListenerNotRegisteredException(String title) : super(title);
-}
-
-// Android only
 class MultiWindowUnsupportedException extends IProovException {
   MultiWindowUnsupportedException(String title) : super(title);
 }
@@ -78,4 +88,12 @@ class UnsupportedDeviceException extends IProovException {
 // Android only
 class InvalidOptionsException extends IProovException {
   InvalidOptionsException(String title) : super(title);
+}
+
+class UnsupportedOSVersionException extends IProovException {
+  UnsupportedOSVersionException(String title, String? message) : super(title, message);
+}
+
+class UnsupportedSDKVersionException extends IProovException {
+  UnsupportedSDKVersionException(String title, String? message) : super(title, message);
 }

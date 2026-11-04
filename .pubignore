@@ -1,0 +1,48 @@
+# .pubignore — controls what dart pub publish includes in the package.
+# When this file exists, .gitignore is NOT used for publishing.
+#
+# The native SDK binaries (ios/iproov_flutter/Frameworks/, android/repo/) are gitignored
+# to keep them out of git history, but MUST be included in the published
+# package — that's the whole point of embedded SDKs. So they are NOT
+# listed here.
+
+# Build artifacts
+.DS_Store
+.dart_tool/
+.packages
+.pub/
+.gradle/
+build/
+out/
+example/android/app/release/
+
+# IDE
+**/.idea/
+*.iml
+misc.xml
+runConfigurations.xml
+
+# Flutter generated
+.flutter-plugins-dependencies
+.flutter-plugins
+pubspec.lock
+local.properties
+flutter_export_environment.sh
+Generated.xcconfig
+GeneratedPluginRegistrant.h
+GeneratedPluginRegistrant.m
+example/ios/Flutter/ephemeral/
+
+# CI and project config
+.bitrise.secrets.yml
+bitrise.yml
+CLAUDE.local.md
+Gemfile
+Gemfile.lock
+
+# Scripts and docs (not needed by integrators)
+scripts/
+EXAMPLE_DEVELOPMENT.md
+
+# Internal version marker (used by verify script, not needed by integrators)
+ios/iproov_flutter/Frameworks/.iproov-version
